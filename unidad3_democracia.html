@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Unidad 3 — La Democracia | IPC · CBC · UBA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0a0a0d;
+  --surface:   #121218;
+  --card:      #161620;
+  --border:    #222230;
+  --gold:      #c9a84c;
+  --gold-dim:  #5a440e;
+  --amber:     #d4813a;
+  --blue:      #4a7fc1;
+  --teal:      #3aaa8c;
+  --rose:      #c15a7a;
+  --violet:    #8a6ec9;
+  --text:      #ddd8cc;
+  --muted:     #666070;
+  --white:     #f2eedd;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,10,13,.94);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: .4rem;
+  padding: .65rem 1.2rem;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: .65rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: .3rem .65rem;
+  border-radius: 3px;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+nav a:hover { color: var(--gold); background: rgba(201,168,76,.08); }
+nav .sep { color: var(--border); }
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  padding: 4rem 1.5rem 3.5rem;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: 'DEMOS';
+  position: absolute;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(5rem, 22vw, 16rem);
+  font-weight: 900;
+  color: rgba(201,168,76,.035);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+  letter-spacing: .15em;
+}
+.eyebrow {
+  font-size: .62rem; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--gold); font-weight: 600; margin-bottom: .7rem;
+}
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  font-weight: 900; color: var(--white);
+  line-height: 1.1; margin-bottom: .8rem;
+}
+.hero-sub { font-size: .85rem; color: var(--muted); max-width: 560px; margin: 0 auto 2rem; }
+.pills { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; }
+.pill {
+  font-size: .62rem; letter-spacing: .08em; font-weight: 600;
+  padding: .3rem .85rem; border-radius: 20px; text-transform: uppercase;
+}
+.p-blue   { background: rgba(74,127,193,.15); color: #88aadd; border: 1px solid rgba(74,127,193,.35); }
+.p-teal   { background: rgba(58,170,140,.15); color: #6dcdb0; border: 1px solid rgba(58,170,140,.35); }
+.p-rose   { background: rgba(193,90,122,.15); color: #dd88a8; border: 1px solid rgba(193,90,122,.35); }
+.p-violet { background: rgba(138,110,201,.15); color: #b8a0e0; border: 1px solid rgba(138,110,201,.35); }
+
+/* ── PREGUNTA GLOBAL ── */
+.global-q {
+  max-width: 820px; margin: 2.5rem auto; padding: 0 1.2rem;
+}
+.gq-box {
+  background: linear-gradient(135deg, #15100a 0%, #100f18 100%);
+  border: 1px solid var(--gold-dim);
+  border-left: 4px solid var(--gold);
+  border-radius: 4px;
+  padding: 1.5rem 1.8rem;
+}
+.gq-label { font-size: .58rem; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: .6rem; }
+.gq-text { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-style: italic; color: var(--white); line-height: 1.55; }
+
+/* ── TIMELINE ── */
+.timeline-section {
+  max-width: 920px; margin: 0 auto 3rem; padding: 0 1.2rem;
+}
+.tl-header {
+  padding: .8rem 1.4rem;
+  background: #12121a;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+}
+.tl-header-label { font-size: .6rem; letter-spacing: .18em; text-transform: uppercase; color: var(--blue); font-weight: 700; margin-bottom: .2rem; }
+.tl-header h2 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--white); }
+.tl-body {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0 0 6px 6px;
+  padding: 1.5rem 1.4rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: .8rem;
+}
+.tl-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: .85rem 1rem;
+  border-top: 2px solid var(--blue);
+}
+.tl-date { font-size: .65rem; color: var(--blue); font-weight: 700; letter-spacing: .08em; margin-bottom: .3rem; }
+.tl-place { font-size: .8rem; font-weight: 600; color: var(--white); margin-bottom: .3rem; }
+.tl-desc { font-size: .73rem; color: var(--muted); line-height: 1.5; }
+
+/* ── SECCIÓN AUTOR ── */
+.author-section {
+  max-width: 920px; margin: 0 auto 3.5rem; padding: 0 1.2rem;
+  scroll-margin-top: 60px;
+}
+.author-banner {
+  border-radius: 6px 6px 0 0;
+  padding: 1.4rem 1.8rem 1.1rem;
+  border-bottom: 1px solid var(--border);
+}
+.b-blue   { background: linear-gradient(135deg,#0b1320 0%,#0e1828 100%); border:1px solid rgba(74,127,193,.3); border-bottom:none; }
+.b-teal   { background: linear-gradient(135deg,#0b1a16 0%,#0e201a 100%); border:1px solid rgba(58,170,140,.3); border-bottom:none; }
+.b-rose   { background: linear-gradient(135deg,#1a0b12 0%,#200e18 100%); border:1px solid rgba(193,90,122,.3); border-bottom:none; }
+.b-violet { background: linear-gradient(135deg,#120b1a 0%,#160e20 100%); border:1px solid rgba(138,110,201,.3); border-bottom:none; }
+
+.author-num { font-size: .6rem; letter-spacing: .2em; font-weight: 700; text-transform: uppercase; margin-bottom: .3rem; }
+.n-blue   { color: var(--blue); }
+.n-teal   { color: var(--teal); }
+.n-rose   { color: var(--rose); }
+.n-violet { color: var(--violet); }
+
+.author-name { font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 700; color: var(--white); }
+.author-work { font-size: .73rem; color: var(--muted); font-style: italic; margin-top: .2rem; }
+
+.content-body {
+  background: var(--card);
+  border: 1px solid var(--border); border-top: none;
+  border-radius: 0 0 6px 6px;
+  padding: 1.6rem;
+  display: flex; flex-direction: column; gap: 1.3rem;
+}
+
+/* Preguntas disparadoras */
+.q-block {
+  background: rgba(201,168,76,.04);
+  border-left: 3px solid var(--gold-dim);
+  border-radius: 0 4px 4px 0;
+  padding: .9rem 1.2rem;
+}
+.q-label { font-size: .57rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); font-weight: 700; margin-bottom: .5rem; }
+.q-block ul { list-style: none; padding: 0; }
+.q-block li {
+  font-size: .8rem; font-style: italic; color: #b8a880;
+  padding: .2rem 0 .35rem .8rem;
+  border-left: 1px solid var(--gold-dim);
+  margin-bottom: .35rem;
+}
+
+/* Concepto */
+.concept {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1rem 1.2rem;
+}
+.concept-label { font-size: .57rem; letter-spacing: .18em; text-transform: uppercase; font-weight: 700; margin-bottom: .4rem; }
+.l-blue   { color: var(--blue); }
+.l-teal   { color: var(--teal); }
+.l-rose   { color: var(--rose); }
+.l-violet { color: var(--violet); }
+.l-gold   { color: var(--gold); }
+.l-red    { color: #c15a5a; }
+.l-amber  { color: var(--amber); }
+
+.concept-title { font-size: .95rem; font-weight: 600; color: var(--white); margin-bottom: .5rem; }
+.concept-body { font-size: .79rem; color: #a09070; line-height: 1.65; }
+.concept-body strong { color: #d0c8a0; }
+.concept-body em { color: #b8a060; font-style: normal; font-weight: 500; }
+
+/* Tags */
+.tags { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .7rem; }
+.tag {
+  font-size: .6rem; padding: .18rem .52rem; border-radius: 2px;
+  font-weight: 600; letter-spacing: .04em;
+}
+.t-b { background: rgba(74,127,193,.12); color: #88aadd; border: 1px solid rgba(74,127,193,.25); }
+.t-t { background: rgba(58,170,140,.12); color: #6dcdb0; border: 1px solid rgba(58,170,140,.25); }
+.t-r { background: rgba(193,90,122,.12); color: #dd88a8; border: 1px solid rgba(193,90,122,.25); }
+.t-v { background: rgba(138,110,201,.12); color: #b8a0e0; border: 1px solid rgba(138,110,201,.25); }
+.t-g { background: rgba(201,168,76,.1);  color: #c9a84c; border: 1px solid rgba(201,168,76,.25); }
+.t-red { background: rgba(193,90,90,.12); color: #dd9090; border: 1px solid rgba(193,90,90,.25); }
+
+/* Dos columnas */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+@media(max-width:580px){ .two-col { grid-template-columns: 1fr; } }
+
+/* Grilla de filósofos */
+.filos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: .75rem;
+}
+.filo-card {
+  background: #0f0f18;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: .9rem 1rem;
+}
+.filo-name { font-size: .8rem; font-weight: 700; color: var(--white); margin-bottom: .35rem; }
+.filo-body { font-size: .73rem; color: var(--muted); line-height: 1.55; }
+.filo-idea { font-size: .68rem; color: var(--blue); font-weight: 600; margin-top: .4rem; letter-spacing: .03em; }
+
+/* 7 instituciones poliarquía */
+.poliarchy-list {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: .6rem;
+}
+.pol-item {
+  background: #0d0d16;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--teal);
+  border-radius: 3px;
+  padding: .7rem .9rem;
+  display: flex; gap: .6rem; align-items: flex-start;
+}
+.pol-num { font-size: .8rem; font-weight: 900; color: var(--teal); flex-shrink: 0; }
+.pol-text { font-size: .75rem; color: var(--text); line-height: 1.4; }
+
+/* Grilla valores democracia */
+.values-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: .6rem;
+}
+.val-item {
+  background: #0d0d16;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: .7rem .9rem;
+}
+.val-num { font-size: .62rem; color: var(--gold); font-weight: 700; margin-bottom: .2rem; }
+.val-text { font-size: .73rem; color: var(--muted); line-height: 1.45; }
+
+/* Tipos de democracia Linz */
+.linz-types {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: .7rem;
+}
+.linz-card {
+  background: #0f0f18;
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--rose);
+  border-radius: 3px;
+  padding: .85rem 1rem;
+}
+.linz-card-title { font-size: .75rem; font-weight: 700; color: var(--white); margin-bottom: .3rem; }
+.linz-card-body { font-size: .72rem; color: var(--muted); line-height: 1.5; }
+
+/* ── CONFRONTACIÓN ── */
+.confrontation {
+  max-width: 920px; margin: 0 auto 3.5rem; padding: 0 1.2rem;
+  scroll-margin-top: 60px;
+}
+.conf-header {
+  background: #12101a;
+  border: 1px solid var(--gold-dim); border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 1.2rem 1.8rem;
+}
+.conf-header h2 { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--gold); }
+.conf-header p { font-size:.73rem; color:var(--muted); margin-top:.3rem; font-style:italic; }
+
+.conf-body { background:var(--card); border:1px solid var(--border); border-radius:0 0 6px 6px; }
+.conf-row { display:grid; grid-template-columns:1.1fr 1fr 1fr 1fr; border-bottom:1px solid var(--border); }
+.conf-row:last-child { border-bottom:none; }
+@media(max-width:640px){ .conf-row { grid-template-columns:1fr 1fr; } }
+.conf-cell { padding:.85rem 1rem; border-right:1px solid var(--border); font-size:.76rem; line-height:1.5; }
+.conf-cell:last-child { border-right:none; }
+.conf-cell.hdr { font-size:.58rem; letter-spacing:.15em; text-transform:uppercase; font-weight:700; color:var(--muted); background:#0e0e18; }
+.conf-cell.axis { color:var(--gold); font-weight:600; font-size:.78rem; }
+.cc-b { color:#90b0e0; }
+.cc-t { color:#80d0b8; }
+.cc-r { color:#e0a0b8; }
+.cc-v { color:#c0a8e8; }
+
+/* ── NOTA FINAL ── */
+.final-note { max-width:760px; margin:0 auto 4rem; padding:0 1.2rem; }
+.fn-bar { height:3px; border-radius:3px 3px 0 0; background:var(--gold); }
+.fn-inner {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-top:none;
+  border-radius:0 0 6px 6px;
+  padding:1.5rem 1.8rem;
+}
+.fn-label { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:.6rem; }
+.fn-text { font-size:.81rem; color:#a09870; line-height:1.7; }
+.fn-text strong { color:var(--white); }
+
+footer {
+  text-align:center; font-size:.66rem; color:var(--muted);
+  padding:1.5rem 1rem 2.5rem; border-top:1px solid var(--border); letter-spacing:.04em;
+}
+footer span { color:var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#dahl1">Dahl I</a>
+  <span class="sep">·</span>
+  <a href="#dahl2">Dahl II</a>
+  <span class="sep">·</span>
+  <a href="#linz">Linz</a>
+  <span class="sep">·</span>
+  <a href="#welp">Welp</a>
+  <span class="sep">·</span>
+  <a href="#confrontacion">Confrontación</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="eyebrow">IPC · CBC · UBA · Cátedra Lopreite</p>
+  <h1>Unidad 3<br>La Democracia</h1>
+  <p class="hero-sub">¿Qué prometió la democracia? ¿Qué cumplió? ¿Qué omitió — y a quiénes?</p>
+  <div class="pills">
+    <span class="pill p-blue">Robert Dahl (I y II)</span>
+    <span class="pill p-rose">Juan Linz</span>
+    <span class="pill p-violet">Yanina Welp</span>
+  </div>
+</div>
+
+<!-- PREGUNTA GLOBAL -->
+<div class="global-q">
+  <div class="gq-box">
+    <p class="gq-label">La pregunta que recorre toda la unidad</p>
+    <p class="gq-text">Si la democracia lleva 2.500 años perfeccionándose, ¿por qué cada vez más gente en el mundo siente que no la representa — y por qué los que más la necesitan son los que menos participan en ella?</p>
+  </div>
+</div>
+
+<!-- LÍNEA DE TIEMPO INTRODUCTORIA -->
+<div class="timeline-section">
+  <div class="tl-header">
+    <p class="tl-header-label">Contexto histórico</p>
+    <h2>La democracia a través del tiempo: cinco momentos clave</h2>
+  </div>
+  <div class="tl-body">
+    <div class="tl-item">
+      <p class="tl-date">s. V a.C. — Grecia</p>
+      <p class="tl-place">Democracia directa / Polis</p>
+      <p class="tl-desc">Todos los ciudadanos participan en asamblea. Demos reducido: excluye mujeres, esclavos y extranjeros. El demos era minoría de la población.</p>
+    </div>
+    <div class="tl-item">
+      <p class="tl-date">s. V a.C. — Roma</p>
+      <p class="tl-place">República / Res Publica</p>
+      <p class="tl-desc">Ciudadanía por nacimiento. Las asambleas en el foro excluyen de facto a quienes viven lejos. Oligarquía constitucional encubierta.</p>
+    </div>
+    <div class="tl-item">
+      <p class="tl-date">s. XIII — Italia</p>
+      <p class="tl-place">Repúblicas medievales</p>
+      <p class="tl-desc">Sectores populares exigen participación. Los demos siguen siendo fracción mínima. Caen por corrupción, facciones y guerra.</p>
+    </div>
+    <div class="tl-item">
+      <p class="tl-date">s. XVIII — EE.UU.</p>
+      <p class="tl-place">Democracia representativa</p>
+      <p class="tl-desc">Madison y Wilson: la representación como solución al problema del tamaño. El demos sigue excluyendo mujeres, esclavos, pobres.</p>
+    </div>
+    <div class="tl-item">
+      <p class="tl-date">s. XX — Expansión global</p>
+      <p class="tl-place">Sufragio universal</p>
+      <p class="tl-desc">El demos se expande para incluir a todos los adultos. La democracia deja de ser doctrina local y se convierte en aspiración universal.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     AUTOR 1: DAHL — La Democracia
+══════════════════════════════════════ -->
+<div class="author-section" id="dahl1">
+  <div class="author-banner b-blue">
+    <p class="author-num n-blue">Autor 01 · Texto I</p>
+    <p class="author-name">Robert Dahl</p>
+    <p class="author-work">"La Democracia" — Orígenes, teorías y sistemas contemporáneos</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>¿Cuándo se empezó a llamar "democracia" a algo que en realidad era una oligarquía bien administrada?</li>
+        <li>¿La democracia representativa es una solución al problema del tamaño o una forma elegante de alejar al pueblo del poder real?</li>
+        <li>¿Por qué la democracia avanzó históricamente junto con la economía de mercado — y qué dice eso sobre quién se beneficia de ambas?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-blue">Definición etimológica</p>
+      <p class="concept-title">Demos + Kratos: el gobierno del pueblo (en teoría)</p>
+      <p class="concept-body">
+        <em>Demos</em> = pueblo · <em>Kratos</em> = gobierno o poder. La palabra nació en Grecia, donde el gobierno popular se practicaba en la <strong>polis</strong>, la ciudad-Estado. El problema: el "pueblo" de Atenas excluía a mujeres, esclavos y metecos (extranjeros residentes). Es decir, el demos era aproximadamente el 10-15% de la población. La democracia originaria era, en términos modernos, una <strong>aristocracia viril de propietarios libres</strong> con un nombre más simpático.
+      </p>
+      <div class="tags">
+        <span class="tag t-b">demos</span><span class="tag t-b">polis</span>
+        <span class="tag t-red">exclusión originaria</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-blue">Giro histórico decisivo</p>
+      <p class="concept-title">De la democracia directa a la representativa</p>
+      <p class="concept-body">
+        Durante milenios, la democracia directa (todos deciden en asamblea) fue el único modelo. Cuando el Estado-nación reemplazó a la ciudad-Estado en el s. XVIII, la democracia directa se volvió físicamente imposible. La solución fue la <strong>representación</strong>: elegir delegados que decidan en nombre del demos.<br><br>
+        Madison la llamó "República" para distinguirla de la "democracia pura". James Wilson agregó la clasificación clásica: <strong>monarquía</strong> (un soberano), <strong>aristocracia</strong> (unos pocos) y <strong>democracia</strong> (el pueblo o sus representantes). John Stuart Mill propuso que el gobierno ideal debía ser democrático Y representativo — e incluyó, avanzado para su época, a las mujeres.
+      </p>
+      <div class="tags">
+        <span class="tag t-b">representación</span><span class="tag t-b">Madison</span>
+        <span class="tag t-b">Mill</span><span class="tag t-b">sufragio</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-blue">¿Por qué se expandió la democracia?</p>
+      <p class="concept-title">Cuatro factores explicativos según Dahl</p>
+      <div class="two-col">
+        <div>
+          <p class="concept-body"><strong>Fallas de los no-democráticos:</strong> todos los regímenes alternativos — monarquías, dictaduras, teocracias — fracasaron política, económica y militarmente. La democracia ganó por descarte tanto como por mérito.</p>
+        </div>
+        <div>
+          <p class="concept-body"><strong>Economías de mercado:</strong> a medida que el capitalismo descentralizó el poder económico y creció la clase media, aumentaron las demandas de participación política. Mercado y democracia viajaron juntos. Dato que debería hacernos pensar.</p>
+        </div>
+        <div>
+          <p class="concept-body"><strong>Bienestar económico:</strong> prosperidad generalizada aumenta la probabilidad de éxito democrático; pobreza generalizada la disminuye. La democracia, según Dahl, prospera donde la gente come bien.</p>
+        </div>
+        <div>
+          <p class="concept-body"><strong>Cultura política:</strong> la democracia se sostiene donde existe una cultura de valores democráticos compartida y transmitida generacionalmente. Sin esa cultura, las instituciones son cáscara vacía.</p>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag t-b">expansión democrática</span>
+        <span class="tag t-red">democracia + capitalismo</span>
+        <span class="tag t-b">cultura política</span>
+      </div>
+    </div>
+
+    <!-- Filósofos -->
+    <div class="concept">
+      <p class="concept-label l-blue">La teoría de la democracia: galería de pensadores</p>
+      <p class="concept-title">De Pericles a Rawls: ¿qué es la democracia ideal?</p>
+      <p class="concept-body" style="margin-bottom:.9rem">Dahl hace un recorrido por los grandes teóricos. Lo interesante es lo que cada uno <em>omite</em> tanto como lo que dice:</p>
+      <div class="filos-grid">
+        <div class="filo-card">
+          <p class="filo-name">Pericles</p>
+          <p class="filo-body">La democracia "favorece a los muchos en lugar de a los pocos". Libertad e igualdad ante la ley, incluida la pobreza como no-obstáculo.</p>
+          <p class="filo-idea">→ Olvidó mencionar que los muchos no incluían a las mujeres ni a los esclavos.</p>
+        </div>
+        <div class="filo-card">
+          <p class="filo-name">Aristóteles</p>
+          <p class="filo-body">La constitución como organización de funciones según el poder de cada clase. El mejor gobierno suele ser inalcanzable. La democracia se basa en la libertad.</p>
+          <p class="filo-idea">→ Honesto al menos: reconoce que el mejor gobierno es el que nadie alcanza.</p>
+        </div>
+        <div class="filo-card">
+          <p class="filo-name">Locke</p>
+          <p class="filo-body">Legitimidad = consentimiento de los gobernados mediante regla de la mayoría. El pueblo juzga si el gobierno abusó. Si retiene el legislativo, hay democracia perfecta.</p>
+          <p class="filo-idea">→ ¿Qué pasa cuando la mayoría oprime a las minorías? Silencio.</p>
+        </div>
+        <div class="filo-card">
+          <p class="filo-name">Montesquieu</p>
+          <p class="filo-body">Tres tipos: monarquía (leyes fijas), despotismo (capricho), república (democracia o aristocracia). La virtud pública es condición necesaria. Sin ella, las facciones destruyen la república.</p>
+          <p class="filo-idea">→ La "virtud pública" suena bien. ¿Quién la certifica?</p>
+        </div>
+        <div class="filo-card">
+          <p class="filo-name">Rousseau</p>
+          <p class="filo-body">La soberanía popular no puede representarse: "en el instante en que un pueblo consiente en ser representado, ya no es libre". Solo viable en confederaciones pequeñas.</p>
+          <p class="filo-idea">→ El más radical. Y el más ignorado por la práctica occidental.</p>
+        </div>
+        <div class="filo-card">
+          <p class="filo-name">Mill</p>
+          <p class="filo-body">Libertad individual como base. Sin restricciones al pensamiento y la expresión. Gobierno representativo como ideal. Incluyó a las mujeres cuando nadie más lo hacía.</p>
+          <p class="filo-idea">→ Liberal coherente: defendió incluso lo que le costaba políticamente.</p>
+        </div>
+        <div class="filo-card">
+          <p class="filo-name">Dewey</p>
+          <p class="filo-body">La democracia es un "modo de vida asociada", no solo un sistema electoral. Énfasis especial en la educación como base democrática real.</p>
+          <p class="filo-idea">→ Si la democracia es un modo de vida, ¿qué pasa cuando la vida económica es antidemocrática?</p>
+        </div>
+        <div class="filo-card">
+          <p class="filo-name">Rawls</p>
+          <p class="filo-body">Detrás del "velo de ignorancia" (sin saber tu posición social), todos elegirían: igualdad de libertades, igualdad de oportunidades, y que las desigualdades beneficien a los menos favorecidos.</p>
+          <p class="filo-idea">→ Experimento mental brillante. Pero nadie decide políticas desde el velo. Todos saben exactamente quiénes son.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Democracia ideal -->
+    <div class="concept">
+      <p class="concept-label l-blue">La democracia ideal según Dahl</p>
+      <p class="concept-title">Cinco criterios para el gobierno del pueblo</p>
+      <p class="concept-body" style="margin-bottom:.8rem">Dahl propone que una democracia ideal requiere cinco condiciones. Ningún sistema real las cumple todas. Eso es, según él, normal. Desde el marxismo, eso es exactamente el problema:</p>
+      <div class="values-grid">
+        <div class="val-item"><p class="val-num">01</p><p class="val-text"><strong style="color:#d0c8a0">Participación efectiva</strong> — Todos los miembros del demos pueden dar a conocer sus opiniones antes de que se tome una decisión.</p></div>
+        <div class="val-item"><p class="val-num">02</p><p class="val-text"><strong style="color:#d0c8a0">Igualdad de votos</strong> — Cada voto cuenta igual. Un millonario = un desocupado. Solo en la urna, claro.</p></div>
+        <div class="val-item"><p class="val-num">03</p><p class="val-text"><strong style="color:#d0c8a0">Electorado informado</strong> — Los ciudadanos tienen acceso a información relevante para decidir. ¿Quién controla esa información?</p></div>
+        <div class="val-item"><p class="val-num">04</p><p class="val-text"><strong style="color:#d0c8a0">Control de la agenda</strong> — El demos decide qué asuntos se discuten y cómo. En la práctica: lo deciden los medios, los partidos y el mercado.</p></div>
+        <div class="val-item"><p class="val-num">05</p><p class="val-text"><strong style="color:#d0c8a0">Inclusión</strong> — Todos los adultos tienen derecho a participar. Derecho formal, no siempre efectivo.</p></div>
+      </div>
+      <div class="tags" style="margin-top:.9rem">
+        <span class="tag t-b">participación</span><span class="tag t-b">igualdad de votos</span>
+        <span class="tag t-b">inclusión</span><span class="tag t-red">brecha ideal/real</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     AUTOR 2: DAHL — Segunda transformación
+══════════════════════════════════════ -->
+<div class="author-section" id="dahl2">
+  <div class="author-banner b-teal">
+    <p class="author-num n-teal">Autor 01 · Texto II</p>
+    <p class="author-name">Robert Dahl</p>
+    <p class="author-work">"La segunda transformación democrática: de la ciudad-Estado al Estado-nación"</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>¿Ganar en tamaño (más ciudadanos, más territorio) implicó perder en profundidad democrática? ¿Cuánto democracia se sacrificó en el altar de la escala?</li>
+        <li>La poliarquía de Dahl ¿es la democracia real o el mejor sustituto disponible? ¿Hay diferencia entre ambas cosas?</li>
+        <li>¿Puede haber "pluralismo" real en una sociedad estructuralmente desigual?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-teal">El argumento central</p>
+      <p class="concept-title">Cuando la democracia cambió de escala — y lo que perdió en el camino</p>
+      <p class="concept-body">
+        El desplazamiento de la democracia desde la ciudad-Estado al Estado-nación (s. XIX–XX) fue la segunda gran transformación democrática. El resultado: <strong>ocho consecuencias</strong> que Dahl analiza con precisión y que pueden leerse como ocho concesiones que la democracia hizo al tamaño.
+      </p>
+      <div class="two-col" style="margin-top:.8rem">
+        <div>
+          <p class="concept-body"><strong>Representación:</strong> elemento esencial de la democracia moderna. Amplió el sufragio, mejoró los sistemas electorales. Pero también: ahora otros deciden por vos.</p>
+        </div>
+        <div>
+          <p class="concept-body"><strong>Extensión ilimitada:</strong> ningún país sería demasiado grande para el gobierno representativo. Se resolvió el problema del tamaño — a costa de la participación directa.</p>
+        </div>
+        <div>
+          <p class="concept-body"><strong>Límites a la participación:</strong> en el Estado-nación, la participación individual es inevitablemente más limitada que en la polis. El ciudadano ateniense tenía más peso en su asamblea que vos en un país de 46 millones.</p>
+        </div>
+        <div>
+          <p class="concept-body"><strong>Diversidad y conflicto:</strong> más ciudadanos = más diferencias étnicas, religiosas, ideológicas. El conflicto se vuelve inevitable. Madison lo veía como virtud: el tamaño diluye las facciones.</p>
+        </div>
+        <div>
+          <p class="concept-body"><strong>Pluralismo social:</strong> proliferación de grupos autónomos entre sí y respecto al gobierno. Es la base del modelo pluralista liberal — que presupone que todos los grupos tienen igual capacidad de organizarse.</p>
+        </div>
+        <div>
+          <p class="concept-body"><strong>Expansión de derechos:</strong> los derechos individuales crecieron junto con el tamaño. Funcionan como sustituto del consenso cuando no es posible que todos estén de acuerdo en todo.</p>
+        </div>
+      </div>
+      <div class="tags">
+        <span class="tag t-t">segunda transformación</span>
+        <span class="tag t-t">representación</span>
+        <span class="tag t-red">límites participativos</span>
+        <span class="tag t-t">pluralismo</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-teal">Concepto central</p>
+      <p class="concept-title">Poliarquía: la democracia realmente existente</p>
+      <p class="concept-body">
+        Dahl propone llamar <em>poliarquía</em> al régimen que realmente existe en las democracias contemporáneas, para distinguirlo de la democracia ideal. La poliarquía tiene <strong>dos características definitorias</strong>: (1) ciudadanía extendida a la mayoría de adultos; (2) derecho a oponerse a los gobernantes y removerlos mediante el voto.
+        <br><br>
+        Y <strong>siete instituciones</strong> que la sostienen:
+      </p>
+      <div class="poliarchy-list" style="margin-top:.9rem">
+        <div class="pol-item"><span class="pol-num">1</span><span class="pol-text">Funcionarios electos</span></div>
+        <div class="pol-item"><span class="pol-num">2</span><span class="pol-text">Elecciones libres e imparciales</span></div>
+        <div class="pol-item"><span class="pol-num">3</span><span class="pol-text">Sufragio inclusivo</span></div>
+        <div class="pol-item"><span class="pol-num">4</span><span class="pol-text">Derecho a ocupar cargos públicos</span></div>
+        <div class="pol-item"><span class="pol-num">5</span><span class="pol-text">Libertad de expresión</span></div>
+        <div class="pol-item"><span class="pol-num">6</span><span class="pol-text">Variedad de fuentes de información</span></div>
+        <div class="pol-item"><span class="pol-num">7</span><span class="pol-text">Autonomía asociativa</span></div>
+      </div>
+      <p class="concept-body" style="margin-top:.8rem">La poliarquía es el gobierno de los <em>muchos</em> — pero no de todos. Es la democracia posible, no la democracia plena. Dahl lo presenta como una aproximación satisfactoria al ideal. Desde el marxismo: es la forma que la democracia adopta para ser compatible con el capitalismo.</p>
+      <div class="tags">
+        <span class="tag t-t">poliarquía</span>
+        <span class="tag t-t">7 instituciones</span>
+        <span class="tag t-red">democracia posible ≠ democracia plena</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     AUTOR 3: LINZ
+══════════════════════════════════════ -->
+<div class="author-section" id="linz">
+  <div class="author-banner b-rose">
+    <p class="author-num n-rose">Autor 02</p>
+    <p class="author-name">Juan Linz</p>
+    <p class="author-work">"Los problemas de las democracias y la diversidad de democracias"</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>¿La democracia es un sistema para el bien común o un procedimiento para que los que quieren gobernar se turnen ordenadamente?</li>
+        <li>Si los partidos se financian con dinero privado, ¿quién gobierna realmente: los elegidos o los financistas?</li>
+        <li>¿El nacionalismo es el principal enemigo histórico de la democracia — y por qué Linz lo trata con tanta cautela?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-rose">Definición operativa</p>
+      <p class="concept-title">¿Qué es la democracia para Linz? Un sistema pro tempore con reglas</p>
+      <p class="concept-body">
+        Linz define la democracia como un sistema basado en la <strong>libertad legal de formular y proclamar alternativas políticas</strong>, con libertad de asociación, expresión y competencia no violenta entre líderes, revalidación periódica del poder, y participación de todos los miembros de la comunidad política.<br><br>
+        La clave de Linz es el concepto de <strong>gobierno pro tempore</strong>: quienes gobiernan deben enfrentarse al electorado a intervalos regulares. No hay magistraturas vitalicias. Esto es tanto una virtud (los derrotados pueden volver) como un límite (las políticas de largo plazo son difíciles cuando el horizonte es siempre la próxima elección).<br><br>
+        La democracia también excluye la violencia como vía de acceso o de salida del poder. El derecho a la rebeldía existe como recurso extremo teórico — pero quienes lo usaron históricamente raramente devolvieron el poder.
+      </p>
+      <div class="tags">
+        <span class="tag t-r">pro tempore</span><span class="tag t-r">competencia no violenta</span>
+        <span class="tag t-r">legitimidad</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-rose">Tipología democrática</p>
+      <p class="concept-title">No todas las democracias son iguales: cinco tipos</p>
+      <div class="linz-types">
+        <div class="linz-card">
+          <p class="linz-card-title">Democracias consolidadas</p>
+          <p class="linz-card-body">Estables, con continuidad institucional nunca puesta en duda. Casos históricos: Europa occidental, Canadá, Australia.</p>
+        </div>
+        <div class="linz-card">
+          <p class="linz-card-title">Post Segunda Guerra Mundial</p>
+          <p class="linz-card-body">Alemania y Japón: después del nazismo y el militarismo, el éxito económico legitimó las nuevas instituciones democráticas.</p>
+        </div>
+        <div class="linz-card">
+          <p class="linz-card-title">Democracias de tercera ola</p>
+          <p class="linz-card-body">Transiciones recientes desde autoritarismos. Memoria del régimen anterior aún presente. Muchos países latinoamericanos.</p>
+        </div>
+        <div class="linz-card">
+          <p class="linz-card-title">Post-comunistas</p>
+          <p class="linz-card-body">Construyen Estado y democracia simultáneamente, más transformación económica. Triple desafío sin precedente histórico.</p>
+        </div>
+        <div class="linz-card">
+          <p class="linz-card-title">Semidemocracia en construcción</p>
+          <p class="linz-card-body">Con altos niveles de conflicto social. Las más difíciles de consolidar. Muchos países del Sur Global.</p>
+        </div>
+      </div>
+      <div class="tags" style="margin-top:.8rem">
+        <span class="tag t-r">consolidación</span><span class="tag t-r">transición</span>
+        <span class="tag t-r">tercera ola</span><span class="tag t-red">fragilidad institucional</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-rose">Problema estructural</p>
+      <p class="concept-title">Partidos, dinero y corrupción: la democracia y su precio</p>
+      <p class="concept-body">
+        Linz identifica un nudo gordiano que ninguna democracia ha resuelto: los <strong>partidos necesitan dinero</strong> para campañas, sedes y comunicación. Ese dinero proviene de fuentes privadas — lo que genera corrupción estructural, no accidental.<br><br>
+        La solución técnica (financiamiento público) tiene su propio problema: obliga a los ciudadanos a financiar a partidos por los que no votaron. Ninguna solución es limpia. Linz lo señala con precisión pero sin extraer la conclusión obvia: que quien financia condiciona quien gobierna.<br><br>
+        Otro diagnóstico lúcido: la tendencia creciente de los políticos a vivir <strong>"de la política"</strong> en vez de <strong>"para la política"</strong> (Weber). La política se profesionaliza, las élites se aíslan, y el dinero se vuelve la motivación central. Carl Schmitt ya lo había notado: la disciplina de partido fosiliza el debate parlamentario. Los discursos se escriben antes de la sesión y nadie escucha a nadie.
+      </p>
+      <div class="tags">
+        <span class="tag t-r">financiamiento</span><span class="tag t-r">corrupción</span>
+        <span class="tag t-red">élite política</span><span class="tag t-r">Weber</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-rose">Tensión estructural</p>
+      <p class="concept-title">Nacionalismo y democracia: una relación complicada</p>
+      <p class="concept-body">
+        Linz analiza con cuidado la relación entre democracia y nación. El nacionalismo que unificó estados en el s. XIX también creó mayorías que oprimieron minorías. La libertad "nacional" vino a costa de las libertades individuales de quienes no encajaban en la mayoría cultural o étnica.<br><br>
+        La fórmula del principio de autodeterminación es tan razonable como irrealizable: "dejemos al pueblo decidir". El problema, como señala Sir Jennings con sarcasmo preciso: <em>"el pueblo no puede decidir hasta que alguien decide quién es el pueblo"</em>. Esa decisión previa ya es un acto de poder, no de democracia.
+      </p>
+      <div class="tags">
+        <span class="tag t-r">nacionalismo</span><span class="tag t-r">minorías</span>
+        <span class="tag t-r">autodeterminación</span><span class="tag t-red">identidad y poder</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     AUTOR 4: WELP
+══════════════════════════════════════ -->
+<div class="author-section" id="welp">
+  <div class="author-banner b-violet">
+    <p class="author-num n-violet">Autor 03</p>
+    <p class="author-name">Yanina Welp</p>
+    <p class="author-work">"El debate del siglo XXI" — Democracia digital, participación y futuro</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>¿Las redes sociales democratizaron la información o crearon el mejor sistema de manipulación de masas de la historia?</li>
+        <li>¿El referendo es más democrático que el parlamento, o es la forma más fácil de que una mayoría aplaste a una minoría con el aval de las urnas?</li>
+        <li>¿Puede sobrevivir la democracia sin partidos — o los que dicen que sí están construyendo algo peor sin decirlo?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-violet">Problema del siglo XXI</p>
+      <p class="concept-title">Opinión pública, medios e información: quién controla el demos</p>
+      <p class="concept-body">
+        Welp abre con una pregunta que define nuestra época: ¿quién forma la opinión pública? La esfera pública debería controlar a los gobiernos y proveer información para que los ciudadanos decidan. En la práctica: <strong>la educación, los medios, los partidos, los líderes de opinión y los grupos de interés</strong> moldean lo que la gente piensa antes de que tenga oportunidad de pensar.<br><br>
+        Sartori identificó dos condiciones para una opinión pública autónoma: un sistema educativo que no adoctrine y pluralidad de fuentes de información. Internet pareció resolverlo: más voces, más acceso. El resultado fue el opuesto: más <strong>fake news</strong>, más cámaras de eco, más técnicas de manipulación algorítmica. La pluralidad de fuentes sin criterio de calidad no democratiza: desorienta.<br><br>
+        <strong>Un dato propio que vale añadir:</strong> hoy los algoritmos de las plataformas digitales no muestran información sino información que confirma lo que ya creés. El demos informado que imaginó Dahl choca contra un ecosistema diseñado para maximizar el tiempo de pantalla, no para formar ciudadanos.
+      </p>
+      <div class="tags">
+        <span class="tag t-v">opinión pública</span><span class="tag t-v">fake news</span>
+        <span class="tag t-v">algoritmos</span><span class="tag t-red">manipulación digital</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-violet">Mecanismos de participación directa</p>
+      <p class="concept-title">El referendo: ¿más democracia o democracia más peligrosa?</p>
+      <p class="concept-body">
+        Welp analiza los referendos como mecanismo de participación directa. Sus condiciones para que funcionen: supervisión imparcial, formulación de pregunta no tendenciosa, debate plural con garantías, y distinción entre <strong>voto de primer orden</strong> (se decide sobre el tema) y <strong>voto de segundo orden</strong> (se decide en función de adhesión o rechazo al gobierno que lo promueve).<br><br>
+        El potencial democratizador es enorme. El riesgo también: el Brexit fue un referendo donde la mayoría votó sin información completa sobre las consecuencias. El referendo venezolano de 1999 fue el primero paso de un proceso que terminó en autoritarismo. La herramienta de la democracia directa puede usarse para destruir la democracia representativa.
+      </p>
+      <div class="tags">
+        <span class="tag t-v">referendo</span><span class="tag t-v">participación directa</span>
+        <span class="tag t-red">riesgo populista</span><span class="tag t-v">voto de primer/segundo orden</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-violet">Crisis de representación</p>
+      <p class="concept-title">¿Puede haber democracia sin partidos? Welp dice que no — y explica por qué importa</p>
+      <p class="concept-body">
+        Los <strong>partidos atrapa-todo</strong> (catch-all) intentan representar todo para no representar a nadie en particular. Surgieron como respuesta a la fragmentación del electorado pero perdieron profundidad ideológica. La desafección ciudadana crece: menor confianza en instituciones, denuncias de corrupción, sensación de que "todos son lo mismo".<br><br>
+        Los nuevos partidos que critican a los viejos (partidos piratas, verdes, de democracia directa) tienden, con el tiempo, a parecerse cada vez más a los que criticaban. Welp es lúcida: un sistema sin partidos es improbable y además <strong>indeseable</strong>. Los partidos son intermediarios necesarios, aunque imperfectos. El problema no es tener partidos; es qué hacen con el poder cuando llegan.<br><br>
+        Su diagnóstico final: la <strong>legitimidad</strong> (atributo jurídico y procedimental) y la <strong>confianza</strong> (dimensión moral y sustancial) son cosas distintas. Las elecciones no generan confianza automáticamente. La democracia está fatigada — no por sus principios sino por cómo los practica.
+      </p>
+      <div class="tags">
+        <span class="tag t-v">partidos políticos</span><span class="tag t-v">desafección</span>
+        <span class="tag t-v">legitimidad vs confianza</span><span class="tag t-red">fatiga democrática</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CONFRONTACIÓN
+══════════════════════════════════════ -->
+<div class="confrontation" id="confrontacion">
+  <div class="conf-header">
+    <h2>¿Todos hablan de la misma democracia?</h2>
+    <p>Tres miradas, tres diagnósticos — y las preguntas que ninguno termina de responder</p>
+  </div>
+  <div class="conf-body">
+    <div class="conf-row">
+      <div class="conf-cell hdr">Eje de análisis</div>
+      <div class="conf-cell hdr" style="color:#88aadd">Dahl (I y II)</div>
+      <div class="conf-cell hdr" style="color:#e0a0b8">Linz</div>
+      <div class="conf-cell hdr" style="color:#c0a8e8">Welp</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis">¿Qué es la democracia?</div>
+      <div class="conf-cell cc-b">Sistema de gobierno del pueblo, aproximado hoy por la poliarquía (gobierno de muchos)</div>
+      <div class="conf-cell cc-r">Sistema pro tempore de competencia libre y no violenta por el poder, con revalidación periódica</div>
+      <div class="conf-cell cc-v">Sistema en crisis que necesita mecanismos de participación directa y recuperar la confianza ciudadana</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis">¿Cuál es su principal virtud?</div>
+      <div class="conf-cell cc-b">Previene autócratas, promueve prosperidad y desarrollo humano, garantiza derechos</div>
+      <div class="conf-cell cc-r">Excluye la violencia del acceso al poder; los derrotados pueden volver; es constitucional</div>
+      <div class="conf-cell cc-v">Su potencial de adaptación y la posibilidad de incorporar participación ciudadana real</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis">¿Cuál es su principal problema?</div>
+      <div class="conf-cell cc-b">El tamaño limitó la participación; la poliarquía es aproximación, no ideal</div>
+      <div class="conf-cell cc-r">La profesionalización política, el financiamiento corrupto y el faccionalismo partidario</div>
+      <div class="conf-cell cc-v">La desinformación digital, la desafección ciudadana y la brecha entre legitimidad y confianza</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis">¿Qué relación tiene con la economía?</div>
+      <div class="conf-cell cc-b">La democracia creció junto al capitalismo y la clase media. La prosperidad la sostiene.</div>
+      <div class="conf-cell cc-r">El dinero privado corrompe a los partidos. Tensión no resuelta entre capital y democracia.</div>
+      <div class="conf-cell cc-v">No la tematiza directamente. Punto ciego notable en un análisis sobre el siglo XXI.</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis">¿Puede la democracia transformar la sociedad?</div>
+      <div class="conf-cell cc-b">Sí, mediante expansión gradual de derechos y bienestar. Pero dentro de sus límites institucionales.</div>
+      <div class="conf-cell cc-r">Con dificultad: los partidos, el dinero y las élites frenan la transformación.</div>
+      <div class="conf-cell cc-v">Potencialmente sí, si se incorporan mecanismos de participación directa y se recupera la confianza.</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis">La pregunta que no se hacen</div>
+      <div class="conf-cell cc-b">¿Puede haber democracia plena dentro de una economía capitalista que concentra poder?</div>
+      <div class="conf-cell cc-r">¿Por qué quienes financian la democracia terminan controlando sus resultados?</div>
+      <div class="conf-cell cc-v">¿Quiénes diseñan los algoritmos que forman la opinión pública — y a qué intereses sirven?</div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTA FINAL MARXISTA -->
+<div class="final-note">
+  <div class="fn-bar"></div>
+  <div class="fn-inner">
+    <p class="fn-label">Síntesis crítica · Perspectiva marxista</p>
+    <p class="fn-text">
+      Los tres autores de esta unidad son demócratas sinceros. Ninguno es apologista del sistema: <strong>Dahl</strong> reconoce que la poliarquía es una aproximación al ideal, no el ideal mismo; <strong>Linz</strong> denuncia la corrupción estructural de los partidos y el vaciamiento del parlamento; <strong>Welp</strong> advierte sobre la manipulación algorítmica y la fatiga democrática. Son diagnósticos honestos y valiosos.
+      <br><br>
+      El punto ciego que comparten es el mismo: ninguno pregunta si la <strong>propiedad privada de los medios de producción</strong> es compatible con la democracia real. Si una empresa puede despedir a miles de personas sin votación alguna; si los medios de comunicación son propiedad de grupos económicos con intereses definidos; si las plataformas digitales maximizan ganancias con los datos de los ciudadanos — entonces la "igualdad de votos" que celebra Dahl convive con una desigualdad estructural que la neutraliza.
+      <br><br>
+      La democracia que describen estos autores es real y vale defenderla. Pero es también <strong>la forma de dominación política más sofisticada que el capitalismo ha producido</strong>: permite que el pueblo elija quién administra el sistema, pero no que elija qué sistema quiere. La pregunta que la Unidad 3 no formula — y que cualquier estudiante debería hacerse — es si eso es suficiente.
+    </p>
+  </div>
+</div>
+
+<footer>
+  Unidad 3 · IPC · CBC · UBA &nbsp;|&nbsp; Cátedra <span>Lopreite</span> &nbsp;|&nbsp; Prof. Claudio Damián Sacco
+</footer>
+
+</body>
+</html>

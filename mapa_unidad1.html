@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Mapa Conceptual — Unidad 1: Ciencia Política</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0d0d0f;
+    --surface:   #16161a;
+    --border:    #2a2a32;
+    --gold:      #c9a84c;
+    --gold-dim:  #7a5f1e;
+    --red:       #c94c4c;
+    --blue:      #4c7bc9;
+    --green:     #4cc97a;
+    --text:      #e8e4d8;
+    --muted:     #7a7868;
+    --white:     #f4f0e4;
+  }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 3rem 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  header::after {
+    content: '';
+    display: block;
+    width: 80px; height: 2px;
+    background: var(--gold);
+    margin: 1.2rem auto 0;
+  }
+  .eyebrow {
+    font-size: .7rem;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: .6rem;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 900;
+    color: var(--white);
+    line-height: 1.15;
+  }
+  .subtitle {
+    font-size: .85rem;
+    color: var(--muted);
+    margin-top: .6rem;
+    letter-spacing: .04em;
+  }
+
+  /* ── LAYOUT ── */
+  .canvas {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2.5rem 1.2rem 4rem;
+  }
+
+  /* ── NODO CENTRAL ── */
+  .center-node {
+    background: linear-gradient(135deg, #1e1a10 0%, #2a2212 100%);
+    border: 2px solid var(--gold);
+    border-radius: 6px;
+    padding: 1.4rem 2rem;
+    text-align: center;
+    margin: 0 auto 2.5rem;
+    max-width: 420px;
+    position: relative;
+    box-shadow: 0 0 40px rgba(201,168,76,.12);
+  }
+  .center-node h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    margin-bottom: .3rem;
+  }
+  .center-node p {
+    font-size: .78rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── CONECTORES SVG ── */
+  .connector-row {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    position: relative;
+    margin-bottom: 0;
+  }
+  .branch-line {
+    width: 2px;
+    height: 40px;
+    background: var(--gold-dim);
+    margin: 0 auto;
+  }
+  .h-line {
+    height: 2px;
+    background: var(--border);
+    flex: 1;
+    align-self: center;
+  }
+
+  /* ── COLUMNAS DE AUTORES ── */
+  .authors-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 0;
+  }
+
+  @media (max-width: 720px) {
+    .authors-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── TARJETA AUTOR ── */
+  .author-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    transition: box-shadow .3s ease;
+  }
+  .author-card:hover {
+    box-shadow: 0 4px 32px rgba(201,168,76,.1);
+  }
+  .author-card.bobbio  { border-top: 3px solid var(--blue); }
+  .author-card.bulcourf { border-top: 3px solid var(--green); }
+
+  .author-header {
+    padding: 1.2rem 1.4rem .8rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .author-tag {
+    font-size: .62rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: .35rem;
+  }
+  .bobbio  .author-tag { color: var(--blue); }
+  .bulcourf .author-tag { color: var(--green); }
+
+  .author-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+  }
+  .author-work {
+    font-size: .72rem;
+    color: var(--muted);
+    margin-top: .25rem;
+    font-style: italic;
+  }
+
+  /* ── CLUSTERS DE CONCEPTOS ── */
+  .concepts {
+    padding: 1.1rem 1.4rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: .9rem;
+  }
+
+  .cluster {
+    background: #1a1a1f;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .9rem 1rem;
+    position: relative;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+  .cluster:hover { border-color: var(--gold-dim); }
+
+  .cluster-label {
+    font-size: .62rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: .5rem;
+  }
+  .cluster-title {
+    font-size: .92rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: .4rem;
+  }
+  .cluster-body {
+    font-size: .78rem;
+    color: #a09880;
+    line-height: 1.6;
+  }
+
+  /* ── TAGS ── */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+    margin-top: .6rem;
+  }
+  .tag {
+    font-size: .62rem;
+    padding: .2rem .55rem;
+    border-radius: 2px;
+    font-weight: 500;
+    letter-spacing: .05em;
+  }
+  .tag-blue   { background: rgba(76,123,201,.15); color: #7aa3e0; border: 1px solid rgba(76,123,201,.3); }
+  .tag-green  { background: rgba(76,201,122,.15); color: #6ed49a; border: 1px solid rgba(76,201,122,.3); }
+  .tag-gold   { background: rgba(201,168,76,.12); color: #c9a84c; border: 1px solid rgba(201,168,76,.3); }
+  .tag-red    { background: rgba(201,76,76,.12);  color: #d98080; border: 1px solid rgba(201,76,76,.3);  }
+
+  /* ── TABLA COMPARATIVA ── */
+  .compare-section {
+    margin-top: 3rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .compare-header {
+    background: #1a1510;
+    padding: 1rem 1.4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--gold);
+  }
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  @media (max-width: 600px) {
+    .compare-grid { grid-template-columns: 1fr; }
+  }
+  .compare-col {
+    padding: 1rem 1.2rem;
+    border-right: 1px solid var(--border);
+  }
+  .compare-col:last-child { border-right: none; }
+  .compare-col-title {
+    font-size: .65rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: .8rem;
+    font-weight: 600;
+  }
+  .compare-item {
+    font-size: .78rem;
+    color: var(--text);
+    line-height: 1.55;
+    margin-bottom: .55rem;
+    padding-left: .8rem;
+    border-left: 2px solid var(--border);
+  }
+  .compare-item.blue-line  { border-left-color: var(--blue);  }
+  .compare-item.green-line { border-left-color: var(--green); }
+  .compare-item.gold-line  { border-left-color: var(--gold);  }
+
+  /* ── LEYENDA ── */
+  .legend {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 1.5rem 1rem .5rem;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .72rem;
+    color: var(--muted);
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    font-size: .68rem;
+    color: var(--muted);
+    padding: 1.5rem 1rem 2.5rem;
+    border-top: 1px solid var(--border);
+    letter-spacing: .04em;
+  }
+  footer span { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">IPC · CBC · UBA</p>
+  <h1>Ciencia Política<br>como disciplina</h1>
+  <p class="subtitle">Mapa conceptual — Unidad 1 · Cátedra Lopreite</p>
+</header>
+
+<div class="canvas">
+
+  <!-- NODO CENTRAL -->
+  <div class="center-node">
+    <h2>¿Qué es la Ciencia Política?</h2>
+    <p>Disciplina académica que estudia la política, el poder y sus estructuras mediante métodos sistemáticos y rigurosos</p>
+  </div>
+
+  <div class="branch-line"></div>
+
+  <!-- LEYENDA -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Bobbio</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> Bulcourf & Vázquez</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div> Concepto compartido</div>
+  </div>
+
+  <!-- GRID DE AUTORES -->
+  <div class="authors-grid">
+
+    <!-- ══ BOBBIO ══ -->
+    <div class="author-card bobbio">
+      <div class="author-header">
+        <p class="author-tag">Autor 1</p>
+        <p class="author-name">Norberto Bobbio</p>
+        <p class="author-work">Diccionario de Política</p>
+      </div>
+      <div class="concepts">
+
+        <div class="cluster">
+          <p class="cluster-label">Definición central</p>
+          <p class="cluster-title">Ciencia empírica de la política</p>
+          <p class="cluster-body">La CP en sentido estricto aplica la metodología de las ciencias empíricas al fenómeno político. No prescribe: describe y comprende lo que <em>es</em>.</p>
+          <div class="tags">
+            <span class="tag tag-blue">empirismo</span>
+            <span class="tag tag-blue">objetividad</span>
+            <span class="tag tag-blue">descripción</span>
+          </div>
+        </div>
+
+        <div class="cluster">
+          <p class="cluster-label">Distinción clave</p>
+          <p class="cluster-title">CP vs. Filosofía Política</p>
+          <p class="cluster-body"><strong style="color:#e8e4d8">CP:</strong> estudia lo que <em>es</em> · método empírico<br><strong style="color:#e8e4d8">Fil. Pol.:</strong> estudia lo que <em>debe ser</em> · prescripción normativa</p>
+          <div class="tags">
+            <span class="tag tag-blue">ser / deber ser</span>
+            <span class="tag tag-blue">separación valorativa</span>
+          </div>
+        </div>
+
+        <div class="cluster">
+          <p class="cluster-label">Giro metodológico</p>
+          <p class="cluster-title">Del institucionalismo al conductismo</p>
+          <p class="cluster-body">Desde 1921: abandono del enfoque jurídico-institucional. El <em>behaviorismo</em> estudia comportamientos observables de individuos y grupos políticos. Técnicas: encuesta, entrevista, datos cuantitativos.</p>
+          <div class="tags">
+            <span class="tag tag-blue">conductismo</span>
+            <span class="tag tag-blue">datos cuantitativos</span>
+            <span class="tag tag-blue">política comparada</span>
+          </div>
+        </div>
+
+        <div class="cluster">
+          <p class="cluster-label">Ideal regulativo</p>
+          <p class="cluster-title">Política científica + avaloración</p>
+          <p class="cluster-body">Meta: acción política fundada en leyes objetivas del desarrollo social. La <em>avaloración</em> exige suspender los juicios de valor durante la investigación para preservar objetividad.</p>
+          <div class="tags">
+            <span class="tag tag-blue">avaloración</span>
+            <span class="tag tag-blue">neutralidad</span>
+            <span class="tag tag-blue">política científica</span>
+          </div>
+        </div>
+
+        <div class="cluster">
+          <p class="cluster-label">Límites reconocidos</p>
+          <p class="cluster-title">Dificultades específicas</p>
+          <p class="cluster-body">La CP no puede prescindir de la economía ni la psicología. El ser humano es teleológico, simbólico e ideológico. La verificación/falsificación experimental es imposible. Las previsiones científicas son aún inalcanzables.</p>
+          <div class="tags">
+            <span class="tag tag-red">límite predictivo</span>
+            <span class="tag tag-red">acción ideológica</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ BULCOURF & VÁZQUEZ ══ -->
+    <div class="author-card bulcourf">
+      <div class="author-header">
+        <p class="author-tag">Autor 2</p>
+        <p class="author-name">Bulcourf & Vázquez</p>
+        <p class="author-work">La Ciencia Política Como Profesión</p>
+      </div>
+      <div class="concepts">
+
+        <div class="cluster">
+          <p class="cluster-label">Definición central</p>
+          <p class="cluster-title">Disciplina académica e histórica</p>
+          <p class="cluster-body">La CP describe, analiza y explica sistémicamente la toma de decisiones políticas, sus valores y puntos de vista. Nace a fines del s. XIX en Europa y EE.UU.</p>
+          <div class="tags">
+            <span class="tag tag-green">disciplina académica</span>
+            <span class="tag tag-green">práctica histórica</span>
+            <span class="tag tag-green">construcción colectiva</span>
+          </div>
+        </div>
+
+        <div class="cluster">
+          <p class="cluster-label">Concepto de poder</p>
+          <p class="cluster-title">Weber: monopolio de la violencia legítima</p>
+          <p class="cluster-body">Poder = probabilidad de imponer la voluntad contra toda resistencia. El Estado reclama el <em>monopolio legítimo de la violencia física</em> en un territorio. Dominación = obediencia a un mandato.</p>
+          <div class="tags">
+            <span class="tag tag-green">poder</span>
+            <span class="tag tag-green">dominación</span>
+            <span class="tag tag-green">Estado · Weber</span>
+          </div>
+        </div>
+
+        <div class="cluster">
+          <p class="cluster-label">Dimensiones de la política</p>
+          <p class="cluster-title">Politics · Policy · Polity</p>
+          <p class="cluster-body">
+            <strong style="color:#6ed49a">Politics:</strong> lucha y ejercicio del poder<br>
+            <strong style="color:#6ed49a">Policy:</strong> políticas públicas, programas de acción<br>
+            <strong style="color:#6ed49a">Polity:</strong> comunidad política, territorio e identidad
+          </p>
+          <div class="tags">
+            <span class="tag tag-green">politics</span>
+            <span class="tag tag-green">policy</span>
+            <span class="tag tag-green">polity</span>
+          </div>
+        </div>
+
+        <div class="cluster">
+          <p class="cluster-label">Corrientes teóricas</p>
+          <p class="cluster-title">Clasificación triádica europea</p>
+          <p class="cluster-body">
+            <strong style="color:#e8e4d8">Normativa:</strong> estudia el deber ser, enfoque histórico<br>
+            <strong style="color:#e8e4d8">Empírico-analítica:</strong> imita las ciencias duras<br>
+            <strong style="color:#e8e4d8">Crítico-dialéctica:</strong> referentes marxistas, socialismo crítico
+          </p>
+          <div class="tags">
+            <span class="tag tag-green">normativa</span>
+            <span class="tag tag-green">empírica</span>
+            <span class="tag tag-green">crítico-dialéctica</span>
+          </div>
+        </div>
+
+        <div class="cluster">
+          <p class="cluster-label">Perspectivas sobre el poder</p>
+          <p class="cluster-title">Pluralista · Dirigencial · Clasista</p>
+          <p class="cluster-body">Tres perspectivas según el elemento dominante: el <em>individuo</em> (pluralismo), las <em>organizaciones</em> (dirigencialismo), las <em>clases sociales</em> (clasismo). Almond agrega el eje ideológico (izq./der.) × metodológico (blando/duro).</p>
+          <div class="tags">
+            <span class="tag tag-green">pluralismo</span>
+            <span class="tag tag-green">dirigencialismo</span>
+            <span class="tag tag-green">clasismo</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ TABLA COMPARATIVA ══ -->
+  <div class="compare-section">
+    <div class="compare-header">
+      <h3>Comparación entre autores · Ejes conceptuales</h3>
+    </div>
+    <div class="compare-grid">
+
+      <div class="compare-col">
+        <p class="compare-col-title">Eje</p>
+        <div class="compare-item gold-line">Definición de CP</div>
+        <div class="compare-item gold-line">Método central</div>
+        <div class="compare-item gold-line">Concepto de poder</div>
+        <div class="compare-item gold-line">Rol del politólogo</div>
+        <div class="compare-item gold-line">Relación con valores</div>
+      </div>
+
+      <div class="compare-col">
+        <p class="compare-col-title">Bobbio</p>
+        <div class="compare-item blue-line">Ciencia empírica de la política</div>
+        <div class="compare-item blue-line">Conductismo + cuantificación</div>
+        <div class="compare-item blue-line">No es su foco central</div>
+        <div class="compare-item blue-line">Científico objetivo</div>
+        <div class="compare-item blue-line">Avaloración (suspender juicios)</div>
+      </div>
+
+      <div class="compare-col">
+        <p class="compare-col-title">Bulcourf & Vázquez</p>
+        <div class="compare-item green-line">Disciplina que explica la toma de decisiones</div>
+        <div class="compare-item green-line">Plural: empírico, normativo, crítico</div>
+        <div class="compare-item green-line">Central: Weber + monopolio de violencia</div>
+        <div class="compare-item green-line">Docente · Investigador · Asesor</div>
+        <div class="compare-item green-line">Reconoce pluralidad de enfoques</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Unidad 1 · IPC · CBC · UBA &nbsp;|&nbsp; Cátedra <span>Lopreite</span> &nbsp;|&nbsp; Prof. Claudio Damián Sacco
+</footer>
+
+</body>
+</html>

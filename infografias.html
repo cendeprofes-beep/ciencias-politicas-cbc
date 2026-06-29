@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Infografías · Ciencias Políticas CBC</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#07070a;--surface:#0f0f14;--card:#13131a;--border:#1e1e2a;
+  --gold:#c9a84c;--gold-d:#4a3a08;--text:#dcd8ca;--muted:#55555f;--white:#f0ecd8;
+  --u1:#4a7ec4;--u2:#8a5ac4;--u3:#3aaa6a;--u4:#c47a2a;--u5:#c44a4a;--u6:#c44a8a;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(7,7,10,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:.65rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.nav-brand{font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;color:var(--gold);text-decoration:none;white-space:nowrap;}
+.nav-back{font-size:.68rem;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:20px;padding:.25rem .7rem;transition:all .2s;white-space:nowrap;}
+.nav-back:hover{color:var(--gold);border-color:var(--gold-d);}
+
+/* HERO */
+.hero{text-align:center;padding:2.5rem 1.5rem 2rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+.hero::before{content:'INFO';position:absolute;font-family:'Playfair Display',serif;font-size:clamp(5rem,20vw,14rem);font-weight:900;color:rgba(201,168,76,.025);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;letter-spacing:.2em;}
+.eyebrow{font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:.5rem;}
+h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,4vw,2.8rem);font-weight:900;color:var(--white);line-height:1.1;margin-bottom:.5rem;}
+.hero-sub{font-size:.78rem;color:var(--muted);max-width:480px;margin:0 auto;}
+
+/* TABS DE UNIDADES */
+.tabs-wrap{position:sticky;top:53px;z-index:90;background:rgba(7,7,10,.97);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:.6rem 1.2rem;overflow-x:auto;white-space:nowrap;display:flex;gap:.4rem;-webkit-overflow-scrolling:touch;}
+.tab-btn{flex-shrink:0;font-size:.72rem;font-weight:700;letter-spacing:.06em;padding:.38rem .9rem;border-radius:4px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .18s;text-transform:uppercase;}
+.tab-btn:hover{color:var(--white);border-color:var(--muted);}
+.tab-btn.active{color:var(--bg);border-color:transparent;}
+.tab-btn[data-u="1"].active{background:var(--u1);}
+.tab-btn[data-u="2"].active{background:var(--u2);}
+.tab-btn[data-u="3"].active{background:var(--u3);}
+.tab-btn[data-u="4"].active{background:var(--u4);}
+.tab-btn[data-u="5"].active{background:var(--u5);}
+.tab-btn[data-u="6"].active{background:var(--u6);}
+
+/* PANELES */
+.panel{display:none;max-width:960px;margin:0 auto;padding:2rem 1.2rem 3rem;}
+.panel.active{display:block;}
+
+/* CABECERA DE PANEL */
+.panel-header{margin-bottom:1.5rem;padding-bottom:.9rem;border-bottom:1px solid var(--border);}
+.panel-eyebrow{font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;font-weight:700;margin-bottom:.25rem;}
+.panel-title{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--white);}
+.panel-meta{font-size:.72rem;color:var(--muted);margin-top:.2rem;}
+
+/* SECCIÓN DENTRO DEL PANEL */
+.infos-section{margin-bottom:2rem;}
+.section-label{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;margin-bottom:.8rem;padding:.3rem .7rem;border-radius:3px;display:inline-block;}
+.section-label.sintesis{background:rgba(201,168,76,.12);color:var(--gold);border:1px solid rgba(201,168,76,.25);}
+.section-label.textos{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--border);}
+
+/* GRID DE MINIATURAS */
+.thumbs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.9rem;}
+.thumb-card{background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .2s;}
+.thumb-card:hover{transform:translateY(-2px);}
+.thumb-img-wrap{position:relative;padding-top:70%;overflow:hidden;background:var(--surface);}
+.thumb-img-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .3s;}
+.thumb-card:hover .thumb-img-wrap img{transform:scale(1.03);}
+.thumb-footer{padding:.6rem .8rem;display:flex;align-items:center;justify-content:space-between;gap:.4rem;}
+.thumb-name{font-size:.72rem;font-weight:600;color:var(--text);line-height:1.3;flex:1;}
+.thumb-zoom{font-size:.75rem;color:var(--muted);}
+
+/* color borde por unidad */
+.u1 .thumb-card{border-left:3px solid var(--u1);}
+.u2 .thumb-card{border-left:3px solid var(--u2);}
+.u3 .thumb-card{border-left:3px solid var(--u3);}
+.u4 .thumb-card{border-left:3px solid var(--u4);}
+.u5 .thumb-card{border-left:3px solid var(--u5);}
+.u6 .thumb-card{border-left:3px solid var(--u6);}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;cursor:grab;}
+.lightbox.open{display:flex;}
+.lb-toolbar{position:absolute;top:0;left:0;right:0;padding:.6rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:2;}
+.lb-name{font-size:.85rem;font-weight:600;color:var(--white);}
+.lb-controls{display:flex;align-items:center;gap:.4rem;}
+.lb-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:4px;color:var(--white);font-size:.9rem;font-weight:700;padding:.3rem .75rem;cursor:pointer;transition:background .18s;}
+.lb-btn:hover{background:rgba(255,255,255,.22);}
+.lb-btn.close-btn{color:#e09090;border-color:rgba(196,74,74,.4);}
+.lb-btn.close-btn:hover{background:rgba(196,74,74,.2);}
+.lb-img-wrap{width:90vw;height:85vh;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-top:48px;}
+#lb-img{max-width:90%;max-height:80vh;object-fit:contain;cursor:inherit;touch-action:none;user-select:none;-webkit-user-drag:none;}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:#fff;width:46px;height:46px;border-radius:50%;font-size:1.4rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;z-index:3;}
+.lb-nav:hover{background:rgba(255,255,255,.3);}
+.lb-nav.hidden{display:none;}
+.lb-prev{left:1.2rem;}
+.lb-next{right:1.2rem;}
+.lb-info{position:absolute;bottom:2.2rem;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;padding:.3rem .8rem;border-radius:20px;font-size:.75rem;font-weight:600;pointer-events:none;}
+.lb-hint{position:absolute;bottom:.5rem;left:50%;transform:translateX(-50%);font-size:.62rem;color:rgba(255,255,255,.3);white-space:nowrap;pointer-events:none;}
+
+@media(max-width:500px){
+  .thumbs-grid{grid-template-columns:1fr 1fr;}
+  .lb-btn span{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="landing_ccpp_cbc.html">← Ciencias Políticas · CBC</a>
+  <a class="nav-back" href="landing_ccpp_cbc.html">Volver a la landing</a>
+</nav>
+
+<div class="hero">
+  <p class="eyebrow">Ciencias Políticas (22) · CBC · UBA</p>
+  <h1>Infografías</h1>
+  <p class="hero-sub">Seleccioná una unidad y hacé clic en cualquier infografía para verla en pantalla completa. Podés ampliarla con el botón de zoom o con la rueda del mouse.</p>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <button class="tab-btn active" data-u="1" onclick="switchTab(1)">Unidad 1</button>
+  <button class="tab-btn" data-u="2" onclick="switchTab(2)">Unidad 2</button>
+  <button class="tab-btn" data-u="3" onclick="switchTab(3)">Unidad 3</button>
+  <button class="tab-btn" data-u="4" onclick="switchTab(4)">Unidad 4</button>
+  <button class="tab-btn" data-u="5" onclick="switchTab(5)">Unidad 5</button>
+  <button class="tab-btn" data-u="6" onclick="switchTab(6)">Unidad 6</button>
+</div>
+
+<!-- ══ PANEL U1 ══ -->
+<div class="panel active u1" id="panel-1">
+  <div class="panel-header">
+    <p class="panel-eyebrow" style="color:var(--u1)">Unidad 1</p>
+    <p class="panel-title">La ciencia política como disciplina</p>
+    <p class="panel-meta">3 infografías · Bobbio · Bulcourf & Vázquez · Weber</p>
+  </div>
+  <div class="infos-section">
+    <span class="section-label textos">Por texto</span>
+    <div class="thumbs-grid">
+      <div class="thumb-card" onclick="openLB('infografias/unidad 1/bobbio.png','Bobbio',1,0)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 1/bobbio.png" alt="Bobbio" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Bobbio</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 1/bulcourf-vazquez.png','Bulcourf & Vázquez',1,1)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 1/bulcourf-vazquez.png" alt="Bulcourf & Vázquez" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Bulcourf & Vázquez</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 1/weber.png','Weber',1,2)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 1/weber.png" alt="Weber" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Weber</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PANEL U2 ══ -->
+<div class="panel u2" id="panel-2">
+  <div class="panel-header">
+    <p class="panel-eyebrow" style="color:var(--u2)">Unidad 2</p>
+    <p class="panel-title">El Estado</p>
+    <p class="panel-meta">5 infografías · Bulcourf & Cardozo · Lopreite & Rodríguez Gusta · Malamud · Síntesis comparativa</p>
+  </div>
+  <div class="infos-section">
+    <span class="section-label textos">Por texto</span>
+    <div class="thumbs-grid">
+      <div class="thumb-card" onclick="openLB('infografias/unidad 2/bulcourf-cardozo.png','Bulcourf & Cardozo',2,0)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 2/bulcourf-cardozo.png" alt="Bulcourf & Cardozo" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Bulcourf & Cardozo</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 2/lopreite-rodriguez gusta.png','Lopreite & Rodríguez Gusta',2,1)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 2/lopreite-rodriguez gusta.png" alt="Lopreite & Rodríguez Gusta" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Lopreite & Rodríguez Gusta</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 2/malamud.png','Malamud',2,2)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 2/malamud.png" alt="Malamud" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Malamud</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="infos-section">
+    <span class="section-label sintesis">Síntesis de unidad</span>
+    <div class="thumbs-grid">
+      <div class="thumb-card" onclick="openLB('infografias/unidad 2/estado-comparativa-de-autores-simplificado.png','El Estado — Comparativa simplificada',2,3)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 2/estado-comparativa-de-autores-simplificado.png" alt="Comparativa simplificada" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Comparativa simplificada</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 2/sintesis-unidad-2-estado-comparativa-de-autores.png','Síntesis U2 — El Estado',2,4)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 2/sintesis-unidad-2-estado-comparativa-de-autores.png" alt="Síntesis U2" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Síntesis U2 · El Estado</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PANEL U3 ══ -->
+<div class="panel u3" id="panel-3">
+  <div class="panel-header">
+    <p class="panel-eyebrow" style="color:var(--u3)">Unidad 3</p>
+    <p class="panel-title">La democracia</p>
+    <p class="panel-meta">10 infografías · Dahl · Linz · Welp · Síntesis comparativa</p>
+  </div>
+  <div class="infos-section">
+    <span class="section-label textos">Por texto</span>
+    <div class="thumbs-grid">
+      <div class="thumb-card" onclick="openLB('infografias/unidad 3/dahl-1.png','Dahl — 1',3,0)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 3/dahl-1.png" alt="Dahl 1" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Dahl · 1</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 3/dahl-2.png','Dahl — 2',3,1)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 3/dahl-2.png" alt="Dahl 2" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Dahl · 2</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 3/dahl-3.png','Dahl — 3',3,2)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 3/dahl-3.png" alt="Dahl 3" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Dahl · 3</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 3/dahl-4.png','Dahl — 4',3,3)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 3/dahl-4.png" alt="Dahl 4" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Dahl · 4</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 3/dahl-5.png','Dahl — 5',3,4)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 3/dahl-5.png" alt="Dahl 5" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Dahl · 5</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 3/linz-1.png','Linz — 1',3,5)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 3/linz-1.png" alt="Linz 1" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Linz · 1</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 3/linz-2.png','Linz — 2',3,6)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 3/linz-2.png" alt="Linz 2" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Linz · 2</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 3/welp-1.png','Welp — 1',3,7)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 3/welp-1.png" alt="Welp 1" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Welp · 1</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 3/welp-2.png','Welp — 2',3,8)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 3/welp-2.png" alt="Welp 2" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Welp · 2</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="infos-section">
+    <span class="section-label sintesis">Síntesis de unidad</span>
+    <div class="thumbs-grid">
+      <div class="thumb-card" onclick="openLB('infografias/unidad 3/sintesis-unidad-3-democracia-comparativa-de-autores.png','Síntesis U3 — La Democracia',3,9)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 3/sintesis-unidad-3-democracia-comparativa-de-autores.png" alt="Síntesis U3" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Síntesis U3 · La Democracia</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PANEL U4 ══ -->
+<div class="panel u4" id="panel-4">
+  <div class="panel-header">
+    <p class="panel-eyebrow" style="color:var(--u4)">Unidad 4</p>
+    <p class="panel-title">El gobierno</p>
+    <p class="panel-meta">5 infografías · Zelaznik · Bonvecchi & Zelaznik · Síntesis comparativa</p>
+  </div>
+  <div class="infos-section">
+    <span class="section-label textos">Por texto</span>
+    <div class="thumbs-grid">
+      <div class="thumb-card" onclick="openLB('infografias/unidad 4/zelaznik1.png','Zelaznik — 1',4,0)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 4/zelaznik1.png" alt="Zelaznik 1" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Zelaznik · 1</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 4/zelaznik2.png','Zelaznik — 2',4,1)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 4/zelaznik2.png" alt="Zelaznik 2" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Zelaznik · 2</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 4/zelaznik3.png','Zelaznik — 3',4,2)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 4/zelaznik3.png" alt="Zelaznik 3" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Zelaznik · 3</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 4/zelaznik-bonvecchi.png','Zelaznik & Bonvecchi',4,3)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 4/zelaznik-bonvecchi.png" alt="Zelaznik & Bonvecchi" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Zelaznik & Bonvecchi</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="infos-section">
+    <span class="section-label sintesis">Síntesis de unidad</span>
+    <div class="thumbs-grid">
+      <div class="thumb-card" onclick="openLB('infografias/unidad 4/sintesis-unidad-4-gobierno-comparativa-de-autores.png','Síntesis U4 — El Gobierno',4,4)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 4/sintesis-unidad-4-gobierno-comparativa-de-autores.png" alt="Síntesis U4" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Síntesis U4 · El Gobierno</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PANEL U5 ══ -->
+<div class="panel u5" id="panel-5">
+  <div class="panel-header">
+    <p class="panel-eyebrow" style="color:var(--u5)">Unidad 5</p>
+    <p class="panel-title">Elecciones y partidos políticos</p>
+    <p class="panel-meta">9 infografías · Levitsky · De Luca · Malamud B · Malamud & De Luca · Síntesis</p>
+  </div>
+  <div class="infos-section">
+    <span class="section-label textos">Por texto</span>
+    <div class="thumbs-grid">
+      <div class="thumb-card" onclick="openLB('infografias/unidad 5/Levitsky1.png','Levitsky — 1',5,0)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 5/Levitsky1.png" alt="Levitsky 1" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Levitsky · 1</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 5/Levitsky2.png','Levitsky — 2',5,1)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 5/Levitsky2.png" alt="Levitsky 2" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Levitsky · 2</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 5/luca1.png','De Luca — 1',5,2)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 5/luca1.png" alt="De Luca 1" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">De Luca · 1</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 5/luca2.png','De Luca — 2',5,3)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 5/luca2.png" alt="De Luca 2" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">De Luca · 2</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 5/malamud-b-1.png','Malamud — 1',5,4)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 5/malamud-b-1.png" alt="Malamud 1" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Malamud · 1</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 5/malamud-b-2.png','Malamud — 2',5,5)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 5/malamud-b-2.png" alt="Malamud 2" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Malamud · 2</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 5/malamud-b-3.png','Malamud — 3',5,6)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 5/malamud-b-3.png" alt="Malamud 3" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Malamud · 3</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 5/malamud-luca.png','Malamud & De Luca',5,7)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 5/malamud-luca.png" alt="Malamud & De Luca" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Malamud & De Luca</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="infos-section">
+    <span class="section-label sintesis">Síntesis de unidad</span>
+    <div class="thumbs-grid">
+      <div class="thumb-card" onclick="openLB('infografias/unidad 5/sintesis-unidad-5-elecciones-partidos-comparativa-de-autores.png','Síntesis U5 — Elecciones y Partidos',5,8)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 5/sintesis-unidad-5-elecciones-partidos-comparativa-de-autores.png" alt="Síntesis U5" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Síntesis U5 · Elecciones y Partidos</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PANEL U6 ══ -->
+<div class="panel u6" id="panel-6">
+  <div class="panel-header">
+    <p class="panel-eyebrow" style="color:var(--u6)">Unidad 6</p>
+    <p class="panel-title">Género, movimientos sociales y participación</p>
+    <p class="panel-meta">6 infografías · Franceschet · Tilly & Wood · Tula · Welp · Dahl · Síntesis</p>
+  </div>
+  <div class="infos-section">
+    <span class="section-label textos">Por texto</span>
+    <div class="thumbs-grid">
+      <div class="thumb-card" onclick="openLB('infografias/unidad 6/franceschet.png','Franceschet',6,0)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 6/franceschet.png" alt="Franceschet" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Franceschet</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 6/tilly-wood.png','Tilly & Wood',6,1)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 6/tilly-wood.png" alt="Tilly & Wood" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Tilly & Wood</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 6/tula.png','Tula',6,2)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 6/tula.png" alt="Tula" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Tula</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 6/welp.png','Welp',6,3)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 6/welp.png" alt="Welp" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Welp</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+      <div class="thumb-card" onclick="openLB('infografias/unidad 6/dahl.png','Dahl',6,4)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 6/dahl.png" alt="Dahl" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Dahl</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="infos-section">
+    <span class="section-label sintesis">Síntesis de unidad</span>
+    <div class="thumbs-grid">
+      <div class="thumb-card" onclick="openLB('infografias/unidad 6/sintesis-unidad-6-generos-movimientos-participacion-comparativa-de-autores.png','Síntesis U6 — Género, Movimientos y Participación',6,5)">
+        <div class="thumb-img-wrap"><img src="infografias/unidad 6/sintesis-unidad-6-generos-movimientos-participacion-comparativa-de-autores.png" alt="Síntesis U6" loading="lazy"></div>
+        <div class="thumb-footer"><span class="thumb-name">Síntesis U6 · Género, Movimientos y Participación</span><span class="thumb-zoom">🔍</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-toolbar">
+    <span class="lb-name" id="lb-name"></span>
+    <div class="lb-controls">
+      <button class="lb-btn" onclick="zoomIn()">＋</button>
+      <button class="lb-btn" onclick="zoomOut()">－</button>
+      <button class="lb-btn" onclick="resetZoom()">↺</button>
+      <button class="lb-btn close-btn" onclick="closeLB()">✕ Cerrar</button>
+    </div>
+  </div>
+  <div class="lb-img-wrap" id="lb-img-wrap">
+    <img id="lb-img" src="" alt="" draggable="false">
+  </div>
+  <button class="lb-nav lb-prev hidden" id="lb-prev" onclick="navLB(-1)">‹</button>
+  <button class="lb-nav lb-next hidden" id="lb-next" onclick="navLB(1)">›</button>
+  <div class="lb-info" id="lb-info">100%</div>
+  <p class="lb-hint">Arrastrá para mover · Rueda o ＋／－ para zoom · ESC para cerrar</p>
+</div>
+<script>
+// TABS
+function switchTab(n){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+n).classList.add('active');
+  document.querySelector(`.tab-btn[data-u="${n}"]`).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// DATOS
+const UNIT_IMGS = {
+  1:[
+    {src:'infografias/unidad 1/bobbio.png',name:'Bobbio'},
+    {src:'infografias/unidad 1/bulcourf-vazquez.png',name:'Bulcourf & Vázquez'},
+    {src:'infografias/unidad 1/weber.png',name:'Weber'},
+  ],
+  2:[
+    {src:'infografias/unidad 2/bulcourf-cardozo.png',name:'Bulcourf & Cardozo'},
+    {src:'infografias/unidad 2/lopreite-rodriguez gusta.png',name:'Lopreite & Rodríguez Gusta'},
+    {src:'infografias/unidad 2/malamud.png',name:'Malamud'},
+    {src:'infografias/unidad 2/estado-comparativa-de-autores-simplificado.png',name:'Comparativa simplificada'},
+    {src:'infografias/unidad 2/sintesis-unidad-2-estado-comparativa-de-autores.png',name:'Síntesis U2 · El Estado'},
+  ],
+  3:[
+    {src:'infografias/unidad 3/dahl-1.png',name:'Dahl · 1'},
+    {src:'infografias/unidad 3/dahl-2.png',name:'Dahl · 2'},
+    {src:'infografias/unidad 3/dahl-3.png',name:'Dahl · 3'},
+    {src:'infografias/unidad 3/dahl-4.png',name:'Dahl · 4'},
+    {src:'infografias/unidad 3/dahl-5.png',name:'Dahl · 5'},
+    {src:'infografias/unidad 3/linz-1.png',name:'Linz · 1'},
+    {src:'infografias/unidad 3/linz-2.png',name:'Linz · 2'},
+    {src:'infografias/unidad 3/welp-1.png',name:'Welp · 1'},
+    {src:'infografias/unidad 3/welp-2.png',name:'Welp · 2'},
+    {src:'infografias/unidad 3/sintesis-unidad-3-democracia-comparativa-de-autores.png',name:'Síntesis U3 · La Democracia'},
+  ],
+  4:[
+    {src:'infografias/unidad 4/zelaznik1.png',name:'Zelaznik · 1'},
+    {src:'infografias/unidad 4/zelaznik2.png',name:'Zelaznik · 2'},
+    {src:'infografias/unidad 4/zelaznik3.png',name:'Zelaznik · 3'},
+    {src:'infografias/unidad 4/zelaznik-bonvecchi.png',name:'Zelaznik & Bonvecchi'},
+    {src:'infografias/unidad 4/sintesis-unidad-4-gobierno-comparativa-de-autores.png',name:'Síntesis U4 · El Gobierno'},
+  ],
+  5:[
+    {src:'infografias/unidad 5/Levitsky1.png',name:'Levitsky · 1'},
+    {src:'infografias/unidad 5/Levitsky2.png',name:'Levitsky · 2'},
+    {src:'infografias/unidad 5/luca1.png',name:'De Luca · 1'},
+    {src:'infografias/unidad 5/luca2.png',name:'De Luca · 2'},
+    {src:'infografias/unidad 5/malamud-b-1.png',name:'Malamud · 1'},
+    {src:'infografias/unidad 5/malamud-b-2.png',name:'Malamud · 2'},
+    {src:'infografias/unidad 5/malamud-b-3.png',name:'Malamud · 3'},
+    {src:'infografias/unidad 5/malamud-luca.png',name:'Malamud & De Luca'},
+    {src:'infografias/unidad 5/sintesis-unidad-5-elecciones-partidos-comparativa-de-autores.png',name:'Síntesis U5 · Elecciones y Partidos'},
+  ],
+  6:[
+    {src:'infografias/unidad 6/franceschet.png',name:'Franceschet'},
+    {src:'infografias/unidad 6/tilly-wood.png',name:'Tilly & Wood'},
+    {src:'infografias/unidad 6/tula.png',name:'Tula'},
+    {src:'infografias/unidad 6/welp.png',name:'Welp'},
+    {src:'infografias/unidad 6/dahl.png',name:'Dahl'},
+    {src:'infografias/unidad 6/sintesis-unidad-6-generos-movimientos-participacion-comparativa-de-autores.png',name:'Síntesis U6 · Género, Movimientos y Participación'},
+  ],
+};
+
+// VISOR — copiado del patrón probado
+const lightbox   = document.getElementById('lightbox');
+const lbImg      = document.getElementById('lb-img');
+const lbName     = document.getElementById('lb-name');
+const lbInfo     = document.getElementById('lb-info');
+const lbPrev     = document.getElementById('lb-prev');
+const lbNext     = document.getElementById('lb-next');
+
+let currentUnit=1, currentIdx=0;
+let scale=1, tx=0, ty=0;
+let isDragging=false, startX, startY, startTx, startTy;
+let touchDist=0, touchScaleStart=1;
+
+function actualizarTransform(){
+  lbImg.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+  lbInfo.textContent = `${Math.round(scale*100)}%`;
+}
+
+function openLB(src,name,unit,idx){
+  currentUnit=unit; currentIdx=idx;
+  scale=1; tx=0; ty=0;
+  lbImg.src=src;
+  lbName.textContent=name;
+  updateNavBtns();
+  lightbox.classList.add('open');
+  document.body.style.overflow='hidden';
+  actualizarTransform();
+}
+
+function closeLB(){
+  lightbox.classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function navLB(dir){
+  const imgs=UNIT_IMGS[currentUnit];
+  currentIdx=(currentIdx+dir+imgs.length)%imgs.length;
+  scale=1; tx=0; ty=0;
+  lbImg.src=imgs[currentIdx].src;
+  lbName.textContent=imgs[currentIdx].name;
+  updateNavBtns();
+  actualizarTransform();
+}
+
+function updateNavBtns(){
+  const n=UNIT_IMGS[currentUnit].length;
+  lbPrev.classList.toggle('hidden',n<=1);
+  lbNext.classList.toggle('hidden',n<=1);
+}
+
+// Zoom botones
+function zoomIn() { scale=Math.min(scale*1.25,6); actualizarTransform(); }
+function zoomOut(){ scale=Math.max(scale*0.8,0.3); actualizarTransform(); }
+function resetZoom(){ scale=1;tx=0;ty=0; actualizarTransform(); }
+
+// Rueda del mouse
+lbImg.addEventListener('wheel',(e)=>{
+  e.preventDefault();
+  scale=Math.min(Math.max(scale+(e.deltaY>0?-0.1:0.1),0.3),6);
+  actualizarTransform();
+},{passive:false});
+
+// Drag mouse — eventos en LA IMAGEN, igual que el modelo de referencia
+lbImg.addEventListener('mousedown',(e)=>{
+  isDragging=true;
+  startX=e.clientX; startY=e.clientY;
+  startTx=tx; startTy=ty;
+  lbImg.style.cursor='grabbing';
+});
+window.addEventListener('mousemove',(e)=>{
+  if(!isDragging)return;
+  tx=startTx+(e.clientX-startX);
+  ty=startTy+(e.clientY-startY);
+  actualizarTransform();
+});
+window.addEventListener('mouseup',()=>{
+  isDragging=false;
+  lbImg.style.cursor='grab';
+});
+
+// Táctil
+lbImg.addEventListener('touchstart',(e)=>{
+  if(e.touches.length===1){
+    isDragging=true;
+    startX=e.touches[0].clientX; startY=e.touches[0].clientY;
+    startTx=tx; startTy=ty;
+  } else if(e.touches.length===2){
+    isDragging=false;
+    touchDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+    touchScaleStart=scale;
+  }
+},{passive:false});
+
+lbImg.addEventListener('touchmove',(e)=>{
+  e.preventDefault();
+  if(e.touches.length===1&&isDragging){
+    tx=startTx+(e.touches[0].clientX-startX);
+    ty=startTy+(e.touches[0].clientY-startY);
+    actualizarTransform();
+  } else if(e.touches.length===2){
+    const nd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+    scale=Math.min(Math.max(touchScaleStart*(nd/touchDist),0.3),6);
+    actualizarTransform();
+  }
+},{passive:false});
+
+lbImg.addEventListener('touchend',()=>{ isDragging=false; });
+lbImg.addEventListener('dragstart',e=>e.preventDefault());
+
+// Cerrar y navegar
+lbPrev.addEventListener('click',(e)=>{e.stopPropagation();navLB(-1);});
+lbNext.addEventListener('click',(e)=>{e.stopPropagation();navLB(1);});
+document.getElementById('lb-img-wrap').addEventListener('click',e=>{
+  if(e.target===document.getElementById('lb-img-wrap')) closeLB();
+});
+lightbox.addEventListener('click',e=>{ if(e.target===lightbox) closeLB(); });
+
+document.addEventListener('keydown',e=>{
+  if(!lightbox.classList.contains('open'))return;
+  if(e.key==='Escape')     closeLB();
+  if(e.key==='ArrowRight') navLB(1);
+  if(e.key==='ArrowLeft')  navLB(-1);
+});
+</script>
+</body>
+</html>

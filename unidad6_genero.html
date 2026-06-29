@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Unidad 6 — Género, Movimientos y Participación | IPC · CBC · UBA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #09090b;
+  --surface:  #111116;
+  --card:     #14141a;
+  --border:   #1e1e28;
+  --gold:     #c9a84c;
+  --gold-dim: #4a3a08;
+  --rose:     #c44a8a;
+  --teal:     #3aacaa;
+  --amber:    #c47a2a;
+  --green:    #3aaa6a;
+  --violet:   #7a5ac4;
+  --red:      #c44a4a;
+  --blue:     #4a7ec4;
+  --text:     #dcd8ca;
+  --muted:    #585860;
+  --white:    #f0ecd8;
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
+
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(9,9,11,.95); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: .4rem;
+  padding: .65rem 1.2rem; overflow-x: auto; white-space: nowrap;
+}
+nav a { color: var(--muted); text-decoration: none; font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; padding: .3rem .65rem; border-radius: 3px; transition: all .2s; flex-shrink: 0; }
+nav a:hover { color: var(--gold); background: rgba(201,168,76,.08); }
+nav .sep { color: var(--border); }
+
+.hero { text-align: center; padding: 4rem 1.5rem 3.5rem; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+.hero::before { content: 'LUCHA'; position: absolute; font-family: 'Playfair Display', serif; font-size: clamp(5rem, 22vw, 16rem); font-weight: 900; color: rgba(196,74,138,.03); top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; letter-spacing: .15em; }
+.eyebrow { font-size:.62rem; letter-spacing:.3em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:.7rem; }
+h1 { font-family:'Playfair Display',serif; font-size:clamp(2.2rem,6vw,4rem); font-weight:900; color:var(--white); line-height:1.1; margin-bottom:.8rem; }
+.hero-sub { font-size:.85rem; color:var(--muted); max-width:580px; margin:0 auto 2rem; }
+.pills { display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center; }
+.pill { font-size:.62rem; letter-spacing:.08em; font-weight:600; padding:.3rem .85rem; border-radius:20px; text-transform:uppercase; }
+.p-rose   { background:rgba(196,74,138,.15); color:#e098c8; border:1px solid rgba(196,74,138,.35); }
+.p-teal   { background:rgba(58,172,170,.15);  color:#6dd4d2; border:1px solid rgba(58,172,170,.35); }
+.p-amber  { background:rgba(196,122,42,.15);  color:#dda870; border:1px solid rgba(196,122,42,.35); }
+.p-violet { background:rgba(122,90,196,.15);  color:#b098e0; border:1px solid rgba(122,90,196,.35); }
+.p-blue   { background:rgba(74,126,196,.15);  color:#88b0e0; border:1px solid rgba(74,126,196,.35); }
+
+.global-q { max-width:820px; margin:2.5rem auto; padding:0 1.2rem; }
+.gq-box { background:linear-gradient(135deg,#160812 0%,#0a0a14 100%); border:1px solid var(--gold-dim); border-left:4px solid var(--gold); border-radius:4px; padding:1.5rem 1.8rem; }
+.gq-label { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:.6rem; }
+.gq-text { font-family:'Playfair Display',serif; font-size:1.1rem; font-style:italic; color:var(--white); line-height:1.55; }
+
+.author-section { max-width:920px; margin:0 auto 3.5rem; padding:0 1.2rem; scroll-margin-top:60px; }
+.author-banner { border-radius:6px 6px 0 0; padding:1.4rem 1.8rem 1.1rem; }
+.b-rose   { background:linear-gradient(135deg,#1a0812 0%,#200e18 100%); border:1px solid rgba(196,74,138,.3); border-bottom:none; }
+.b-teal   { background:linear-gradient(135deg,#0b1a1a 0%,#0e2020 100%); border:1px solid rgba(58,172,170,.3);  border-bottom:none; }
+.b-amber  { background:linear-gradient(135deg,#1a1008 0%,#201408 100%); border:1px solid rgba(196,122,42,.3);  border-bottom:none; }
+.b-violet { background:linear-gradient(135deg,#120a1a 0%,#180e22 100%); border:1px solid rgba(122,90,196,.3);  border-bottom:none; }
+.b-blue   { background:linear-gradient(135deg,#0b1220 0%,#0e1828 100%); border:1px solid rgba(74,126,196,.3);  border-bottom:none; }
+
+.author-num { font-size:.6rem; letter-spacing:.2em; font-weight:700; text-transform:uppercase; margin-bottom:.3rem; }
+.n-rose   { color:var(--rose); }
+.n-teal   { color:var(--teal); }
+.n-amber  { color:var(--amber); }
+.n-violet { color:var(--violet); }
+.n-blue   { color:var(--blue); }
+
+.author-name { font-family:'Playfair Display',serif; font-size:1.45rem; font-weight:700; color:var(--white); }
+.author-work { font-size:.73rem; color:var(--muted); font-style:italic; margin-top:.2rem; }
+
+.content-body { background:var(--card); border:1px solid var(--border); border-top:none; border-radius:0 0 6px 6px; padding:1.6rem; display:flex; flex-direction:column; gap:1.3rem; }
+
+.q-block { background:rgba(201,168,76,.04); border-left:3px solid var(--gold-dim); border-radius:0 4px 4px 0; padding:.9rem 1.2rem; }
+.q-label { font-size:.57rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:.5rem; }
+.q-block ul { list-style:none; padding:0; }
+.q-block li { font-size:.8rem; font-style:italic; color:#b8a870; padding:.2rem 0 .35rem .8rem; border-left:1px solid var(--gold-dim); margin-bottom:.35rem; }
+
+.concept { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:1rem 1.2rem; }
+.concept-label { font-size:.57rem; letter-spacing:.18em; text-transform:uppercase; font-weight:700; margin-bottom:.4rem; }
+.l-rose   { color:var(--rose); }
+.l-teal   { color:var(--teal); }
+.l-amber  { color:var(--amber); }
+.l-violet { color:var(--violet); }
+.l-blue   { color:var(--blue); }
+.l-gold   { color:var(--gold); }
+.l-red    { color:var(--red); }
+.l-green  { color:var(--green); }
+
+.concept-title { font-size:.95rem; font-weight:600; color:var(--white); margin-bottom:.5rem; }
+.concept-body { font-size:.79rem; color:#9a9070; line-height:1.65; }
+.concept-body strong { color:#d0c8a0; }
+.concept-body em { color:#b09850; font-style:normal; font-weight:500; }
+
+.tags { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.7rem; }
+.tag { font-size:.6rem; padding:.18rem .52rem; border-radius:2px; font-weight:600; letter-spacing:.04em; }
+.t-r  { background:rgba(196,74,138,.12); color:#e098c8; border:1px solid rgba(196,74,138,.25); }
+.t-t  { background:rgba(58,172,170,.12);  color:#6dd4d2; border:1px solid rgba(58,172,170,.25); }
+.t-a  { background:rgba(196,122,42,.12);  color:#dda870; border:1px solid rgba(196,122,42,.25); }
+.t-v  { background:rgba(122,90,196,.12);  color:#b098e0; border:1px solid rgba(122,90,196,.25); }
+.t-b  { background:rgba(74,126,196,.12);  color:#88b0e0; border:1px solid rgba(74,126,196,.25); }
+.t-g  { background:rgba(201,168,76,.1);   color:#c9a84c; border:1px solid rgba(201,168,76,.25); }
+.t-gr { background:rgba(58,170,106,.12);  color:#6dd098; border:1px solid rgba(58,170,106,.25); }
+.t-red { background:rgba(196,74,74,.12);  color:#e09090; border:1px solid rgba(196,74,74,.25); }
+
+.two-col   { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; }
+.three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.8rem; }
+.four-col  { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:.7rem; }
+@media(max-width:700px){ .three-col,.four-col { grid-template-columns:1fr 1fr; } }
+@media(max-width:560px){ .two-col,.three-col,.four-col { grid-template-columns:1fr; } }
+
+.mini-card { background:#0d0d14; border:1px solid var(--border); border-radius:4px; padding:.85rem 1rem; }
+.mc-title { font-size:.8rem; font-weight:700; color:var(--white); margin-bottom:.35rem; }
+.mc-body  { font-size:.73rem; color:var(--muted); line-height:1.55; }
+.mc-note  { font-size:.67rem; margin-top:.45rem; font-weight:600; }
+
+/* Representaciones */
+.rep-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.7rem; }
+@media(max-width:600px){ .rep-grid { grid-template-columns:1fr; } }
+.rep-card { background:#0d0d14; border:1px solid var(--border); border-radius:4px; padding:.9rem 1rem; }
+.rep-label { font-size:.6rem; letter-spacing:.15em; text-transform:uppercase; font-weight:700; margin-bottom:.35rem; }
+.rep-title { font-size:.8rem; font-weight:700; color:var(--white); margin-bottom:.3rem; }
+.rep-body  { font-size:.73rem; color:var(--muted); line-height:1.5; }
+
+/* Timeline Argentina género */
+.gen-timeline { display:flex; flex-direction:column; gap:.55rem; }
+.gen-event { background:#0d0d14; border:1px solid var(--border); border-left:3px solid var(--rose); border-radius:3px; padding:.75rem 1rem; display:grid; grid-template-columns:60px 1fr; gap:.7rem; align-items:start; }
+.gen-year { font-size:.72rem; font-weight:700; color:var(--rose); padding-top:.05rem; }
+.gen-desc { font-size:.74rem; color:var(--muted); line-height:1.5; }
+.gen-desc strong { color:#d0c8a0; }
+
+/* WUNC */
+.wunc-grid { display:grid; grid-template-columns:1fr 1fr; gap:.7rem; }
+@media(max-width:500px){ .wunc-grid { grid-template-columns:1fr; } }
+.wunc-card { background:#0d0d14; border:1px solid var(--border); border-radius:4px; padding:.85rem 1rem; }
+.wunc-letter { font-size:2rem; font-weight:900; font-family:'Playfair Display',serif; color:var(--teal); opacity:.4; line-height:1; margin-bottom:.3rem; }
+.wunc-title { font-size:.78rem; font-weight:700; color:var(--white); margin-bottom:.3rem; }
+.wunc-body  { font-size:.72rem; color:var(--muted); line-height:1.5; }
+
+/* Agencias cuotas */
+.agency-row { display:grid; grid-template-columns:1fr 1fr; gap:.7rem; }
+@media(max-width:500px){ .agency-row { grid-template-columns:1fr; } }
+
+/* Teorías de movilización */
+.theory-list { display:flex; flex-direction:column; gap:.6rem; }
+.theory-item { background:#0d0d14; border:1px solid var(--border); border-left:3px solid var(--amber); border-radius:3px; padding:.8rem 1rem; }
+.theory-name { font-size:.75rem; font-weight:700; color:var(--white); margin-bottom:.25rem; }
+.theory-body { font-size:.73rem; color:var(--muted); line-height:1.5; }
+.theory-crit { font-size:.67rem; color:var(--amber); margin-top:.4rem; font-weight:600; }
+
+/* Tutelaje Dahl */
+.tutelaje-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.7rem; }
+@media(max-width:600px){ .tutelaje-grid { grid-template-columns:1fr; } }
+
+/* Confrontación */
+.confrontation { max-width:920px; margin:0 auto 3.5rem; padding:0 1.2rem; scroll-margin-top:60px; }
+.conf-header { background:#12101a; border:1px solid var(--gold-dim); border-bottom:none; border-radius:6px 6px 0 0; padding:1.2rem 1.8rem; }
+.conf-header h2 { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--gold); }
+.conf-header p { font-size:.73rem; color:var(--muted); margin-top:.3rem; font-style:italic; }
+.conf-body { background:var(--card); border:1px solid var(--border); border-radius:0 0 6px 6px; }
+.conf-row { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; border-bottom:1px solid var(--border); }
+.conf-row.five-col { grid-template-columns:1fr 1fr 1fr 1fr 1fr; }
+.conf-row:last-child { border-bottom:none; }
+@media(max-width:660px){ .conf-row,.conf-row.five-col { grid-template-columns:1fr 1fr; } }
+.conf-cell { padding:.85rem 1rem; border-right:1px solid var(--border); font-size:.75rem; line-height:1.5; }
+.conf-cell:last-child { border-right:none; }
+.conf-cell.hdr-c { font-size:.57rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--muted); background:#0d0d16; }
+.conf-cell.axis-c { color:var(--gold); font-weight:600; font-size:.77rem; }
+
+.final-note { max-width:760px; margin:0 auto 4rem; padding:0 1.2rem; }
+.fn-bar { height:3px; border-radius:3px 3px 0 0; background:var(--gold); }
+.fn-inner { background:var(--surface); border:1px solid var(--border); border-top:none; border-radius:0 0 6px 6px; padding:1.5rem 1.8rem; }
+.fn-label { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:.6rem; }
+.fn-text { font-size:.81rem; color:#a09870; line-height:1.7; }
+.fn-text strong { color:var(--white); }
+
+footer { text-align:center; font-size:.66rem; color:var(--muted); padding:1.5rem 1rem 2.5rem; border-top:1px solid var(--border); letter-spacing:.04em; }
+footer span { color:var(--gold); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#franceschet">Franceschet</a>
+  <span class="sep">·</span>
+  <a href="#tully-wood">Tilly & Wood</a>
+  <span class="sep">·</span>
+  <a href="#tula">Tula — Argentina</a>
+  <span class="sep">·</span>
+  <a href="#welp">Welp — Protesta</a>
+  <span class="sep">·</span>
+  <a href="#dahl-tutelaje">Dahl — Tutelaje</a>
+  <span class="sep">·</span>
+  <a href="#confrontacion">Confrontación</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="eyebrow">IPC · CBC · UBA · Cátedra Lopreite</p>
+  <h1>Unidad 6<br>Género, Movimientos<br>y Participación</h1>
+  <p class="hero-sub">¿Quién puede entrar a la política — y en qué condiciones? ¿Quién se moviliza cuando las instituciones fallan?</p>
+  <div class="pills">
+    <span class="pill p-rose">Susan Franceschet</span>
+    <span class="pill p-teal">Tilly & Wood</span>
+    <span class="pill p-amber">María Inés Tula</span>
+    <span class="pill p-violet">Yanina Welp</span>
+    <span class="pill p-blue">Robert Dahl</span>
+  </div>
+</div>
+
+<div class="global-q">
+  <div class="gq-box">
+    <p class="gq-label">La pregunta que recorre toda la unidad</p>
+    <p class="gq-text">Si las instituciones fueron diseñadas por y para un grupo específico — varones, propietarios, letrados — ¿cuánto cambia realmente cuando ese grupo diversifica su composición sin modificar sus reglas de fondo?</p>
+  </div>
+</div>
+
+
+<!-- ══════════ FRANCESCHET ══════════ -->
+<div class="author-section" id="franceschet">
+  <div class="author-banner b-rose">
+    <p class="author-num n-rose">Autora 01</p>
+    <p class="author-name">Susan Franceschet</p>
+    <p class="author-work">"¿Promueven las cuotas de género los intereses de las mujeres? El impacto de las leyes de cuota en la representación sustantiva de las mujeres"</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>¿Tener más mujeres en el parlamento cambia lo que el parlamento hace — o simplemente cambia quién lo hace sin cambiarlo?</li>
+        <li>¿Pueden las legisladoras representar "los intereses de las mujeres" si los intereses de las mujeres son radicalmente heterogéneos según clase, etnia y orientación sexual?</li>
+        <li>¿La cuota de género es una política feminista o una política de gestión de la desigualdad que permite al sistema sobrevivir sin transformarse?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-rose">Definición central</p>
+      <p class="concept-title">Las cuotas de género: mecanismo, alcance y límites</p>
+      <p class="concept-body">
+        Las cuotas de género obligan a los partidos a garantizar un porcentaje mínimo de mujeres en sus listas de candidatos — en Argentina, el 30% fijado por la Ley 24.012 de 1991. Son, según la autora, <strong>el mecanismo más efectivo para mejorar la baja representación de las mujeres en política</strong>.<br><br>
+        Pero Franceschet distingue con precisión el objetivo inmediato del objetivo último: las cuotas apuntan directamente a mejorar la <em>representación descriptiva</em> (cuántas mujeres hay) con la esperanza de que eso mejore la <em>representación sustantiva</em> (qué se legisla a favor de las mujeres). El vínculo entre ambas no es automático — y esa tensión es el núcleo de todo el texto.
+      </p>
+      <div class="tags">
+        <span class="tag t-r">cuotas de género</span><span class="tag t-r">30% mínimo</span>
+        <span class="tag t-r">representación descriptiva</span><span class="tag t-r">representación sustantiva</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-rose">La trilogía de la representación</p>
+      <p class="concept-title">Descriptiva, sustantiva y simbólica: tres niveles que no siempre se conectan</p>
+      <div class="rep-grid">
+        <div class="rep-card">
+          <p class="rep-label" style="color:var(--rose)">Representación descriptiva</p>
+          <p class="rep-title">¿Cuántas mujeres hay?</p>
+          <p class="rep-body">La proporción de mujeres en los cuerpos legislativos. Mejora cuando esa proporción se acerca a la real en la población. Es lo que miden las cuotas directamente.</p>
+        </div>
+        <div class="rep-card">
+          <p class="rep-label" style="color:var(--amber)">Representación sustantiva</p>
+          <p class="rep-title">¿Qué se legisla a favor de las mujeres?</p>
+          <p class="rep-body">Que los temas importantes para las mujeres entren en la agenda legislativa y se conviertan en ley. Más difícil de medir. No depende solo de cuántas mujeres hay sino de qué poder tienen y qué coaliciones forman.</p>
+        </div>
+        <div class="rep-card">
+          <p class="rep-label" style="color:var(--violet)">Representación simbólica</p>
+          <p class="rep-title">¿Cómo se percibe a las mujeres en política?</p>
+          <p class="rep-body">Cómo los representantes son percibidos y evaluados por quienes representan. Mejora cuando la sociedad empieza a tener actitudes más igualitarias respecto de las mujeres como funcionarias electas.</p>
+        </div>
+      </div>
+      <p class="concept-body" style="margin-top:.9rem">El vínculo entre descriptiva y simbólica es relativamente claro: más mujeres visibles en política derrumba estereotipos. El vínculo entre descriptiva y sustantiva es el que genera controversia — y donde Franceschet hace su aporte más importante.</p>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-rose">El debate central</p>
+      <p class="concept-title">Phillips vs. los escépticos: ¿importa quién representa o solo qué se representa?</p>
+      <p class="concept-body">
+        <strong>Anne Phillips</strong> distingue entre <em>política de ideas</em> (lo que importa es qué conjunto de valores se representan, no quién los porta) y <em>política de la presencia</em> (hay aspectos de la identidad — género, raza — que no pueden ser representados por delegación, porque fluyen de experiencias inalterables).<br><br>
+        Phillips y Mansbridge argumentan que precisamente porque los intereses de las mujeres son abstractos y heterogéneos, es más importante que haya mujeres en los cuerpos decisores — porque nadie más lo hará con la misma legitimidad experiencial.<br><br>
+        <strong>Los escépticos</strong> replican: presumir un vínculo entre presencia y actuación sustantiva genera expectativas poco realistas y, lo más grave, <strong>libera a los hombres de la responsabilidad de representar los intereses de las mujeres</strong>.<br><br>
+        La posición de Franceschet: mejor ver las cuotas como una <em>condición habilitante</em>, no como una garantía. Abren la puerta; no aseguran qué entra por ella.
+      </p>
+      <div class="tags">
+        <span class="tag t-r">Anne Phillips</span><span class="tag t-r">política de la presencia</span>
+        <span class="tag t-r">política de ideas</span><span class="tag t-red">condición habilitante ≠ garantía</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-rose">Factores determinantes del impacto real</p>
+      <p class="concept-title">Tres condiciones para que las cuotas tengan efecto sustantivo</p>
+      <div class="three-col">
+        <div class="mini-card">
+          <p class="mc-title">Sistema de cuotas de género</p>
+          <p class="mc-body">No basta con que existan cuotas: importa cómo están diseñadas, si obligan a ubicar a las mujeres en posiciones elegibles (no solo al final de la lista) y si hay mecanismos de control efectivo.</p>
+          <p class="mc-note" style="color:var(--rose)">→ Una cuota sin mandato de posición es decorativa.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Apoyo de organizaciones de mujeres en la sociedad civil</p>
+          <p class="mc-body">Las legisladoras necesitan presión externa y alianzas con el movimiento feminista para mantener agenda y resistir la disciplina partidaria que las empuja a votar según el partido, no según el género.</p>
+          <p class="mc-note" style="color:var(--rose)">→ Sin movimiento que respalde, la cuota produce legisladoras sin agenda propia.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Coaliciones transversales de partidos</p>
+          <p class="mc-body">Las legisladoras que dejan de lado la disciplina partidaria y se unen transversalmente con colegas de otros partidos en torno a temas de género tienen mucho más poder de impacto que las que votan en bloque con su partido.</p>
+          <p class="mc-note" style="color:var(--rose)">→ La sororidad legislativa tiene que ser más fuerte que la lealtad al partido.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════ TILLY & WOOD ══════════ -->
+<div class="author-section" id="tully-wood">
+  <div class="author-banner b-teal">
+    <p class="author-num n-teal">Autores 02</p>
+    <p class="author-name">Charles Tilly & Lesley J. Wood</p>
+    <p class="author-work">"Los movimientos sociales como política"</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>Si el movimiento social es una forma de contienda política, ¿qué dice eso sobre la política institucional — que no alcanza, que excluye, o que directamente falla?</li>
+        <li>¿El WUNC (valor, unidad, número, compromiso) es una estrategia de los de abajo para ser escuchados — o una forma de disciplinar la protesta para que sea "aceptable" para los de arriba?</li>
+        <li>¿Pueden los movimientos sociales existir en una democracia perfecta — o son, por definición, la señal de que la democracia no es tan perfecta?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-teal">Definición</p>
+      <p class="concept-title">El movimiento social: contienda política colectiva organizada</p>
+      <p class="concept-body">
+        Los movimientos sociales son una <em>forma única de contienda política</em>. Contienda porque plantean reivindicaciones colectivas que, si se aceptan, chocarían con intereses de otras personas. Política porque los gobiernos — cualquiera sea su signo — están siempre involucrados: como autores de la situación que se cuestiona, como objeto de las reivindicaciones, como aliados de quienes se resiste, o como árbitros de la disputa.<br><br>
+        Tilly y Wood insisten en la perspectiva histórica como herramienta imprescindible: explica por qué los movimientos adoptaron sus formas actuales, identifica cambios significativos en sus prácticas, y alerta sobre posibles transformaciones futuras.
+      </p>
+      <div class="tags">
+        <span class="tag t-t">contienda política</span><span class="tag t-t">reivindicaciones colectivas</span>
+        <span class="tag t-t">perspectiva histórica</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-teal">Los tres elementos constitutivos</p>
+      <p class="concept-title">Campaña + Repertorio + WUNC: la síntesis que define al movimiento social moderno</p>
+      <div class="three-col">
+        <div class="mini-card">
+          <p class="mc-title">Campaña</p>
+          <p class="mc-body">Esfuerzo público, <strong>organizado y sostenido</strong> para trasladar reivindicaciones colectivas a las autoridades pertinentes. La palabra clave es "sostenido": no es un acto puntual sino una acción continua en el tiempo.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Repertorio de acción</p>
+          <p class="mc-body">Formas de acción política disponibles: coaliciones, reuniones públicas, procesiones, mítines, manifestaciones, declaraciones en medios, propaganda. El repertorio no es libre: está condicionado por la posición social de los actores. Los obreros paran fábricas; los estudiantes toman escuelas; los desocupados cortan rutas.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Demostraciones WUNC</p>
+          <p class="mc-body">Manifestaciones concertadas de <strong>W</strong>orth (valor), <strong>U</strong>nity (unidad), <strong>N</strong>umbers (número) y <strong>C</strong>ommitment (compromiso). El movimiento debe demostrar que es digno de ser escuchado, que habla con una sola voz, que es mucho gente, y que está dispuesto a sacrificarse.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-teal">El WUNC en detalle</p>
+      <p class="concept-title">Cómo se demuestra que un movimiento merece ser tomado en serio</p>
+      <div class="wunc-grid">
+        <div class="wunc-card">
+          <p class="wunc-letter">W</p>
+          <p class="wunc-title">Valor (Worth)</p>
+          <p class="wunc-body">Conducta sobria, atuendo cuidado, presencia del clero, de dignatarios o de madres con hijos. El movimiento muestra que es respetable, no peligroso. El orden en la protesta como argumento político.</p>
+        </div>
+        <div class="wunc-card">
+          <p class="wunc-letter">U</p>
+          <p class="wunc-title">Unidad (Unity)</p>
+          <p class="wunc-body">Insignias idénticas, vestuario común, pancartas, desfiles, canciones e himnos. La unidad visual comunica que no hay fragmentación interna — aunque internamente haya muchas posiciones.</p>
+        </div>
+        <div class="wunc-card">
+          <p class="wunc-letter">N</p>
+          <p class="wunc-title">Número (Numbers)</p>
+          <p class="wunc-body">Recuento de asistentes, firma de peticiones, mensajes de las circunscripciones, ocupación de calles. El número es un argumento político: más gente = más legitimidad = más presión.</p>
+        </div>
+        <div class="wunc-card">
+          <p class="wunc-letter">C</p>
+          <p class="wunc-title">Compromiso (Commitment)</p>
+          <p class="wunc-body">Desafiar el mal tiempo, participación de personas mayores o con discapacidad, resistencia ante la represión, sacrificio visible. El costo de participar como prueba de la seriedad del reclamo.</p>
+        </div>
+      </div>
+      <p class="concept-body" style="margin-top:.9rem">Nota crítica: el WUNC es una lista de condiciones para que la protesta sea <em>aceptable</em> para quienes tienen el poder de responder. Exige que los de abajo demuestren mérito para ser escuchados. ¿Quién diseñó esos criterios de mérito?</p>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-teal">Tipos de reivindicaciones</p>
+      <p class="concept-title">Programáticas, identitarias y de posición</p>
+      <div class="three-col">
+        <div class="mini-card">
+          <p class="mc-title">Programáticas</p>
+          <p class="mc-body">Declaración de adhesión o rechazo a acciones concretas del gobierno. Varían entre movimientos y entre fases del mismo movimiento. "Que se apruebe la ley X" o "que se derogue la ley Y".</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Identitarias</p>
+          <p class="mc-body">"Nosotros los reivindicadores somos una fuerza unificada a la que hay que tener en cuenta." Las demostraciones WUNC respaldan estas reivindicaciones. "Somos muchos, somos legítimos, existimos."</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">De posición</p>
+          <p class="mc-body">Refuerzan vínculos con otros actores políticos o señalan la posición de adversarios. "Estamos con X" o "X nos ataca." La construcción del aliado y del enemigo como parte de la estrategia.</p>
+        </div>
+      </div>
+      <div class="tags" style="margin-top:.8rem">
+        <span class="tag t-t">reivindicaciones programáticas</span>
+        <span class="tag t-t">identitarias</span><span class="tag t-t">de posición</span>
+        <span class="tag t-gr">democratización</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════ TULA ══════════ -->
+<div class="author-section" id="tula">
+  <div class="author-banner b-amber">
+    <p class="author-num n-amber">Autora 03</p>
+    <p class="author-name">María Inés Tula</p>
+    <p class="author-work">"Elecciones, cuotas de género y paridad en Argentina"</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>¿La Ley de Cuotas de 1991 fue una conquista feminista o una concesión política controlada que absorbió la demanda sin transformar la estructura?</li>
+        <li>¿La paridad (50/50) es el horizonte real del feminismo político — o solo el siguiente escalón de una escalera que no lleva al poder real?</li>
+        <li>Si en 2019 solo 2 de 8 categorías electorales tenían paridad garantizada, ¿cuánto cambia el sistema cuando cambia la ley?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-amber">Historia de la participación femenina en Argentina</p>
+      <p class="concept-title">De 1947 a 2021: una línea que no es recta</p>
+      <div class="gen-timeline">
+        <div class="gen-event">
+          <p class="gen-year">1947</p>
+          <p class="gen-desc"><strong>Ley de Voto Femenino.</strong> Las mujeres votan por primera vez. El peronismo las incorpora como electoras y como candidatas.</p>
+        </div>
+        <div class="gen-event">
+          <p class="gen-year">1951–55</p>
+          <p class="gen-desc"><strong>Peronismo en el poder:</strong> aumento significativo de legisladoras. Eva Perón como figura central del vínculo entre mujeres y Estado.</p>
+        </div>
+        <div class="gen-event">
+          <p class="gen-year">1973–76</p>
+          <p class="gen-desc">Cantidad de mujeres en el Congreso: <strong>insignificante</strong>. La política argentina es un espacio casi exclusivamente masculino.</p>
+        </div>
+        <div class="gen-event">
+          <p class="gen-year">1983</p>
+          <p class="gen-desc">Retorno democrático: impulso inicial pero con <strong>bajos niveles de representación</strong>. Las mujeres están en la política pero en los márgenes.</p>
+        </div>
+        <div class="gen-event">
+          <p class="gen-year">1991</p>
+          <p class="gen-desc"><strong>Ley 24.012 de Cupo Femenino</strong> (Ley de Cuotas): mínimo del 30% de mujeres en las listas, con requisito de posición elegible. Primera aplicación: elecciones nacionales de 1993.</p>
+        </div>
+        <div class="gen-event">
+          <p class="gen-year">2000</p>
+          <p class="gen-desc">La ley de cuotas se extiende al Senado. En Diputados, la representación pasó de 5% (1991) a 29,6% (2001) a 37,4% (2011).</p>
+        </div>
+        <div class="gen-event">
+          <p class="gen-year">2015–17</p>
+          <p class="gen-desc">Pico de gobernadoras en ejercicio simultáneo. Récord histórico — pero el número sigue siendo bajo en términos absolutos.</p>
+        </div>
+        <div class="gen-event">
+          <p class="gen-year">2017</p>
+          <p class="gen-desc"><strong>Ley de Paridad</strong> (50/50): aprobada con 39% de diputadas mujeres en ese momento. La paridad es permanente, obliga a intercalar varones y mujeres, y aplica también internamente en los partidos — aunque sin obligación de intercalar.</p>
+        </div>
+        <div class="gen-event">
+          <p class="gen-year">2019</p>
+          <p class="gen-desc">Primera elección con paridad en listas de Diputados y Senadores. Pero: de 8 categorías electorales, solo 2 tenían paridad garantizada. De 24 distritos, solo 14 tenían leyes de paridad local. <strong>La ley nacional no alcanza a todos los niveles.</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-amber">Cuota vs. Paridad: la diferencia no es solo numérica</p>
+      <p class="concept-title">Dos herramientas, dos lógicas</p>
+      <div class="two-col">
+        <div class="mini-card">
+          <p class="mc-title">Ley de Cuotas (1991)</p>
+          <p class="mc-body">Mínimo del 30%. Las mujeres deben estar en las listas — pero el 70% restante puede seguir siendo masculino. Es un piso, no un techo. La primera aplicación tuvo problemas: el sistema de lista cerrada bloqueada sin mandato claro de posición permitía ubicar a las mujeres en lugares no elegibles.</p>
+          <p class="mc-note" style="color:var(--amber)">→ El decreto 379/1993 tuvo que aclarar que el 30% debía ubicarse con posibilidad real de ser electo.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Ley de Paridad (2017)</p>
+          <p class="mc-body">50/50. Permanente. Obliga a intercalar varones y mujeres en las listas (una mujer, un varón, una mujer…). También aplica en los órganos internos de los partidos — pero sin obligación de intercalar allí. La paridad en las listas no garantiza paridad en los cargos: en ejecutivos no existe.</p>
+          <p class="mc-note" style="color:var(--amber)">→ En Argentina no existe paridad para cargos ejecutivos. El 50/50 aplica en las listas; quién gana lo decide el sistema electoral.</p>
+        </div>
+      </div>
+      <div class="tags" style="margin-top:.8rem">
+        <span class="tag t-a">cuota 30%</span><span class="tag t-a">paridad 50/50</span>
+        <span class="tag t-a">mandato de posición</span><span class="tag t-red">ejecutivos sin paridad</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════ WELP ══════════ -->
+<div class="author-section" id="welp">
+  <div class="author-banner b-violet">
+    <p class="author-num n-violet">Autora 04</p>
+    <p class="author-name">Yanina Welp</p>
+    <p class="author-work">"La protesta en las calles y en las redes"</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>¿Por qué la gente protesta si el cálculo racional indica que el costo supera el beneficio individual? ¿Hay algo que la teoría de la elección racional no puede explicar?</li>
+        <li>¿Las redes sociales democratizaron la protesta — o la hicieron más fácil de iniciar y más difícil de sostener?</li>
+        <li>Si los mecanismos institucionales de participación tienen tantas trabas, ¿para qué sirven — para canalizar las demandas o para desactivarlas?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-violet">Tipología de movimientos sociales</p>
+      <p class="concept-title">Tres dimensiones que distinguen un movimiento de una protesta puntual</p>
+      <div class="three-col">
+        <div class="mini-card">
+          <p class="mc-title">Identidad</p>
+          <p class="mc-body">El movimiento no es homogéneo, pero está unido en torno a uno o varios valores identitarios que lo definen. La identidad compartida es la que permite que miles de personas actúen como si fueran una.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Organización</p>
+          <p class="mc-body">Puede ser rígida (con estatutos y roles definidos, como los sindicatos) o flexible y horizontal (como los movimientos de base). La organización horizontal es más fácil de iniciar, más difícil de sostener.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Repertorios de acción</p>
+          <p class="mc-body">Condicionados por la posición social de los actores: los obreros paran la fábrica, los estudiantes toman la escuela, los desocupados cortan rutas. El repertorio disponible es una función de quién sos en la estructura social.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-violet">¿Por qué se moviliza la gente? Cuatro teorías</p>
+      <p class="concept-title">Desde la privación hasta la estructura de oportunidades</p>
+      <div class="theory-list">
+        <div class="theory-item">
+          <p class="theory-name">Privación relativa</p>
+          <p class="theory-body">La gente se moviliza cuando siente que tiene menos de lo que cree merecer — no necesariamente cuando está en la peor situación objetiva. La comparación con otros (grupos de referencia) es central. Explica por qué las clases medias empobrecidas protestan más que los sectores más pobres.</p>
+          <p class="theory-crit">→ Problema: no explica por qué la privación subjetiva se convierte en acción colectiva y no en resignación individual.</p>
+        </div>
+        <div class="theory-item">
+          <p class="theory-name">Elección racional</p>
+          <p class="theory-body">Los individuos hacen un cálculo costo-beneficio: si el costo de participar supera el beneficio esperado, no participan. El resultado teórico sería que nadie protesta (porque el beneficio colectivo se distribuye igual entre los que participaron y los que no — el problema del "polizón"). Sin embargo, la gente protesta. Explicación: contextos donde el costo es bajo y las posibilidades de éxito son altas.</p>
+          <p class="theory-crit">→ Problema: trata la acción colectiva como suma de acciones individuales y no puede explicar la solidaridad, el sacrificio ni la identidad.</p>
+        </div>
+        <div class="theory-item">
+          <p class="theory-name">Movilización de recursos</p>
+          <p class="theory-body">Lo que importa no es el agravio (que siempre existe) sino la capacidad del grupo para traducir ese agravio en reclamo y trasladar ese reclamo a la sociedad. Los recursos (dinero, redes, tiempo, organización previa) determinan quién puede movilizarse — y quién no, aunque tenga razón.</p>
+          <p class="theory-crit">→ Más realista sobre el poder, pero puede volverse tecnocrática: reduce la política a logística.</p>
+        </div>
+        <div class="theory-item">
+          <p class="theory-name">Estructura de oportunidades políticas</p>
+          <p class="theory-body">Los movimientos emergen cuando las condiciones estructurales y coyunturales crean una ventana de oportunidad: el sistema es lo suficientemente abierto para que la protesta emerja, pero relativamente cerrado para no ofrecer canales institucionales que absorban la demanda. El equilibrio entre apertura y clausura institucional es lo que determina cuándo aparece el movimiento.</p>
+          <p class="theory-crit">→ La más sofisticada. Pero puede llevar al determinismo: pareciera que los movimientos son consecuencia de la estructura, no de las decisiones de personas reales.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-violet">El rol de los medios digitales</p>
+      <p class="concept-title">Democratización de la protesta — con trampa</p>
+      <p class="concept-body">
+        Los medios digitales demostraron en la última década que pueden <strong>estimular y ampliar la emergencia de movimientos sociales</strong>: dan voz a quienes antes no accedían a los medios masivos, permiten organización rápida y horizontal, y reducen el costo de entrada a la protesta.<br><br>
+        Pero tienen efectos negativos importantes: la <strong>rapidez de difusión genera superficialidad</strong> — los movimientos pueden explotar viralmente y desvanecerse con la misma velocidad. Se adaptan especialmente bien a formas horizontales y asamblearias, no a estructuras jerárquicas que requieren disciplina y sostenimiento en el tiempo.<br><br>
+        En América Latina, el aparente progreso democrático no oculta la contradicción de fondo: compromiso formal con la igualdad de derechos + <strong>altos niveles de desigualdad económica</strong> + insatisfacción institucional. No sorprende que la gente se movilice. Lo que sorprende es que las instituciones sigan sorprendiéndose.
+      </p>
+      <div class="tags">
+        <span class="tag t-v">medios digitales</span><span class="tag t-v">organización horizontal</span>
+        <span class="tag t-red">superficialidad viral</span><span class="tag t-v">desigualdad + desencanto</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-red">El dato más incómodo del texto</p>
+      <p class="concept-title">Los mecanismos institucionales de participación están llenos de trabas</p>
+      <p class="concept-body">
+        En América Latina existen mecanismos formales para que la ciudadanía haga oír su voz: referendos, iniciativas populares, consultas. El problema: en la mayoría de los casos vienen con <strong>trabas ad hoc</strong> que los gobiernos imponen para evitar iniciativas en contra de sus decisiones — altos números de firmas, requisitos formales complejos, plazos imposibles.<br><br>
+        Para que una iniciativa prospere, el tema debe ser suficientemente relevante en la agenda nacional. En muchos casos, los medios masivos — controlados por sectores interesados — bloquean el acceso de ciertos tipos de información. <strong>Los medios digitales aparecen entonces como alternativa real</strong>: no como solución, sino como el único canal disponible cuando los canales institucionales están obturados.<br><br>
+        Conclusión de Welp: una sociedad civil activa es clave para la democracia. Pero si la protesta no obtiene respuestas satisfactorias, alimenta la espiral del desencanto — que a su vez alimenta el populismo autoritario.
+      </p>
+      <div class="tags">
+        <span class="tag t-v">mecanismos de participación</span><span class="tag t-red">trabas institucionales</span>
+        <span class="tag t-v">medios alternativos</span><span class="tag t-red">espiral del desencanto</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════ DAHL — TUTELAJE ══════════ -->
+<div class="author-section" id="dahl-tutelaje">
+  <div class="author-banner b-blue">
+    <p class="author-num n-blue">Autor 05</p>
+    <p class="author-name">Robert Dahl</p>
+    <p class="author-work">"La democracia y sus críticos" — El tutelaje como alternativa</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>Si la gente común "no puede comprender ni defender sus propios intereses", ¿quién decide quién sí puede — y con qué criterio?</li>
+        <li>¿El tutelaje es una fantasía platónica o existe en el mundo real con otros nombres: tecnocracia, meritocracia, gobierno de expertos?</li>
+        <li>¿En qué se diferencia un "rey-filósofo" de un FMI que impone condiciones económicas a países que no las votaron?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-blue">El argumento del tutelaje</p>
+      <p class="concept-title">La alternativa más antigua — y más persistente — a la democracia</p>
+      <p class="concept-body">
+        El tutelaje es la idea de que un <strong>pequeño grupo especialmente capacitado</strong> — en conocimiento, virtud o técnica — debería gobernar en lugar del pueblo, porque el pueblo común no está calificado para autogobernarse ni para comprender sus propios intereses.<br><br>
+        Dahl identifica tres versiones históricas que comparten la misma premisa:
+      </p>
+      <div class="tutelaje-grid" style="margin-top:.8rem">
+        <div class="mini-card">
+          <p class="mc-title">Platón — El rey-filósofo</p>
+          <p class="mc-body">Los tutores deben dedicarse por entero a la búsqueda de la verdad, sin intereses personales incompatibles con el bien de la polis. Son seleccionados y educados con extrema atención. Si el sistema funciona, los ciudadanos reconocerían la excelencia de sus gobernantes y les darían lealtad.</p>
+          <p class="mc-note" style="color:var(--blue)">→ Hermoso en teoría. En la práctica: ¿quién selecciona a los seleccionadores?</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Marx y Lenin — La vanguardia obrera</p>
+          <p class="mc-body">El partido de vanguardia tiene el conocimiento científico de las leyes de la historia y, por lo tanto, el derecho exclusivo de gobernar en nombre del proletariado — incluso contra la voluntad momentánea de ese proletariado, que aún no ha desarrollado conciencia de clase.</p>
+          <p class="mc-note" style="color:var(--blue)">→ El marxismo como tutelaje de izquierda. Hay que ser honestos: Lenin no era Dahl.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Skinner — El rey-psicólogo</p>
+          <p class="mc-body">El gobernante con conocimiento científico del comportamiento humano puede consumar las potencialidades humanas sin que los ciudadanos sepan que están siendo conducidos. Cuando experimenten ese gobierno, abandonarán la "necia idea" de autogobernarse.</p>
+          <p class="mc-note" style="color:var(--blue)">→ El tutelaje como ingeniería conductual. Menos violento que Lenin, más inquietante que Platón.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-blue">Las calificaciones del tutor</p>
+      <p class="concept-title">Tres requisitos para gobernar — y por qué ninguno es demostrable</p>
+      <div class="three-col">
+        <div class="mini-card">
+          <p class="mc-title">Comprensión moral</p>
+          <p class="mc-body">Entender adecuadamente los fines que el gobierno debe perseguir. El problema: los demócratas argumentan que no existe una élite claramente superior en lo moral — todos los seres somos igualmente capaces de distinguir lo justo de lo injusto.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Virtud</p>
+          <p class="mc-body">Estar en condiciones de alcanzar esos fines y tener buena disposición para perseguirlos. El ser humano tiende al egoísmo, argumenta el tutelaje, y el egoísmo es incompatible con la virtud necesaria. ¿Pero quién garantiza que el tutor es menos egoísta que el ciudadano promedio?</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Conocimiento técnico</p>
+          <p class="mc-body">Saber los medios más eficientes para alcanzar los fines. El tutelaje admite que los técnicos no son automáticamente buenos tutores — necesitan las tres cualidades juntas. La especialización no alcanza. Un tecnócrata no es un filósofo.</p>
+        </div>
+      </div>
+      <p class="concept-body" style="margin-top:.8rem">La diferencia clave entre <strong>meritocracia</strong> y <strong>tutelaje</strong>: la meritocracia selecciona funcionarios por mérito pero los subordina a dirigentes electos. El tutelaje reemplaza al proceso democrático por el gobierno de los mejores — que no rinden cuentas a nadie más que a su propia excelencia.</p>
+      <div class="tags">
+        <span class="tag t-b">virtud</span><span class="tag t-b">conocimiento técnico</span>
+        <span class="tag t-b">meritocracia ≠ tutelaje</span><span class="tag t-red">experiencia histórica: nazismo, fascismo, militares</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-red">La experiencia histórica como refutación</p>
+      <p class="concept-title">Todos los que gobernaron en nombre de la excelencia terminaron en lo mismo</p>
+      <p class="concept-body">
+        La idea del tutelaje fue apropiada históricamente por prácticamente todos los regímenes autoritarios — nazismo, fascismo, militarismos latinoamericanos — para legitimar su dominio alegando poseer un conocimiento superior del bien general. El resultado empírico es consistente: quienes gobernaron sin rendir cuentas usaron esa falta de control para perseguir sus propios intereses o los de su clase, no los del bien común que invocaban.<br><br>
+        La conclusión de Dahl no es que la democracia sea perfecta — ya vimos en la Unidad 3 que reconoce sus límites. Es que <strong>el tutelaje es estructuralmente más propenso al abuso que la democracia</strong>, porque carece del único mecanismo que existe para corregir a los gobernantes: la posibilidad de sacarlos.
+      </p>
+      <div class="tags">
+        <span class="tag t-b">autoritarismo disfrazado</span><span class="tag t-red">abuso sin control</span>
+        <span class="tag t-b">democracia como límite al poder</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════ CONFRONTACIÓN ══════════ -->
+<div class="confrontation" id="confrontacion">
+  <div class="conf-header">
+    <h2>Cinco miradas sobre el mismo problema</h2>
+    <p>¿Quién puede entrar, quién puede reclamar, quién puede gobernar — y a quién le toca decidirlo?</p>
+  </div>
+  <div class="conf-body">
+    <div class="conf-row five-col">
+      <div class="conf-cell hdr-c">Eje</div>
+      <div class="conf-cell hdr-c" style="color:#e098c8">Franceschet</div>
+      <div class="conf-cell hdr-c" style="color:#6dd4d2">Tilly & Wood</div>
+      <div class="conf-cell hdr-c" style="color:#dda870">Tula</div>
+      <div class="conf-cell hdr-c" style="color:#b098e0">Welp</div>
+    </div>
+    <div class="conf-row five-col">
+      <div class="conf-cell axis-c">¿Cuál es el problema central?</div>
+      <div class="conf-cell" style="color:#e098c8">Las mujeres están subrepresentadas en las instituciones que toman decisiones que las afectan</div>
+      <div class="conf-cell" style="color:#6dd4d2">Las instituciones no representan a todos: los excluidos deben organizarse fuera de ellas para presionar</div>
+      <div class="conf-cell" style="color:#dda870">La representación formal (cuántas mujeres hay) avanzó; la representación real (qué se decide) avanza mucho más lento</div>
+      <div class="conf-cell" style="color:#b098e0">Los canales institucionales de participación están obturados por quienes deberían abrirlos</div>
+    </div>
+    <div class="conf-row five-col">
+      <div class="conf-cell axis-c">¿Cuál es la solución propuesta?</div>
+      <div class="conf-cell" style="color:#e098c8">Cuotas y paridad como condición habilitante + movimiento feminista externo + coaliciones transversales</div>
+      <div class="conf-cell" style="color:#6dd4d2">Campaña sostenida + repertorios de acción + demostraciones WUNC de legitimidad</div>
+      <div class="conf-cell" style="color:#dda870">Ley de paridad + mandato de posición + extensión a todos los niveles del sistema</div>
+      <div class="conf-cell" style="color:#b098e0">Fortalecer los mecanismos de participación directa + medios digitales como canal alternativo</div>
+    </div>
+    <div class="conf-row five-col">
+      <div class="conf-cell axis-c">¿Qué queda sin resolver?</div>
+      <div class="conf-cell" style="color:#e098c8">¿Puede una institución diseñada sin las mujeres transformarse solo con que entren mujeres?</div>
+      <div class="conf-cell" style="color:#6dd4d2">¿Qué pasa cuando el movimiento social logra ser escuchado pero las instituciones responden incorporando la demanda sin cambiar las relaciones de poder?</div>
+      <div class="conf-cell" style="color:#dda870">¿La paridad en las listas cambia lo que se legisla — o solo cambia quién firma las leyes que siguen siendo las mismas?</div>
+      <div class="conf-cell" style="color:#b098e0">¿Por qué los mecanismos de participación tienen tantas trabas si se supone que la democracia quiere que la gente participe?</div>
+    </div>
+    <div class="conf-row five-col">
+      <div class="conf-cell axis-c">La pregunta que no se hace</div>
+      <div class="conf-cell" style="color:#e098c8">¿Puede haber igualdad de género real sin igualdad de clase? ¿Las cuotas benefician a todas las mujeres por igual?</div>
+      <div class="conf-cell" style="color:#6dd4d2">¿Por qué el WUNC exige que los de abajo demuestren mérito para ser escuchados — en vez de que los de arriba demuestren por qué deben ser obedecidos?</div>
+      <div class="conf-cell" style="color:#dda870">¿Qué pasa con las mujeres indígenas, afrodescendientes, empobrecidas — que están fuera de la paridad partidaria aunque estén dentro de la "mujer"?</div>
+      <div class="conf-cell" style="color:#b098e0">¿Cuándo la protesta no institucionalizada es más democrática que los mecanismos institucionales que la sustituyen?</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- NOTA FINAL MARXISTA -->
+<div class="final-note">
+  <div class="fn-bar"></div>
+  <div class="fn-inner">
+    <p class="fn-label">Síntesis crítica · Perspectiva marxista</p>
+    <p class="fn-text">
+      La Unidad 6 es la que más directamente aborda la política desde los márgenes: el género como eje de exclusión estructural, los movimientos sociales como política de los excluidos, la protesta como señal de fracaso institucional. Es la unidad más honesta del programa sobre lo que la democracia liberal no resuelve.
+      <br><br>
+      <strong>Franceschet</strong> y <strong>Tula</strong> documentan una conquista real: la representación descriptiva de las mujeres creció sustantivamente desde 1991. Pero su propio análisis muestra el límite: más mujeres en las instituciones no garantiza que esas instituciones cambien lo que hacen. La pregunta que ambas evitan formular directamente es la interseccional — ¿de qué clase, etnia y región son las mujeres que se benefician de la paridad? La ley de cuotas incorporó principalmente a mujeres de sectores medios y altos con capital político previo. La mujer villera, la mujer indígena, la trabajadora informal siguen siendo invisibles en las listas.
+      <br><br>
+      <strong>Tilly & Wood</strong> y <strong>Welp</strong> describen la lógica de los movimientos sociales con precisión — pero sin la pregunta de fondo: ¿por qué en el capitalismo los movimientos de los de abajo necesitan demostrar "valor, unidad, número y compromiso" para ser escuchados, mientras que los intereses del capital se procesan directamente en las instituciones sin necesidad de marchar? El poder económico no necesita WUNC: ya tiene representación permanente en el Estado.
+      <br><br>
+      <strong>Dahl</strong> hace la defensa más lúcida de la democracia frente al tutelaje — y tiene razón en lo central: el tutelaje es históricamente más propenso al abuso que la democracia porque carece de accountability. Pero hay una paradoja que no menciona: las instituciones financieras internacionales (FMI, Banco Mundial), las agencias de calificación de riesgo, los tratados de libre comercio operan exactamente como tutores globales — imponiendo políticas económicas a poblaciones que nunca las votaron. El tutelaje existe. Solo se llama con otro nombre.
+    </p>
+  </div>
+</div>
+
+<footer>
+  Unidad 6 · IPC · CBC · UBA &nbsp;|&nbsp; Cátedra <span>Lopreite</span> &nbsp;|&nbsp; Prof. Claudio Damián Sacco
+</footer>
+
+</body>
+</html>

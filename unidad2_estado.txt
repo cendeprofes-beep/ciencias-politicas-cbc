@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Unidad 2 — El Estado | IPC · CBC · UBA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0b0b0e;
+  --surface:  #13131a;
+  --card:     #17171f;
+  --border:   #252530;
+  --gold:     #c9a84c;
+  --gold-dim: #6b5520;
+  --red:      #c95a5a;
+  --blue:     #5a8ec9;
+  --green:    #5ac98e;
+  --violet:   #9a6ec9;
+  --text:     #dedad0;
+  --muted:    #686070;
+  --white:    #f0ece0;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(11,11,14,.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: .5rem;
+  padding: .7rem 1.4rem;
+  overflow-x: auto;
+}
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: .7rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: .3rem .7rem;
+  border-radius: 3px;
+  transition: all .2s;
+}
+nav a:hover { color: var(--gold); background: rgba(201,168,76,.08); }
+nav .sep { color: var(--border); font-size: .8rem; }
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  padding: 4rem 1.5rem 3rem;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+.hero::before {
+  content: 'ESTADO';
+  position: absolute;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(6rem, 20vw, 14rem);
+  font-weight: 900;
+  color: rgba(201,168,76,.04);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: .1em;
+}
+.eyebrow {
+  font-size: .65rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: .8rem;
+}
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 6vw, 3.8rem);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: .8rem;
+}
+.hero-sub {
+  font-size: .85rem;
+  color: var(--muted);
+  max-width: 540px;
+  margin: 0 auto 2rem;
+}
+.author-pills {
+  display: flex; flex-wrap: wrap; gap: .5rem;
+  justify-content: center;
+}
+.pill {
+  font-size: .65rem;
+  letter-spacing: .08em;
+  font-weight: 600;
+  padding: .3rem .85rem;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+.pill-blue   { background: rgba(90,142,201,.15); color: #88b4e0; border: 1px solid rgba(90,142,201,.35); }
+.pill-green  { background: rgba(90,201,142,.15); color: #7ddcad; border: 1px solid rgba(90,201,142,.35); }
+.pill-violet { background: rgba(154,110,201,.15); color: #c09ee0; border: 1px solid rgba(154,110,201,.35); }
+
+/* ── PREGUNTA DISPARADORA GLOBAL ── */
+.big-question {
+  max-width: 800px;
+  margin: 2.5rem auto;
+  padding: 0 1.5rem;
+}
+.bq-inner {
+  background: linear-gradient(135deg, #16121a 0%, #0f0f16 100%);
+  border: 1px solid var(--gold-dim);
+  border-left: 4px solid var(--gold);
+  border-radius: 4px;
+  padding: 1.5rem 1.8rem;
+}
+.bq-label {
+  font-size: .6rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 600;
+  margin-bottom: .6rem;
+}
+.bq-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--white);
+  line-height: 1.5;
+}
+
+/* ── SECCIÓN AUTOR ── */
+.author-section {
+  max-width: 920px;
+  margin: 0 auto 3.5rem;
+  padding: 0 1.2rem;
+}
+.author-banner {
+  border-radius: 6px 6px 0 0;
+  padding: 1.5rem 1.8rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.banner-blue   { background: linear-gradient(135deg, #0e1520 0%, #131a28 100%); border: 1px solid rgba(90,142,201,.3); border-bottom: none; }
+.banner-green  { background: linear-gradient(135deg, #0e1a14 0%, #111f18 100%); border: 1px solid rgba(90,201,142,.3); border-bottom: none; }
+.banner-violet { background: linear-gradient(135deg, #150e1a 0%, #1a1220 100%); border: 1px solid rgba(154,110,201,.3); border-bottom: none; }
+
+.author-num {
+  font-size: .6rem;
+  letter-spacing: .2em;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: .35rem;
+}
+.num-blue   { color: var(--blue); }
+.num-green  { color: var(--green); }
+.num-violet { color: var(--violet); }
+
+.author-name-big {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--white);
+}
+.author-work-title {
+  font-size: .75rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: .2rem;
+}
+
+/* ── BLOQUES DE CONTENIDO ── */
+.content-body {
+  background: var(--card);
+  border-radius: 0 0 6px 6px;
+  border: 1px solid var(--border);
+  border-top: none;
+  padding: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+/* Pregunta disparadora por autor */
+.q-block {
+  background: rgba(201,168,76,.05);
+  border-left: 3px solid var(--gold-dim);
+  border-radius: 0 4px 4px 0;
+  padding: .9rem 1.2rem;
+}
+.q-block-label {
+  font-size: .58rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: .5rem;
+}
+.q-block ul { padding-left: 0; list-style: none; }
+.q-block li {
+  font-size: .82rem;
+  font-style: italic;
+  color: #bdb090;
+  padding: .2rem 0;
+  padding-left: .9rem;
+  border-left: 1px solid var(--gold-dim);
+  margin-bottom: .4rem;
+}
+
+/* Módulo de concepto */
+.concept {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.1rem 1.3rem;
+}
+.concept-label {
+  font-size: .58rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: .4rem;
+}
+.label-blue   { color: var(--blue); }
+.label-green  { color: var(--green); }
+.label-violet { color: var(--violet); }
+.label-gold   { color: var(--gold); }
+.label-red    { color: var(--red); }
+
+.concept-title {
+  font-size: .98rem;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: .5rem;
+}
+.concept-body {
+  font-size: .8rem;
+  color: #a09880;
+  line-height: 1.65;
+}
+.concept-body strong { color: #d0c8a8; }
+.concept-body em { color: #c0b090; font-style: normal; font-weight: 500; }
+
+/* Tags */
+.tags { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .7rem; }
+.tag {
+  font-size: .6rem;
+  padding: .2rem .55rem;
+  border-radius: 2px;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+.tag-b { background: rgba(90,142,201,.12); color: #88b0d8; border: 1px solid rgba(90,142,201,.25); }
+.tag-g { background: rgba(90,201,142,.12); color: #7dd0a8; border: 1px solid rgba(90,201,142,.25); }
+.tag-v { background: rgba(154,110,201,.12); color: #b898d8; border: 1px solid rgba(154,110,201,.25); }
+.tag-r { background: rgba(201,90,90,.12);  color: #d89898; border: 1px solid rgba(201,90,90,.25); }
+.tag-gold { background: rgba(201,168,76,.1); color: #c9a84c; border: 1px solid rgba(201,168,76,.25); }
+
+/* Grid de 2 columnas para conceptos side by side */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media(max-width:600px){ .two-col { grid-template-columns: 1fr; } }
+
+/* Tabla de tipos de Estado */
+.state-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .7rem;
+}
+@media(max-width:500px){ .state-grid { grid-template-columns: 1fr; } }
+
+.state-card {
+  background: #11111a;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: .9rem 1rem;
+}
+.state-card-title {
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: .35rem;
+  letter-spacing: .03em;
+}
+.state-card-body {
+  font-size: .73rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+/* Tabla agencias género */
+.agencies-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .7rem;
+}
+@media(max-width:500px){ .agencies-grid { grid-template-columns: 1fr; } }
+
+.agency-card {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: .9rem 1rem;
+}
+.agency-insider  { border-left: 3px solid var(--green);  background: rgba(90,201,142,.05); }
+.agency-marginal { border-left: 3px solid var(--blue);   background: rgba(90,142,201,.05); }
+.agency-symbolic { border-left: 3px solid var(--gold);   background: rgba(201,168,76,.05); }
+.agency-anti     { border-left: 3px solid var(--red);    background: rgba(201,90,90,.05);  }
+
+.agency-title {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  margin-bottom: .35rem;
+}
+.agency-body { font-size: .76rem; color: var(--muted); line-height: 1.5; }
+
+/* ── CONFRONTACIÓN ── */
+.confrontation {
+  max-width: 920px;
+  margin: 0 auto 3.5rem;
+  padding: 0 1.2rem;
+}
+.conf-header {
+  background: #14101a;
+  border: 1px solid var(--gold-dim);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 1.2rem 1.8rem;
+}
+.conf-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--gold);
+}
+.conf-header p {
+  font-size: .75rem;
+  color: var(--muted);
+  margin-top: .3rem;
+  font-style: italic;
+}
+.conf-body {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0 0 6px 6px;
+}
+.conf-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+}
+.conf-row:last-child { border-bottom: none; }
+@media(max-width:640px){
+  .conf-row { grid-template-columns: 1fr 1fr; }
+}
+.conf-cell {
+  padding: .85rem 1rem;
+  border-right: 1px solid var(--border);
+  font-size: .76rem;
+  line-height: 1.5;
+}
+.conf-cell:last-child { border-right: none; }
+.conf-cell.header-cell {
+  font-size: .6rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--muted);
+  background: #0f0f16;
+}
+.conf-cell.axis { color: var(--gold); font-weight: 600; font-size: .78rem; }
+.conf-cell.c-blue   { color: #a0c0e0; }
+.conf-cell.c-green  { color: #90d0b0; }
+.conf-cell.c-violet { color: #c0a0e0; }
+
+/* ── NOTA FINAL ── */
+.final-note {
+  max-width: 760px;
+  margin: 0 auto 4rem;
+  padding: 0 1.2rem;
+}
+.fn-inner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--gold);
+  border-radius: 0 0 6px 6px;
+  padding: 1.5rem 1.8rem;
+}
+.fn-label {
+  font-size: .6rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 700;
+  margin-bottom: .6rem;
+}
+.fn-text {
+  font-size: .82rem;
+  color: #a09880;
+  line-height: 1.7;
+}
+.fn-text strong { color: var(--white); }
+
+footer {
+  text-align: center;
+  font-size: .67rem;
+  color: var(--muted);
+  padding: 1.5rem 1rem 2.5rem;
+  border-top: 1px solid var(--border);
+  letter-spacing: .04em;
+}
+footer span { color: var(--gold); }
+
+/* scroll target offset */
+.section-anchor { scroll-margin-top: 60px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#malamud">Malamud</a>
+  <span class="sep">·</span>
+  <a href="#bulcourf-cardozo">Bulcourf & Cardozo</a>
+  <span class="sep">·</span>
+  <a href="#lopreite">Lopreite & Rodríguez Gustá</a>
+  <span class="sep">·</span>
+  <a href="#confrontacion">Confrontación</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="eyebrow">IPC · CBC · UBA · Cátedra Lopreite</p>
+  <h1>Unidad 2<br>El Estado</h1>
+  <p class="hero-sub">¿Qué es el Estado? ¿Para quién existe? ¿Quién lo construyó y a qué costo?</p>
+  <div class="author-pills">
+    <span class="pill pill-blue">Andrés Malamud</span>
+    <span class="pill pill-green">Bulcourf & Cardozo</span>
+    <span class="pill pill-violet">Lopreite & Rodríguez Gustá</span>
+  </div>
+</div>
+
+<!-- PREGUNTA DISPARADORA GLOBAL -->
+<div class="big-question">
+  <div class="bq-inner">
+    <p class="bq-label">Pregunta que atraviesa toda la unidad</p>
+    <p class="bq-text">Si el Estado nació de la guerra, se consolidó con la religión y se legitimó mediante la violencia, ¿en qué momento exactamente se convirtió en algo que vale la pena defender — y para quién?</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     AUTOR 1: MALAMUD
+══════════════════════════════════════ -->
+<div class="author-section section-anchor" id="malamud">
+
+  <div class="author-banner banner-blue">
+    <p class="author-num num-blue">Autor 01</p>
+    <p class="author-name-big">Andrés Malamud</p>
+    <p class="author-work-title">"Estado" — Conceptos clave de la Ciencia Política</p>
+  </div>
+
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-block-label">Preguntas disparadoras</p>
+      <ul>
+        <li>¿El Estado surgió para proteger a todos o para proteger a quienes ya tenían algo que proteger?</li>
+        <li>¿Qué diferencia hay entre un Estado que ejerce violencia y una banda armada que hace lo mismo? (Respuesta de Weber: el adjetivo "legítima". ¿Pero quién define qué es legítimo?)</li>
+        <li>¿Puede un Estado "fallar" si nunca fue diseñado para servir a toda su población?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label label-blue">Definición central</p>
+      <p class="concept-title">¿Qué es el Estado?</p>
+      <p class="concept-body">
+        Malamud sigue la línea Bobbio–Poggi: el Estado es la <em>manifestación institucionalizada del poder político</em>. Bobbio distingue tres tipos de poder social: económico, ideológico y político. Este último se define por ser <strong>coercitivo</strong>: usa la fuerza (o la amenaza de usarla) como recurso específico.<br><br>
+        El Estado es la forma suprema de institucionalización: rutiniza reglas, despersonaliza relaciones y las formaliza. En otras palabras: convierte la dominación de <em>personas concretas</em> en dominación de <em>instituciones abstractas</em>. Ya no obedecés al rey; obedecés a la ley. Que casualmente el rey ayudó a escribir.
+      </p>
+      <div class="tags">
+        <span class="tag tag-b">institucionalización</span>
+        <span class="tag tag-b">poder coercitivo</span>
+        <span class="tag tag-b">Bobbio · Poggi</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label label-blue">Genealogía histórica</p>
+      <p class="concept-title">Del status latino al monopolio de la violencia</p>
+      <p class="concept-body">
+        <strong>Etimología:</strong> <em>status</em> en latín = posición social del individuo en la comunidad. En el s. XVI pasa a significar la posición de los <em>gobernantes</em> frente a los gobernados. Ya en el nombre hay una separación de clases.<br><br>
+        <strong>Maquiavelo</strong> (s. XVI): identifica al gobernante con territorio, régimen y población. El poder se territorializa.<br>
+        <strong>Bodino</strong>: acuña <em>soberanía</em> como poder no sujeto a leyes humanas sino divinas. El monarca manda porque Dios lo dice. Conveniente.<br>
+        <strong>Hobbes</strong> (s. XVII): la lealtad es al Estado como institución, no al gobernante personal. La autoridad es única, absoluta y civil.<br>
+        <strong>Weber</strong>: el Estado es la organización que <em>reclama con éxito</em> el monopolio <strong>legítimo</strong> de la violencia física en un territorio. La clave está en "con éxito": si nadie obedece, no hay Estado.
+      </p>
+      <div class="tags">
+        <span class="tag tag-b">soberanía</span>
+        <span class="tag tag-b">Weber</span>
+        <span class="tag tag-b">monopolio violencia</span>
+        <span class="tag tag-b">Hobbes</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label label-blue">Formación histórica</p>
+      <p class="concept-title">El Estado nació de la guerra — no del contrato social</p>
+      <p class="concept-body">
+        Los estados europeos se formaron porque quienes controlaban ejércitos, armas y flotas intentaban extender su dominio. Los gobernantes de menor poder debían elegir: rendirse o guerrear. El sistema interestatal moderno nace en <strong>1648 con la Paz de Westfalia</strong>, que establece tres principios: soberanía estatal, igualdad legal entre estados, no intervención. En el papel, los estados son iguales. En la práctica, no.<br><br>
+        La difusión del modelo estatal al resto del mundo se produjo mediante <strong>conquista y dominación colonial</strong>. Alguien llevó el modelo al tercer mundo a punta de cañón. El dato aparece en el texto casi de pasada. No es casual que se mencione sin detenerse.
+      </p>
+      <div class="tags">
+        <span class="tag tag-b">Westfalia 1648</span>
+        <span class="tag tag-b">sistema interestatal</span>
+        <span class="tag tag-r">colonialismo</span>
+      </div>
+    </div>
+
+    <!-- Tipos de Estado -->
+    <div class="concept">
+      <p class="concept-label label-blue">Tipología</p>
+      <p class="concept-title">Los tipos de Estado según Malamud</p>
+      <p class="concept-body" style="margin-bottom:.8rem">Una taxonomía útil para entender cómo el Estado varía según su relación con la sociedad, el mercado y la violencia:</p>
+      <div class="state-grid">
+        <div class="state-card">
+          <p class="state-card-title" style="color:#88b0d8">Estado Absolutista</p>
+          <p class="state-card-body">El monarca no conoce límites. Lo público y lo privado están unidos. Las personas son propiedad del gobernante. S. XVII–XVIII en Inglaterra y Francia.</p>
+        </div>
+        <div class="state-card">
+          <p class="state-card-title" style="color:#7dd0a8">Estado de Derecho</p>
+          <p class="state-card-body">Victoria del liberalismo sobre el absolutismo. Libertad personal, religiosa, económica. Límites a la arbitrariedad estatal.</p>
+        </div>
+        <div class="state-card">
+          <p class="state-card-title" style="color:#d89898">Estado Totalitario</p>
+          <p class="state-card-body">S. XX. No hay diferencia entre Estado, partido y personas. Consenso fabricado vía ideología. Dominio y control absoluto.</p>
+        </div>
+        <div class="state-card">
+          <p class="state-card-title" style="color:#c9a84c">Estado de Bienestar</p>
+          <p class="state-card-body">Fines s. XIX – mediados s. XX. Ampliación de derechos. El Estado interviene en economía y provee educación, salud, vivienda. Crisis fiscal por inflación y shocks petroleros en los '70.</p>
+        </div>
+        <div class="state-card">
+          <p class="state-card-title" style="color:#b898d8">Estado Gendarme</p>
+          <p class="state-card-body">S. XIX. Lo opuesto al bienestar: el Estado se limita a seguridad, justicia y defensa. El ideal del liberalismo clásico. Más reducción llevaría a la anarquía.</p>
+        </div>
+        <div class="state-card">
+          <p class="state-card-title" style="color:#d89898">Estado Fallido / Predatorio</p>
+          <p class="state-card-body">Escasa o nula capacidad de respuesta a ciudadanos. Sin monopolio institucional. Ruptura de la ley y el orden. El "Estado canalla" además amenaza la paz mundial.</p>
+        </div>
+      </div>
+      <div class="tags" style="margin-top:.9rem">
+        <span class="tag tag-b">absolutismo</span>
+        <span class="tag tag-g">Estado de derecho</span>
+        <span class="tag tag-gold">bienestar</span>
+        <span class="tag tag-r">Estado fallido</span>
+      </div>
+    </div>
+
+    <!-- Teorías del Estado -->
+    <div class="concept">
+      <p class="concept-label label-blue">Teorías del Estado</p>
+      <p class="concept-title">Pluralismo · Marxismo · Elitismo</p>
+      <div class="two-col">
+        <div>
+          <p class="concept-body"><strong>Pluralismo:</strong> el poder está disperso entre grupos autoorganizados. El Estado es reactivo: capta propuestas de la sociedad y arbitra. Ningún grupo domina de manera permanente.</p>
+        </div>
+        <div>
+          <p class="concept-body"><strong>Elitismo:</strong> el Estado tiende a servir a una clase social o a quienes gobiernan directamente. El poder se concentra en élites, no en el pueblo.</p>
+        </div>
+      </div>
+      <p class="concept-body" style="margin-top:.8rem"><strong>Marxismo (aparece brevemente):</strong> Malamud lo cita a través de Lindblom: los grupos que representan al capital tienen una <em>posición privilegiada estructural</em> dentro de la sociedad, independientemente de su poder circunstancial. El objetivo marxista no es entender el Estado sino eliminarlo. Dato notable: se menciona en tres renglones y se sigue. El marxismo merece más que un cameo, pero aquí es tratado como actor de reparto.</p>
+      <div class="tags">
+        <span class="tag tag-b">pluralismo</span>
+        <span class="tag tag-r">marxismo (breve)</span>
+        <span class="tag tag-gold">elitismo</span>
+      </div>
+    </div>
+
+    <!-- Estado Argentino -->
+    <div class="concept">
+      <p class="concept-label label-red">Caso concreto</p>
+      <p class="concept-title">La consolidación del Estado Argentino (1880 en adelante)</p>
+      <p class="concept-body">
+        1880 como fecha fundacional: el Estado central logra control sobre cuatro factores: <strong>recursos</strong> (puerto y aduana de BsAs), <strong>violencia</strong> (prohibición de milicias provinciales), <strong>legislación civil</strong> (registros civiles frente a la Iglesia) y <strong>territorio</strong>.<br><br>
+        Dos modelos económicos: (1) <strong>agroexportador</strong> — el granero del mundo, hasta la crisis del '30. (2) <strong>ISI</strong> (industrialización por sustitución de importaciones) — orientado al mercado interno. La crisis del '30 forzó el giro. El Estado intervino en la economía con un nuevo autoritarismo: el <strong>Estado Burocrático-Autoritario</strong> (O'Donnell), que describe las dictaduras de 1966–73 y 1976–83: orientación eficientista, represión, ajuste.
+      </p>
+      <div class="tags">
+        <span class="tag tag-b">1880</span>
+        <span class="tag tag-b">agroexportador</span>
+        <span class="tag tag-b">ISI</span>
+        <span class="tag tag-r">Estado Burocrático-Autoritario</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     AUTOR 2: BULCOURF & CARDOZO
+══════════════════════════════════════ -->
+<div class="author-section section-anchor" id="bulcourf-cardozo">
+
+  <div class="author-banner banner-green">
+    <p class="author-num num-green">Autor 02</p>
+    <p class="author-name-big">Bulcourf & Cardozo</p>
+    <p class="author-work-title">"Comprendiendo el Estado en América Latina" — Una aproximación a su historia y análisis</p>
+  </div>
+
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-block-label">Preguntas disparadoras</p>
+      <ul>
+        <li>¿El Estado latinoamericano es una versión del Estado europeo o es otra cosa? ¿Trasplantar un modelo produce el mismo resultado en otro suelo?</li>
+        <li>¿Puede construirse un "orden" sin preguntarse a quién beneficia ese orden?</li>
+        <li>Si la independencia no rompió el esquema colonial de dominación, ¿de qué independencia estamos hablando?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label label-green">Concepto clave</p>
+      <p class="concept-title">Estatidad: el Estado como proceso, no como dato</p>
+      <p class="concept-body">
+        A diferencia de Malamud, que describe el Estado como un fenómeno ya constituido, Bulcourf y Cardozo proponen el concepto de <em>estatidad</em>: el grado en que un sistema de dominación social ha adquirido las propiedades que definen la existencia de un Estado.<br><br>
+        El Estado no "es" de golpe: <strong>se convierte</strong> en Estado mediante un proceso histórico. Los atributos de la estatidad son cuatro capacidades: <strong>(1) externalizar el poder</strong> (proyectarlo más allá de las fronteras), <strong>(2) institucionalizar la autoridad</strong>, <strong>(3) diferenciar el control</strong>, <strong>(4) internalizar una identidad colectiva</strong>.<br><br>
+        Esta perspectiva dinámica es más útil para entender América Latina, donde los estados no nacieron de la misma forma que en Europa.
+      </p>
+      <div class="tags">
+        <span class="tag tag-g">estatidad</span>
+        <span class="tag tag-g">proceso histórico</span>
+        <span class="tag tag-g">capacidades estatales</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label label-green">Nación y Estado</p>
+      <p class="concept-title">Elementos materiales e ideales de la nación</p>
+      <p class="concept-body">
+        La idea de nación combina dos dimensiones:<br><br>
+        <strong>Material:</strong> intereses resultantes de la diferenciación e integración económica dentro de un territorio. En criollo: las clases sociales con intereses en juego.<br><br>
+        <strong>Ideal:</strong> símbolos, valores, sentimientos de pertenencia, tradiciones étnicas, lenguaje, identidad colectiva.<br><br>
+        La formación del Estado nacional es el resultado de un proceso <em>convergente</em>: por un lado, la constitución de una nación (con relaciones sociales capitalistas y una identidad); por otro, la construcción de un sistema de dominación. La nación no es una comunidad de hermanos: es el territorio donde el capitalismo organizó sus relaciones sociales y luego necesitó una bandera.
+      </p>
+      <div class="tags">
+        <span class="tag tag-g">nación</span>
+        <span class="tag tag-g">identidad colectiva</span>
+        <span class="tag tag-g">capitalismo</span>
+        <span class="tag tag-r">dominación</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label label-green">Modelos económico-políticos (Schmitter)</p>
+      <p class="concept-title">Tres modelos de relación entre economía y Estado en América Latina</p>
+      <div class="two-col">
+        <div>
+          <p class="concept-body"><strong style="color:#7dd0a8">Mercantilismo:</strong> herencia colonial. Prácticas e ideales contrarios a la modernización económica. El Estado colonial administra recursos para la metrópoli, no para la población local.</p>
+        </div>
+        <div>
+          <p class="concept-body"><strong style="color:#7dd0a8">Liberalismo:</strong> apertura al mercado mundial. Los estados latinoamericanos se reconfiguran para financiar, regular y facilitar la nueva organización capitalista de la producción.</p>
+        </div>
+      </div>
+      <p class="concept-body" style="margin-top:.8rem"><strong style="color:#7dd0a8">Intervencionismo:</strong> el Estado asume un rol activo más allá de los estímulos externos. Las interacciones Estado-sociedad generan dinámicas propias. Aparece cuando el mercado falla o cuando las demandas sociales crecen.</p>
+      <div class="tags">
+        <span class="tag tag-g">mercantilismo</span>
+        <span class="tag tag-g">liberalismo</span>
+        <span class="tag tag-g">intervencionismo</span>
+        <span class="tag tag-g">Schmitter</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label label-red">Tensión histórica</p>
+      <p class="concept-title">Emancipación sin ruptura: la independencia que no lo fue tanto</p>
+      <p class="concept-body">
+        La independencia latinoamericana fue un punto de arranque común, pero <strong>no implicó la suplantación automática del Estado colonial por un Estado nacional</strong>. El período independentista se caracterizó por tendencias secesionistas que desmembraron los virreinatos — y por dos factores estructurales que condicionaron todo: la <em>inexistencia de independencia real entre señores de la tierra</em> y la acción de la <em>burguesía urbana</em>.<br><br>
+        Es decir: los mismos sectores que dominaban antes de 1810 siguieron dominando después. Cambiaron los colores de la bandera; no cambiaron las relaciones de producción.
+        <br><br>
+        El "orden" que el Estado debía garantizar era la <strong>condición para el progreso</strong> — donde "progreso" significaba oportunidades de exportación agropecuaria. Orden para el mercado; no orden para las personas.
+      </p>
+      <div class="tags">
+        <span class="tag tag-g">independencia</span>
+        <span class="tag tag-r">continuidad colonial</span>
+        <span class="tag tag-r">orden y progreso</span>
+        <span class="tag tag-g">burguesía urbana</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     AUTOR 3: LOPREITE & RODRÍGUEZ GUSTÁ
+══════════════════════════════════════ -->
+<div class="author-section section-anchor" id="lopreite">
+
+  <div class="author-banner banner-violet">
+    <p class="author-num num-violet">Autor 03</p>
+    <p class="author-name-big">Lopreite & Rodríguez Gustá</p>
+    <p class="author-work-title">"Feminismo de Estado en la Argentina Democrática (1983–2021)"</p>
+  </div>
+
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-block-label">Preguntas disparadoras</p>
+      <ul>
+        <li>Si el Estado fue construido por y para varones propietarios, ¿puede ese mismo Estado producir igualdad de género — o solo administrar la desigualdad?</li>
+        <li>¿Qué diferencia hay entre una política de género que transforma y una que simplemente da visibilidad?</li>
+        <li>¿Puede el feminismo sobrevivir dentro del Estado sin ser domesticado por él?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label label-violet">Problema central</p>
+      <p class="concept-title">Las desigualdades de género como problema público</p>
+      <p class="concept-body">
+        En América Latina, las desigualdades y discriminaciones por razones de sexo y género ganaron lugar en la agenda política con los procesos de democratización post-dictaduras. No fue por generosidad estatal: fue por <strong>presión de los movimientos de mujeres y feministas</strong>.<br><br>
+        La respuesta institucional fue la creación de <em>agencias de políticas para las mujeres</em>: estructuras estatales con mandato normativo de promover la mejora de la posición social de la mujer y/o la igualdad de género. El problema, como veremos, es que tener el mandato no significa tener el poder ni los recursos para cumplirlo.
+      </p>
+      <div class="tags">
+        <span class="tag tag-v">género</span>
+        <span class="tag tag-v">movimiento feminista</span>
+        <span class="tag tag-v">democratización</span>
+        <span class="tag tag-v">agenda pública</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label label-violet">Marco internacional</p>
+      <p class="concept-title">Nairobi, Beijing y el mainstreaming de género</p>
+      <p class="concept-body">
+        Dos conferencias mundiales marcaron el camino:<br><br>
+        <strong>Nairobi (1985):</strong> se instó a consolidar agencias especializadas e introducir planes y medidas legislativas para la participación de la mujer.<br><br>
+        <strong>Beijing (1995):</strong> se constató que esas agencias carecían de recursos y apoyo político. La estrategia adoptada fue el <em>mainstreaming de género</em>: incorporar la perspectiva de género en <strong>la totalidad</strong> de las acciones estatales, no solo en una agencia específica. En teoría, todo el Estado debería pensar con perspectiva de género. En la práctica, la historia argentina demuestra que eso depende de quién gobierna.
+      </p>
+      <div class="tags">
+        <span class="tag tag-v">Nairobi 1985</span>
+        <span class="tag tag-v">Beijing 1995</span>
+        <span class="tag tag-v">mainstreaming de género</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label label-violet">Tipología central</p>
+      <p class="concept-title">Cuatro tipos de agencias de políticas para las mujeres (McBride & Mazur)</p>
+      <p class="concept-body" style="margin-bottom:.9rem">La tipología clasifica las agencias según dos variables: su <em>nexo con el movimiento feminista</em> y su <em>acceso a las decisiones de política</em>.</p>
+      <div class="agencies-grid">
+        <div class="agency-card agency-insider">
+          <p class="agency-title" style="color:#5ac98e">Agencias Insiders (aliadas)</p>
+          <p class="agency-body">Facilitan debates enmarcados en las demandas del movimiento feminista. Introducen justicia e igualdad de género en normas y regulaciones. Son la expresión del <em>Feminismo de Estado</em> real. Son las que funcionan.</p>
+        </div>
+        <div class="agency-card agency-marginal">
+          <p class="agency-title" style="color:#5a8ec9">Agencias Marginales</p>
+          <p class="agency-body">Carecen de capacidades para promover derechos. Tienen dificultades para redistribuir el poder social. Existen en el organigrama pero no en la realidad.</p>
+        </div>
+        <div class="agency-card agency-symbolic">
+          <p class="agency-title" style="color:#c9a84c">Agencias Simbólicas</p>
+          <p class="agency-body">Excluidas de los debates políticos relevantes. Sin vínculos con los movimientos feministas. Son la foto sin el marco: visibles, vacías.</p>
+        </div>
+        <div class="agency-card agency-anti">
+          <p class="agency-title" style="color:#c95a5a">Agencias Antifeministas</p>
+          <p class="agency-body">Sus políticas sustentan ideas contrarias a los derechos de las mujeres. Relaciones antagónicas con el movimiento. No solo no ayudan: activamente dañan.</p>
+        </div>
+      </div>
+      <div class="tags" style="margin-top:.9rem">
+        <span class="tag tag-g">insider</span>
+        <span class="tag tag-b">marginal</span>
+        <span class="tag tag-gold">simbólica</span>
+        <span class="tag tag-r">antifeminista</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label label-violet">Hallazgo central</p>
+      <p class="concept-title">Las "femócratas" y la fragilidad institucional</p>
+      <p class="concept-body">
+        Las <strong>femócratas</strong> son feministas en cargos institucionales. Son quienes establecen los nexos entre agencias estatales y movimientos sociales, y protegen las conquistas de los embates conservadores.<br><br>
+        Conclusión incómoda: el feminismo de Estado no se desarrolla sin mujeres en los partidos políticos y en las élites estatales. Esto significa que la transformación institucional <strong>depende de quién gobierna</strong>. Cuando cambia el gobierno (y el cuadro de la Argentina 1987–2021 lo demuestra claramente), las agencias pueden pasar de insiders a simbólicas o antifeministas casi de un mandato al otro.<br><br>
+        Hay un riesgo adicional: las agencias de mujeres como <em>moneda de cambio</em> político. Un gobernante las crea para ganar votos, no para transformar estructuras. El feminismo entra al Estado por la puerta de servicio.
+      </p>
+      <div class="tags">
+        <span class="tag tag-v">femócratas</span>
+        <span class="tag tag-v">fragilidad institucional</span>
+        <span class="tag tag-r">conservadurismo</span>
+        <span class="tag tag-r">moneda de cambio</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CONFRONTACIÓN ENTRE AUTORES
+══════════════════════════════════════ -->
+<div class="confrontation section-anchor" id="confrontacion">
+  <div class="conf-header">
+    <h2>¿Hablan del mismo Estado?</h2>
+    <p>Confrontación entre los tres autores · Los ejes donde sus miradas divergen</p>
+  </div>
+  <div class="conf-body">
+    <div class="conf-row">
+      <div class="conf-cell header-cell">Eje de análisis</div>
+      <div class="conf-cell header-cell" style="color:#88b0d8">Malamud</div>
+      <div class="conf-cell header-cell" style="color:#7dd0a8">Bulcourf & Cardozo</div>
+      <div class="conf-cell header-cell" style="color:#c0a0e0">Lopreite & Rodríguez Gustá</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis">¿Qué ES el Estado?</div>
+      <div class="conf-cell c-blue">Institución que monopoliza la violencia legítima en un territorio</div>
+      <div class="conf-cell c-green">Un proceso histórico de adquisición de atributos (estatidad)</div>
+      <div class="conf-cell c-violet">Un espacio de disputa donde el género estructura quién decide y quién queda afuera</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis">¿Para quién existe?</div>
+      <div class="conf-cell c-blue">Para la comunidad política en su conjunto (según la teoría liberal-pluralista)</div>
+      <div class="conf-cell c-green">Para las clases que lo construyeron: terratenientes y burguesía urbana</div>
+      <div class="conf-cell c-violet">Históricamente para varones propietarios; la disputa feminista intenta ampliarlo</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis">¿Cómo se forma?</div>
+      <div class="conf-cell c-blue">Por guerra, conquista y negociación interestatal (Westfalia)</div>
+      <div class="conf-cell c-green">Por convergencia de nación y dominación, condicionada por economía colonial</div>
+      <div class="conf-cell c-violet">No lo dicen explícitamente — su foco es cómo el Estado puede transformarse desde adentro</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis">¿Puede el Estado cambiar la sociedad?</div>
+      <div class="conf-cell c-blue">Sí: mediante políticas públicas y tipos de Estado (bienestar, desarrollista)</div>
+      <div class="conf-cell c-green">Con límites: depende de la relación Estado-sociedad y el modelo económico dominante</div>
+      <div class="conf-cell c-violet">Solo si hay femócratas en posiciones de poder Y nexo real con movimientos feministas</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis">¿Qué queda afuera del análisis?</div>
+      <div class="conf-cell c-blue">Las relaciones de producción que estructuran el Estado; el colonialismo mencionado de pasada</div>
+      <div class="conf-cell c-green">La dimensión de género: la "nación" que construyen parece tener solo clase, no sexo</div>
+      <div class="conf-cell c-violet">La clase social: el feminismo que proponen es principalmente institucional, no interseccional con pobreza</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis">Pregunta que no se hacen</div>
+      <div class="conf-cell c-blue">¿Por qué el capitalismo necesita al Estado?</div>
+      <div class="conf-cell c-green">¿Por qué la independencia no transformó las relaciones de explotación?</div>
+      <div class="conf-cell c-violet">¿Puede un Estado capitalista y patriarcal producir feminismo real o solo su simulacro?</div>
+    </div>
+  </div>
+</div>
+
+<!-- NOTA FINAL -->
+<div class="final-note">
+  <div style="background:var(--gold);height:3px;border-radius:3px 3px 0 0;"></div>
+  <div class="fn-inner">
+    <p class="fn-label">Síntesis crítica · Perspectiva marxista</p>
+    <p class="fn-text">
+      Los tres textos describen el Estado desde adentro del Estado. <strong>Malamud</strong> lo anatomiza con precisión weberiana pero sin preguntar a qué intereses sirve su violencia "legítima". <strong>Bulcourf y Cardozo</strong> son los más honestos históricamente: muestran que en América Latina el Estado fue un instrumento de las clases dominantes antes y después de la independencia, aunque evitan la conclusión directa. <strong>Lopreite y Rodríguez Gustá</strong> abren la dimensión más provocadora: demuestran empíricamente que el Estado no es neutral respecto al género, que puede actuar a favor o en contra de la igualdad según quién lo ocupe — lo cual implica, aunque no lo digan así, que el Estado es un campo de disputa y no una institución natural o técnica.
+      <br><br>
+      La pregunta que los tres evitan es la misma: <strong>¿puede el Estado capitalista producir igualdad — de clase, de género, de cualquier tipo — o solo administrar la desigualdad lo suficientemente bien como para que el sistema no explote?</strong> Esa pregunta no está en el programa. Pero debería estar en la cabeza de quien lo estudia.
+    </p>
+  </div>
+</div>
+
+<footer>
+  Unidad 2 · IPC · CBC · UBA &nbsp;|&nbsp; Cátedra <span>Lopreite</span> &nbsp;|&nbsp; Prof. Claudio Damián Sacco
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Unidad 4 — El Gobierno | IPC · CBC · UBA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #09090c;
+  --surface:   #111116;
+  --card:      #14141c;
+  --border:    #202028;
+  --gold:      #c9a84c;
+  --gold-dim:  #52400a;
+  --orange:    #c97a3a;
+  --blue:      #4a8ac4;
+  --green:     #3aaa6a;
+  --red:       #c44a4a;
+  --violet:    #8a5ac4;
+  --text:      #dcd8ca;
+  --muted:     #606068;
+  --white:     #f0ecd8;
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(9,9,12,.95); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: .4rem;
+  padding: .65rem 1.2rem; overflow-x: auto; white-space: nowrap;
+}
+nav a {
+  color: var(--muted); text-decoration: none; font-size: .65rem;
+  letter-spacing: .1em; text-transform: uppercase; font-weight: 600;
+  padding: .3rem .65rem; border-radius: 3px; transition: all .2s; flex-shrink: 0;
+}
+nav a:hover { color: var(--gold); background: rgba(201,168,76,.08); }
+nav .sep { color: var(--border); }
+
+/* HERO */
+.hero {
+  text-align: center; padding: 4rem 1.5rem 3.5rem;
+  border-bottom: 1px solid var(--border); position: relative; overflow: hidden;
+}
+.hero::before {
+  content: 'PODER';
+  position: absolute; font-family: 'Playfair Display', serif;
+  font-size: clamp(5rem, 22vw, 16rem); font-weight: 900;
+  color: rgba(201,168,76,.032); top: 50%; left: 50%;
+  transform: translate(-50%,-50%); pointer-events: none; letter-spacing: .15em;
+}
+.eyebrow { font-size:.62rem; letter-spacing:.3em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:.7rem; }
+h1 { font-family:'Playfair Display',serif; font-size:clamp(2.2rem,6vw,4rem); font-weight:900; color:var(--white); line-height:1.1; margin-bottom:.8rem; }
+.hero-sub { font-size:.85rem; color:var(--muted); max-width:560px; margin:0 auto 2rem; }
+.pills { display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center; }
+.pill { font-size:.62rem; letter-spacing:.08em; font-weight:600; padding:.3rem .85rem; border-radius:20px; text-transform:uppercase; }
+.p-blue   { background:rgba(74,138,196,.15); color:#88bae0; border:1px solid rgba(74,138,196,.35); }
+.p-orange { background:rgba(201,122,58,.15);  color:#e0a878; border:1px solid rgba(201,122,58,.35); }
+
+/* PREGUNTA GLOBAL */
+.global-q { max-width:820px; margin:2.5rem auto; padding:0 1.2rem; }
+.gq-box {
+  background:linear-gradient(135deg,#140e08 0%,#0e0e18 100%);
+  border:1px solid var(--gold-dim); border-left:4px solid var(--gold);
+  border-radius:4px; padding:1.5rem 1.8rem;
+}
+.gq-label { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:.6rem; }
+.gq-text { font-family:'Playfair Display',serif; font-size:1.1rem; font-style:italic; color:var(--white); line-height:1.55; }
+
+/* SECCIÓN AUTOR */
+.author-section { max-width:920px; margin:0 auto 3.5rem; padding:0 1.2rem; scroll-margin-top:60px; }
+.author-banner { border-radius:6px 6px 0 0; padding:1.4rem 1.8rem 1.1rem; border-bottom:1px solid var(--border); }
+.b-blue   { background:linear-gradient(135deg,#0b1420 0%,#0e1a2a 100%); border:1px solid rgba(74,138,196,.3); border-bottom:none; }
+.b-orange { background:linear-gradient(135deg,#1a0e08 0%,#201408 100%); border:1px solid rgba(201,122,58,.3);  border-bottom:none; }
+
+.author-num { font-size:.6rem; letter-spacing:.2em; font-weight:700; text-transform:uppercase; margin-bottom:.3rem; }
+.n-blue   { color:var(--blue); }
+.n-orange { color:var(--orange); }
+.author-name { font-family:'Playfair Display',serif; font-size:1.45rem; font-weight:700; color:var(--white); }
+.author-work { font-size:.73rem; color:var(--muted); font-style:italic; margin-top:.2rem; }
+
+.content-body {
+  background:var(--card); border:1px solid var(--border); border-top:none;
+  border-radius:0 0 6px 6px; padding:1.6rem;
+  display:flex; flex-direction:column; gap:1.3rem;
+}
+
+/* Preguntas disparadoras */
+.q-block { background:rgba(201,168,76,.04); border-left:3px solid var(--gold-dim); border-radius:0 4px 4px 0; padding:.9rem 1.2rem; }
+.q-label { font-size:.57rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:.5rem; }
+.q-block ul { list-style:none; padding:0; }
+.q-block li { font-size:.8rem; font-style:italic; color:#b8a870; padding:.2rem 0 .35rem .8rem; border-left:1px solid var(--gold-dim); margin-bottom:.35rem; }
+
+/* Concepto */
+.concept { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:1rem 1.2rem; }
+.concept-label { font-size:.57rem; letter-spacing:.18em; text-transform:uppercase; font-weight:700; margin-bottom:.4rem; }
+.l-blue   { color:var(--blue); }
+.l-orange { color:var(--orange); }
+.l-gold   { color:var(--gold); }
+.l-green  { color:var(--green); }
+.l-red    { color:var(--red); }
+.l-violet { color:var(--violet); }
+
+.concept-title { font-size:.95rem; font-weight:600; color:var(--white); margin-bottom:.5rem; }
+.concept-body { font-size:.79rem; color:#9a9070; line-height:1.65; }
+.concept-body strong { color:#d0c8a0; }
+.concept-body em { color:#b09850; font-style:normal; font-weight:500; }
+
+/* Tags */
+.tags { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.7rem; }
+.tag { font-size:.6rem; padding:.18rem .52rem; border-radius:2px; font-weight:600; letter-spacing:.04em; }
+.t-b  { background:rgba(74,138,196,.12); color:#88bae0; border:1px solid rgba(74,138,196,.25); }
+.t-o  { background:rgba(201,122,58,.12);  color:#e0a878; border:1px solid rgba(201,122,58,.25); }
+.t-g  { background:rgba(201,168,76,.1);   color:#c9a84c; border:1px solid rgba(201,168,76,.25); }
+.t-gr { background:rgba(58,170,106,.12);  color:#6dd098; border:1px solid rgba(58,170,106,.25); }
+.t-r  { background:rgba(196,74,74,.12);   color:#e09090; border:1px solid rgba(196,74,74,.25); }
+.t-v  { background:rgba(138,90,196,.12);  color:#c0a0e8; border:1px solid rgba(138,90,196,.25); }
+
+/* Tres perspectivas lado a lado */
+.three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.8rem; }
+@media(max-width:640px){ .three-col { grid-template-columns:1fr; } }
+
+/* Tabla comparativa sistemas de gobierno */
+.sys-compare {
+  display:grid; grid-template-columns:1.2fr 1fr 1fr 1fr;
+  background:var(--surface); border:1px solid var(--border); border-radius:4px; overflow:hidden;
+}
+@media(max-width:660px){ .sys-compare { grid-template-columns:1fr 1fr; } }
+.sc-cell { padding:.75rem .9rem; border-right:1px solid var(--border); border-bottom:1px solid var(--border); font-size:.75rem; line-height:1.5; }
+.sc-cell:last-child { border-right:none; }
+.sc-cell.hdr { font-size:.58rem; letter-spacing:.15em; text-transform:uppercase; font-weight:700; color:var(--muted); background:#0e0e18; }
+.sc-cell.axis { color:var(--gold); font-weight:600; font-size:.77rem; }
+.sc-cell.last-row { border-bottom:none; }
+.cc-b { color:#88bae0; }
+.cc-g { color:#c9a84c; }
+.cc-o { color:#e0a878; }
+
+/* Tarjetas sistemas */
+.sys-cards { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:.8rem; }
+.sys-card { background:#0e0e18; border:1px solid var(--border); border-radius:4px; padding:1rem; }
+.sys-card-flag { font-size:.6rem; letter-spacing:.15em; text-transform:uppercase; font-weight:700; margin-bottom:.4rem; }
+.sys-card-title { font-size:.88rem; font-weight:700; color:var(--white); margin-bottom:.4rem; }
+.sys-card-body { font-size:.74rem; color:var(--muted); line-height:1.55; }
+.sys-card-note { font-size:.68rem; color:var(--orange); margin-top:.5rem; font-weight:500; }
+
+/* Recursos del gobierno argentino */
+.recursos-grid { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; }
+@media(max-width:560px){ .recursos-grid { grid-template-columns:1fr; } }
+.recurso-card { background:#0e0e18; border:1px solid var(--border); border-radius:4px; padding:.9rem 1rem; }
+.rec-label { font-size:.6rem; letter-spacing:.15em; text-transform:uppercase; font-weight:700; margin-bottom:.4rem; }
+.rec-title { font-size:.82rem; font-weight:700; color:var(--white); margin-bottom:.35rem; }
+.rec-body { font-size:.74rem; color:var(--muted); line-height:1.55; }
+.rec-body strong { color:#d0c8a0; }
+
+/* Flujo DNU */
+.flow { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; margin-top:.6rem; }
+.flow-step {
+  background:#0e0e18; border:1px solid var(--border); border-radius:3px;
+  padding:.45rem .75rem; font-size:.72rem; color:var(--text); flex-shrink:0;
+}
+.flow-arrow { color:var(--gold-dim); font-size:1rem; }
+
+/* CONFRONTACIÓN */
+.confrontation { max-width:920px; margin:0 auto 3.5rem; padding:0 1.2rem; scroll-margin-top:60px; }
+.conf-header { background:#12101a; border:1px solid var(--gold-dim); border-bottom:none; border-radius:6px 6px 0 0; padding:1.2rem 1.8rem; }
+.conf-header h2 { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--gold); }
+.conf-header p { font-size:.73rem; color:var(--muted); margin-top:.3rem; font-style:italic; }
+.conf-body { background:var(--card); border:1px solid var(--border); border-radius:0 0 6px 6px; }
+.conf-row { display:grid; grid-template-columns:1.2fr 1fr 1fr 1fr; border-bottom:1px solid var(--border); }
+.conf-row:last-child { border-bottom:none; }
+@media(max-width:640px){ .conf-row { grid-template-columns:1fr 1fr; } }
+.conf-cell { padding:.85rem 1rem; border-right:1px solid var(--border); font-size:.76rem; line-height:1.5; }
+.conf-cell:last-child { border-right:none; }
+.conf-cell.hdr-c { font-size:.58rem; letter-spacing:.15em; text-transform:uppercase; font-weight:700; color:var(--muted); background:#0d0d16; }
+.conf-cell.axis-c { color:var(--gold); font-weight:600; font-size:.78rem; }
+
+/* NOTA FINAL */
+.final-note { max-width:760px; margin:0 auto 4rem; padding:0 1.2rem; }
+.fn-bar { height:3px; border-radius:3px 3px 0 0; background:var(--gold); }
+.fn-inner { background:var(--surface); border:1px solid var(--border); border-top:none; border-radius:0 0 6px 6px; padding:1.5rem 1.8rem; }
+.fn-label { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:.6rem; }
+.fn-text { font-size:.81rem; color:#a09870; line-height:1.7; }
+.fn-text strong { color:var(--white); }
+
+/* dos columnas genérico */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; }
+@media(max-width:560px){ .two-col { grid-template-columns:1fr; } }
+
+footer { text-align:center; font-size:.66rem; color:var(--muted); padding:1.5rem 1rem 2.5rem; border-top:1px solid var(--border); letter-spacing:.04em; }
+footer span { color:var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#zelaznik1">Zelaznik — Gobierno</a>
+  <span class="sep">·</span>
+  <a href="#zelaznik2">Zelaznik & Bonvecchi — Argentina</a>
+  <span class="sep">·</span>
+  <a href="#confrontacion">Confrontación</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="eyebrow">IPC · CBC · UBA · Cátedra Lopreite</p>
+  <h1>Unidad 4<br>El Gobierno</h1>
+  <p class="hero-sub">¿Quién manda realmente? ¿Cómo se organiza el poder ejecutivo — y qué herramientas usa para no perderlo?</p>
+  <div class="pills">
+    <span class="pill p-blue">Javier Zelaznik</span>
+    <span class="pill p-orange">Zelaznik & Bonvecchi</span>
+  </div>
+</div>
+
+<!-- PREGUNTA GLOBAL -->
+<div class="global-q">
+  <div class="gq-box">
+    <p class="gq-label">La pregunta que recorre toda la unidad</p>
+    <p class="gq-text">Si el gobierno es el "núcleo irreducible de lo político", ¿quién controla al controlador — y por qué en Argentina esa pregunta tiene respuestas tan incómodas?</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     AUTOR 1: ZELAZNIK — GOBIERNO
+══════════════════════════════════════ -->
+<div class="author-section" id="zelaznik1">
+  <div class="author-banner b-blue">
+    <p class="author-num n-blue">Autor 01</p>
+    <p class="author-name">Javier Zelaznik</p>
+    <p class="author-work">"Gobierno" — Definición, funciones y sistemas de gobierno comparados</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>¿El gobierno es un conjunto de personas, un conjunto de funciones o un conjunto de instituciones? ¿Importa cómo lo definamos — o es siempre lo mismo con distinto nombre?</li>
+        <li>¿El presidencialismo latinoamericano es una adaptación del modelo norteamericano o una mutación propia que lo hace irreconocible en su original?</li>
+        <li>¿Puede el poder ejecutivo ser "neutral" si es él quien decide quién recibe los recursos del Estado y quién no?</li>
+      </ul>
+    </div>
+
+    <!-- Tres perspectivas -->
+    <div class="concept">
+      <p class="concept-label l-blue">Las tres definiciones de gobierno</p>
+      <p class="concept-title">Actores, funciones e instituciones: tres formas de ver lo mismo</p>
+      <p class="concept-body" style="margin-bottom:.9rem">Zelaznik advierte desde el inicio: la Ciencia Política carece de acuerdo sobre qué significa "gobierno". Propone tres perspectivas que no se excluyen sino que se complementan — aunque cada una enfatiza cosas distintas y oculta otras:</p>
+      <div class="three-col">
+        <div class="sys-card">
+          <p class="sys-card-flag" style="color:var(--blue)">Perspectiva I</p>
+          <p class="sys-card-title">Gobierno como actores</p>
+          <p class="sys-card-body">Red de funcionarios públicos ligados al Ejecutivo que diseñan y ejecutan políticas. Incluye <strong style="color:#d0c8a0">gobernantes</strong> (con poder político) y <strong style="color:#d0c8a0">burócratas</strong> (técnicos de carrera). El poder es del <em>cargo</em>, no de la persona.</p>
+          <p class="sys-card-note">→ Pregunta que omite: ¿quién designa a quién y con qué criterios?</p>
+        </div>
+        <div class="sys-card">
+          <p class="sys-card-flag" style="color:var(--blue)">Perspectiva II</p>
+          <p class="sys-card-title">Gobierno como funciones</p>
+          <p class="sys-card-body">La función central es la <strong style="color:#d0c8a0">dirección política</strong>: tomar decisiones vinculantes e implementarlas. Garantiza la paz interior y la defensa exterior. El gobierno moderno monopoliza ambas funciones.</p>
+          <p class="sys-card-note">→ Pregunta que omite: ¿vinculante para todos por igual o más para unos que para otros?</p>
+        </div>
+        <div class="sys-card">
+          <p class="sys-card-flag" style="color:var(--blue)">Perspectiva III</p>
+          <p class="sys-card-title">Gobierno como instituciones</p>
+          <p class="sys-card-body">Morlino analiza los sistemas políticos desde un enfoque sistémico. Sentido <strong style="color:#d0c8a0">amplio</strong>: Ejecutivo + Legislativo. Sentido <strong style="color:#d0c8a0">estricto</strong>: solo el Ejecutivo como órgano central de decisión.</p>
+          <p class="sys-card-note">→ Pregunta que omite: ¿y el Judicial — árbitro neutral o tercer actor político?</p>
+        </div>
+      </div>
+      <div class="tags" style="margin-top:.9rem">
+        <span class="tag t-b">actores</span><span class="tag t-b">funciones</span>
+        <span class="tag t-b">instituciones</span><span class="tag t-b">burocracia</span>
+        <span class="tag t-b">dirección política</span>
+      </div>
+    </div>
+
+    <!-- Los tres sistemas -->
+    <div class="concept">
+      <p class="concept-label l-blue">Los tres sistemas de gobierno</p>
+      <p class="concept-title">Parlamentarismo, presidencialismo y semipresidencialismo: mismo problema, tres soluciones</p>
+      <p class="concept-body" style="margin-bottom:.9rem">El eje de la diferencia es siempre el mismo: <strong>¿cómo se relacionan el Ejecutivo y el Legislativo?</strong> ¿Quién depende de quién? ¿Quién puede sacar a quién?</p>
+      <div class="sys-cards">
+
+        <div class="sys-card">
+          <p class="sys-card-flag" style="color:var(--blue)">Sistema 1 · Origen: Inglaterra s. XVII–XVIII</p>
+          <p class="sys-card-title">Parlamentarismo</p>
+          <p class="sys-card-body">
+            <strong style="color:#d0c8a0">Ejecutivo dualista:</strong> Jefe de Estado (simbólico: rey o presidente ceremonial) + Jefe de Gobierno (Primer Ministro, con poder real).<br><br>
+            El PM surge del Parlamento y <em>depende de su confianza</em>: puede ser derrocado por voto de censura. A su vez, puede disolver el Parlamento y convocar nuevas elecciones. Hay equilibrio de amenazas mutuas.<br><br>
+            <strong style="color:#d0c8a0">Fusión de poderes:</strong> el Ejecutivo nace del Legislativo, no existe separación rígida. La coalición de gobierno es la regla, no la excepción.
+          </p>
+          <p class="sys-card-note">→ Ventaja: flexibilidad. Si el gobierno fracasa, se va. No hace falta esperar cuatro años.</p>
+        </div>
+
+        <div class="sys-card">
+          <p class="sys-card-flag" style="color:var(--orange)">Sistema 2 · Origen: EE.UU. 1787</p>
+          <p class="sys-card-title">Presidencialismo</p>
+          <p class="sys-card-body">
+            <strong style="color:#d0c8a0">Ejecutivo unipersonal (monista):</strong> el Presidente es simultáneamente Jefe de Estado y de Gobierno. Controla el gabinete, que depende únicamente de él.<br><br>
+            <strong style="color:#d0c8a0">Separación rígida de poderes:</strong> el Presidente no puede disolver el Congreso; el Congreso no puede remover al Presidente salvo Juicio Político (impeachment) por delitos graves. Mandatos fijos = estabilidad, pero también rigidez.<br><br>
+            <strong style="color:#d0c8a0">Doble legitimidad directa:</strong> Presidente y Congreso son elegidos por el pueblo por separado — lo que puede producir gobiernos divididos (el Presidente de un partido, la mayoría legislativa de otro).
+          </p>
+          <p class="sys-card-note">→ Riesgo: si hay conflicto entre Ejecutivo y Legislativo, no hay mecanismo institucional de salida elegante. Las crisis pueden volverse constitucionales.</p>
+        </div>
+
+        <div class="sys-card">
+          <p class="sys-card-flag" style="color:var(--green)" style="color:var(--green)">Sistema 3 · Modelo: Francia V República</p>
+          <p class="sys-card-title">Semipresidencialismo</p>
+          <p class="sys-card-body">
+            <strong style="color:#d0c8a0">Híbrido:</strong> combina elección directa del Presidente (legitimidad democrática propia) con un Primer Ministro responsable ante el Parlamento.<br><br>
+            El Presidente tiene poder <em>regulador real</em>, no meramente ceremonial. Tanto Presidente como Parlamento son elegidos directamente: <strong style="color:#d0c8a0">doble legitimidad</strong>. El poder ejecutivo se ejerce en tensión entre ambos.<br><br>
+            Caso especial: la <strong style="color:#d0c8a0">cohabitación</strong> — cuando el Presidente y el PM son de partidos distintos (ocurrió en Francia en los '80s y '90s). El sistema sobrevivió; no sin tensión.
+          </p>
+          <p class="sys-card-note">→ Ventaja: más flexible que el presidencialismo puro. Riesgo: ambigüedad sobre quién manda realmente.</p>
+        </div>
+
+      </div>
+      <div class="tags" style="margin-top:.9rem">
+        <span class="tag t-b">parlamentarismo</span>
+        <span class="tag t-o">presidencialismo</span>
+        <span class="tag t-gr">semipresidencialismo</span>
+        <span class="tag t-g">separación de poderes</span>
+        <span class="tag t-r">gobierno dividido</span>
+      </div>
+    </div>
+
+    <!-- Tabla comparativa -->
+    <div class="concept">
+      <p class="concept-label l-blue">Comparación directa</p>
+      <p class="concept-title">Los tres sistemas frente a frente</p>
+      <div class="sys-compare" style="margin-top:.6rem">
+        <div class="sc-cell hdr">Dimensión</div>
+        <div class="sc-cell hdr" style="color:#88bae0">Parlamentarismo</div>
+        <div class="sc-cell hdr" style="color:#e0a878">Presidencialismo</div>
+        <div class="sc-cell hdr" style="color:#6dd098">Semipresidencialismo</div>
+
+        <div class="sc-cell axis">Jefe de Gobierno</div>
+        <div class="sc-cell cc-b">Primer Ministro (surge del Parlamento)</div>
+        <div class="sc-cell cc-o">Presidente (elegido por el pueblo)</div>
+        <div class="sc-cell" style="color:#6dd098">Presidente + Primer Ministro</div>
+
+        <div class="sc-cell axis">Jefe de Estado</div>
+        <div class="sc-cell cc-b">Rey / Presidente ceremonial</div>
+        <div class="sc-cell cc-o">El mismo Presidente</div>
+        <div class="sc-cell" style="color:#6dd098">Presidente con poder real</div>
+
+        <div class="sc-cell axis">¿Quién remueve al gobierno?</div>
+        <div class="sc-cell cc-b">El Parlamento (voto de censura)</div>
+        <div class="sc-cell cc-o">Solo Juicio Político por delito</div>
+        <div class="sc-cell" style="color:#6dd098">El Parlamento (al PM); no al Presidente</div>
+
+        <div class="sc-cell axis">¿Mandato fijo?</div>
+        <div class="sc-cell cc-b">No: el PM dura lo que el Parlamento lo apoye</div>
+        <div class="sc-cell cc-o">Sí: período fijo inamovible</div>
+        <div class="sc-cell" style="color:#6dd098">Mixto: PM flexible, Presidente fijo</div>
+
+        <div class="sc-cell axis last-row">Riesgo principal</div>
+        <div class="sc-cell cc-b last-row">Inestabilidad (muchos cambios de gobierno)</div>
+        <div class="sc-cell cc-o last-row">Rigidez (crisis sin salida institucional)</div>
+        <div class="sc-cell last-row" style="color:#6dd098">Ambigüedad (dos ejecutivos en tensión)</div>
+      </div>
+    </div>
+
+    <!-- Voto de censura constructivo y herramientas legislativas -->
+    <div class="concept">
+      <p class="concept-label l-blue">Mecanismos institucionales específicos</p>
+      <p class="concept-title">Las herramientas que distinguen a cada sistema</p>
+      <div class="two-col">
+        <div>
+          <p class="concept-body">
+            <strong>Parlamentarismo — Voto de censura constructivo:</strong> mecanismo alemán para evitar la inestabilidad. Un Premier sometido a censura no cae a menos que el Parlamento elija simultáneamente a su sucesor. Se remueve al gobierno solo si hay otro gobierno disponible. Impide el vacío de poder.
+          </p>
+        </div>
+        <div>
+          <p class="concept-body">
+            <strong>Presidencialismo — Poderes legislativos del Ejecutivo:</strong> el Presidente puede vetar leyes (total o parcialmente), iniciar debate legislativo y emitir decretos. En la práctica: el Presidente legisla cuando el Congreso no le da lo que necesita — o cuando no quiere negociar.
+          </p>
+        </div>
+      </div>
+      <div class="tags" style="margin-top:.8rem">
+        <span class="tag t-b">voto de censura constructivo</span>
+        <span class="tag t-o">veto presidencial</span>
+        <span class="tag t-o">decreto ejecutivo</span>
+        <span class="tag t-r">poderes proactivos vs reactivos</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     AUTOR 2: ZELAZNIK & BONVECCHI — ARGENTINA
+══════════════════════════════════════ -->
+<div class="author-section" id="zelaznik2">
+  <div class="author-banner b-orange">
+    <p class="author-num n-orange">Autor 02</p>
+    <p class="author-name">Zelaznik & Bonvecchi</p>
+    <p class="author-work">"Recursos de Gobierno y Funcionamiento del Presidencialismo en Argentina"</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>¿Los recursos institucionales del Ejecutivo argentino son herramientas de gobernabilidad o de concentración de poder? ¿Hay diferencia?</li>
+        <li>Si el presidente maneja discrecionalmente los recursos fiscales y los usa más cerca de las elecciones, ¿eso es política o es corrupción institucionalizada?</li>
+        <li>¿El DNU es una herramienta de emergencia o el instrumento favorito de quien no quiere negociar?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-orange">Contexto regional</p>
+      <p class="concept-title">Argentina y el presidencialismo latinoamericano</p>
+      <p class="concept-body">
+        Argentina tiene un régimen presidencialista. En América Latina, 18 de 20 países comparten el mismo sistema — herencia directa de las guerras de independencia que tomaron el modelo norteamericano de 1787 como referencia. Las características típicas: Ejecutivo monista y unipersonal, elecciones directas para Presidente y legisladores, mandatos fijos.<br><br>
+        El problema específico del presidencialismo en contextos de alta fragmentación partidaria es el <strong>empate</strong>: cuando el Presidente no tiene mayoría en el Congreso, el sistema puede paralizarse. Argentina diseñó herramientas para evitar — o sortear — ese empate. El resultado es un Ejecutivo con recursos institucionales extraordinariamente amplios.
+      </p>
+      <div class="tags">
+        <span class="tag t-o">presidencialismo</span><span class="tag t-o">América Latina</span>
+        <span class="tag t-r">gobierno dividido</span><span class="tag t-o">empate institucional</span>
+      </div>
+    </div>
+
+    <!-- Tres tipos de recursos -->
+    <div class="concept">
+      <p class="concept-label l-orange">El arsenal del Ejecutivo argentino</p>
+      <p class="concept-title">Tres tipos de recursos: institucionales, partidarios y fiscales</p>
+      <p class="concept-body" style="margin-bottom:.9rem">Zelaznik y Bonvecchi sistematizan los recursos con que cuenta el Presidente argentino para gobernar — o para imponer su voluntad cuando gobernar se complica:</p>
+      <div class="recursos-grid">
+
+        <div class="recurso-card">
+          <p class="rec-label" style="color:var(--blue)">Recurso I · Institucional</p>
+          <p class="rec-title">El Gabinete como moneda de cambio</p>
+          <p class="rec-body">En el presidencialismo, el Presidente designa libremente a sus ministros. Zelaznik señala algo que los manuales suelen omitir: los cargos ministeriales se usan como <strong>"pago" por apoyo legislativo</strong>. Si el partido presidencial no tiene mayoría en el Congreso, el Presidente arma una coalición ofreciendo ministerios a partidos aliados. Las coaliciones existen también en el presidencialismo — solo que son menos transparentes que en el parlamentarismo.</p>
+        </div>
+
+        <div class="recurso-card">
+          <p class="rec-label" style="color:var(--blue)">Recurso II · Institucional</p>
+          <p class="rec-title">El Veto: poder reactivo</p>
+          <p class="rec-body">El veto presidencial es un <strong>poder reactivo</strong>: permite al Ejecutivo bloquear cambios que no desea. En Argentina puede ser <strong>total</strong> (rechazar toda la ley) o <strong>parcial</strong> (vetar fragmentos e implementar el resto según preferencias). El Congreso puede insistir solo con 2/3 de cada cámara — una mayoría difícil de reunir. Resultado: el veto parcial convierte al Presidente en co-legislador de facto, eligiendo qué partes de una ley se aplican.</p>
+        </div>
+
+        <div class="recurso-card">
+          <p class="rec-label" style="color:var(--red)">Recurso III · Institucional</p>
+          <p class="rec-title">El DNU: poder proactivo</p>
+          <p class="rec-body">Los Decretos de Necesidad y Urgencia son <strong>poderes proactivos</strong>: alteran el statu quo <em>sin</em> autorización previa del Congreso. El mecanismo constitucional prevé control posterior — pero aquí aparece el dato más revelador del texto: en Argentina opera la <strong>aprobación tácita</strong>. Los DNU son vigentes a menos que <em>ambas cámaras</em> los rechacen explícitamente. Como coordinar el rechazo de ambas cámaras es políticamente difícil, la mayoría de los DNU quedan vigentes. El Ejecutivo legisla; el Congreso no legisla en contra.</p>
+        </div>
+
+        <div class="recurso-card">
+          <p class="rec-label" style="color:var(--orange)">Recurso IV · Partidario</p>
+          <p class="rec-title">El contingente legislativo y la cohesión</p>
+          <p class="rec-body">El poder del Presidente en el Congreso depende de cuántas bancas tiene su partido (<strong>contingente legislativo</strong>) y de cuán disciplinado está ese partido (<strong>cohesión</strong>). Complicación argentina: los partidos desnacionalizados — cuyo electorado no está distribuido uniformemente en el país — responden más a intereses locales que a la línea nacional. Los líderes subnacionales negocian por separado. El Presidente debe entonces usar otros recursos (fiscales, de cargos) para comprar esa cohesión.</p>
+        </div>
+
+        <div class="recurso-card" style="grid-column: 1 / -1;">
+          <p class="rec-label" style="color:var(--green)">Recurso V · Fiscal</p>
+          <p class="rec-title">Las transferencias intergubernamentales: el poder del dinero</p>
+          <p class="rec-body">El Ejecutivo maneja <strong>discrecionalmente</strong> las transferencias fiscales a los gobiernos provinciales. El mecanismo es sutil: los gobernadores quieren que el dinero llegue seguro (certeza), pero con la menor discrecionalidad posible para administrarlo (autonomía). El Presidente los tiene en ese equilibrio — puede beneficiar o castigar según su alineamiento político.<br><br>El dato más político del texto: <strong>el uso de recursos fiscales discrecionales aumenta cuanto más cerca están las elecciones</strong>. Maximize rédito político en el momento preciso. Zelaznik y Bonvecchi lo describen con neutralidad académica. Desde cualquier otra perspectiva, eso tiene nombre.</p>
+        </div>
+
+      </div>
+      <div class="tags">
+        <span class="tag t-o">gabinete</span><span class="tag t-o">veto total/parcial</span>
+        <span class="tag t-r">DNU</span><span class="tag t-o">recursos fiscales</span>
+        <span class="tag t-r">discrecionalidad</span><span class="tag t-o">ciclo electoral</span>
+      </div>
+    </div>
+
+    <!-- Flujo DNU -->
+    <div class="concept">
+      <p class="concept-label l-red">Así funciona un DNU en Argentina</p>
+      <p class="concept-title">El camino del decreto que nadie rechaza</p>
+      <p class="concept-body" style="margin-bottom:.7rem">El mecanismo constitucional en teoría garantiza control legislativo. En la práctica, la aprobación tácita lo convierte en una puerta que raramente se cierra:</p>
+      <div class="flow">
+        <div class="flow-step">El Presidente emite el DNU</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">Entra en vigencia inmediatamente</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">Va a la Comisión Bicameral Permanente</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step">Ambas cámaras deben rechazarlo explícitamente para frenarlo</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-step" style="border-color:var(--red); color:#e09090">Si no hay rechazo de ambas → sigue vigente indefinidamente</div>
+      </div>
+      <p class="concept-body" style="margin-top:.8rem">El nombre dice "Necesidad y Urgencia". La práctica argentina sugiere que "necesidad" y "urgencia" son conceptos más elásticos de lo que la Constitución tuvo en mente.</p>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     CONFRONTACIÓN
+══════════════════════════════════════ -->
+<div class="confrontation" id="confrontacion">
+  <div class="conf-header">
+    <h2>Zelaznik vs. Zelaznik & Bonvecchi</h2>
+    <p>Del modelo teórico al caso argentino: la distancia entre el diseño y la práctica</p>
+  </div>
+  <div class="conf-body">
+    <div class="conf-row">
+      <div class="conf-cell hdr-c">Dimensión</div>
+      <div class="conf-cell hdr-c" style="color:#88bae0">Zelaznik (teoría comparada)</div>
+      <div class="conf-cell hdr-c" style="color:#e0a878">Zelaznik & Bonvecchi (Argentina)</div>
+      <div class="conf-cell hdr-c" style="color:#e09090">Perspectiva crítica</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis-c">¿Qué es el gobierno?</div>
+      <div class="conf-cell" style="color:#88bae0">Centro institucionalizado del poder político: actores, funciones e instituciones en equilibrio</div>
+      <div class="conf-cell" style="color:#e0a878">En Argentina: un Ejecutivo con recursos extraordinarios para superar bloqueos institucionales</div>
+      <div class="conf-cell" style="color:#e09090">El "equilibrio" teórico oculta una concentración real de poder en el Ejecutivo</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis-c">Relación Ejecutivo–Legislativo</div>
+      <div class="conf-cell" style="color:#88bae0">Depende del sistema: fusión (parlamentarismo) o separación rígida (presidencialismo)</div>
+      <div class="conf-cell" style="color:#e0a878">El Ejecutivo puede sortear al Legislativo mediante DNU, veto parcial y recursos fiscales</div>
+      <div class="conf-cell" style="color:#e09090">La separación de poderes funciona en el papel. En la práctica, el Ejecutivo legisla y el Congreso convalida</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis-c">¿Quién controla al gobierno?</div>
+      <div class="conf-cell" style="color:#88bae0">El Legislativo (en el parlamentarismo) o el electorado cada cuatro años (en el presidencialismo)</div>
+      <div class="conf-cell" style="color:#e0a878">El Congreso controla formalmente. Los DNU con aprobación tácita invierten la lógica</div>
+      <div class="conf-cell" style="color:#e09090">En Argentina, el Ejecutivo se controla a sí mismo buena parte del tiempo</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis-c">El dinero y la política</div>
+      <div class="conf-cell" style="color:#88bae0">No abordado en el texto teórico. Los recursos se presuponen neutrales.</div>
+      <div class="conf-cell" style="color:#e0a878">Las transferencias fiscales son un recurso político explícito, administrado con lógica electoral</div>
+      <div class="conf-cell" style="color:#e09090">Cuando el Estado distribuye recursos según ciclo electoral, la política fiscal y la campaña son la misma cosa</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis-c">La pregunta que no se hacen</div>
+      <div class="conf-cell" style="color:#88bae0">¿A qué intereses de clase sirve cada sistema de gobierno — independientemente de cómo se llame?</div>
+      <div class="conf-cell" style="color:#e0a878">¿Por qué el presidencialismo argentino acumuló estos recursos? ¿Crisis, diseño intencional — o ambos?</div>
+      <div class="conf-cell" style="color:#e09090">¿Puede haber "gobernabilidad" real sin cuestionar quién define qué se gobierna y para quién?</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- NOTA FINAL MARXISTA -->
+<div class="final-note">
+  <div class="fn-bar"></div>
+  <div class="fn-inner">
+    <p class="fn-label">Síntesis crítica · Perspectiva marxista</p>
+    <p class="fn-text">
+      La Unidad 4 es la más técnica del programa — y por eso la más reveladora cuando se lee con otros anteojos. <strong>Zelaznik</strong> ofrece una cartografía precisa de los sistemas de gobierno comparados: parlamentarismo, presidencialismo, semipresidencialismo. Es un mapa útil. Lo que el mapa no muestra es el territorio: qué intereses de clase se favorecen con cada diseño institucional, y por qué el presidencialismo fue el modelo elegido masivamente en América Latina — una región que produjo oligarquías exportadoras, no clases medias industriales.<br><br>
+      <strong>Zelaznik y Bonvecchi</strong> dan el paso más honesto del programa: describen con precisión los recursos extraordinarios del Ejecutivo argentino y admiten, sin muchos eufemismos, que las transferencias fiscales se usan con lógica electoral. Lo que no hacen es llamar a eso por su nombre estructural: la <strong>autonomía relativa del Estado</strong> marxista (Poulantzas) — la idea de que el Estado no es un instrumento directo de la burguesía sino que goza de cierta autonomía para garantizar la reproducción del sistema en su conjunto, incluso si eso implica frenar a fracciones del capital o distribuir recursos para mantener la paz social.<br><br>
+      El DNU, el veto parcial, las transferencias discrecionales: son herramientas que sirven para gobernar <em>sin necesitar consenso</em>. En un país con alta conflictividad social y fragmentación política como Argentina, eso puede leerse como pragmatismo. También puede leerse como la institucionalización del gobierno por decreto — que es, en definitiva, lo opuesto de la democracia que se describió en la Unidad 3.
+    </p>
+  </div>
+</div>
+
+<footer>
+  Unidad 4 · IPC · CBC · UBA &nbsp;|&nbsp; Cátedra <span>Lopreite</span> &nbsp;|&nbsp; Prof. Claudio Damián Sacco
+</footer>
+
+</body>
+</html>

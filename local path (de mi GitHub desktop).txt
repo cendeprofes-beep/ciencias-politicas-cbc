@@ -1,0 +1,6 @@
+repositorio o URL de GitHub
+https://github.com/cendeprofes-beep/ciencias-politicas-cbc.git
+
+
+local path (de mi GitHub desktop)
+C:\Users\54115\OneDrive\Documentos\GitHub\ciencias-politicas-cbc
