@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Red Conceptual — Final IPC · Cátedra Lopreite</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #07070a;
+  --surface:  #0f0f14;
+  --card:     #13131a;
+  --border:   #1e1e2a;
+  --gold:     #c9a84c;
+  --gold-d:   #4a3a08;
+  --text:     #dcd8ca;
+  --muted:    #55555f;
+  --white:    #f0ecd8;
+
+  --bulcourf: #4a7ec4;
+  --malamud:  #3aacaa;
+  --dahl:     #3aaa6a;
+  --lopreite: #c44a8a;
+  --linz:     #c44a4a;
+  --welp:     #c9a84c;
+  --zelaznik: #8a5ac4;
+  --bonvecchi:#c47a2a;
+  --levitsky: #5aaa5a;
+  --deluca:   #4a9ac4;
+  --franceschet:#c44a6a;
+  --tula:     #aa4ac4;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* HEADER */
+header {
+  text-align: center;
+  padding: 2.5rem 1.5rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+header::before {
+  content: 'FINAL';
+  position: absolute;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(5rem,20vw,14rem);
+  font-weight: 900;
+  color: rgba(201,168,76,.03);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none; letter-spacing:.2em;
+}
+.eyebrow { font-size:.6rem; letter-spacing:.28em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:.5rem; }
+h1 { font-family:'Playfair Display',serif; font-size:clamp(1.6rem,4vw,2.6rem); font-weight:900; color:var(--white); line-height:1.15; margin-bottom:.5rem; }
+.header-sub { font-size:.75rem; color:var(--muted); max-width:520px; margin:0 auto; }
+.hint { display:inline-flex; align-items:center; gap:.4rem; margin-top:1rem; font-size:.68rem; color:var(--muted); background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:.3rem .8rem; }
+
+/* TREE */
+#tree-container { width:100%; overflow-x:auto; padding:2rem 1rem 1rem; -webkit-overflow-scrolling:touch; }
+svg#tree { display:block; margin:0 auto; overflow:visible; }
+
+.connector { stroke:var(--border); stroke-width:1.5; fill:none; transition:stroke .3s; }
+.node { cursor:pointer; }
+.node-circle { transition: filter .25s; }
+.node:hover .node-circle { filter: drop-shadow(0 0 10px currentColor); }
+.node-label { font-family:'Inter',sans-serif; font-weight:600; text-anchor:middle; dominant-baseline:middle; pointer-events:none; fill:var(--white); font-size:11px; }
+.node-sublabel { font-family:'Inter',sans-serif; font-weight:400; text-anchor:middle; dominant-baseline:middle; pointer-events:none; fill:rgba(220,216,200,.55); font-size:9px; }
+
+.badge-critica { fill:rgba(196,74,74,.25); stroke:rgba(196,74,74,.6); stroke-width:1; }
+.badge-alta    { fill:rgba(196,122,42,.22); stroke:rgba(196,122,42,.55); stroke-width:1; }
+.badge-media   { fill:rgba(58,170,106,.2);  stroke:rgba(58,170,106,.5);  stroke-width:1; }
+
+/* MODAL */
+.modal-overlay {
+  position:fixed; inset:0; z-index:1000;
+  background:rgba(0,0,0,.75); backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+  padding:1rem; opacity:0; pointer-events:none; transition:opacity .25s;
+}
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal {
+  background:var(--card); border:1px solid var(--border); border-radius:8px;
+  width:100%; max-width:640px; max-height:88vh; overflow-y:auto;
+  transform:translateY(18px) scale(.97); transition:transform .25s; position:relative;
+}
+.modal-overlay.open .modal { transform:translateY(0) scale(1); }
+
+.modal-header {
+  padding:1.3rem 1.5rem 1rem; border-bottom:1px solid var(--border);
+  position:sticky; top:0; background:var(--card); z-index:2; border-radius:8px 8px 0 0;
+}
+.modal-author-tag { font-size:.57rem; letter-spacing:.2em; text-transform:uppercase; font-weight:700; margin-bottom:.25rem; }
+.modal-title { font-family:'Playfair Display',serif; font-size:1.3rem; font-weight:700; color:var(--white); line-height:1.2; margin-bottom:.2rem; }
+.modal-sub { font-size:.7rem; color:var(--muted); font-style:italic; }
+.modal-close { position:absolute; top:1rem; right:1.2rem; background:none; border:none; cursor:pointer; color:var(--muted); font-size:1.3rem; line-height:1; transition:color .2s; padding:.2rem; }
+.modal-close:hover { color:var(--white); }
+.modal-body { padding:1.2rem 1.5rem 1.5rem; display:flex; flex-direction:column; gap:1rem; }
+
+.key-box { background:rgba(201,168,76,.05); border-left:3px solid var(--gold-d); border-radius:0 4px 4px 0; padding:.8rem 1rem; font-size:.78rem; color:#b8a870; line-height:1.6; }
+.key-box strong { color:var(--white); }
+
+.faq-block { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:.9rem 1rem; }
+.faq-tag { font-size:.55rem; letter-spacing:.18em; text-transform:uppercase; font-weight:700; color:var(--gold); margin-bottom:.4rem; }
+.faq-q { font-size:.82rem; font-weight:600; color:var(--white); margin-bottom:.6rem; line-height:1.4; }
+.opt { font-size:.76rem; padding:.28rem .6rem; border-radius:3px; border:1px solid var(--border); color:var(--muted); background:#0d0d14; margin-bottom:.22rem; display:block; }
+.opt.c { background:rgba(58,170,106,.1); color:#6dd098; border-color:rgba(58,170,106,.35); font-weight:600; }
+.opt.c::before { content:'✓ '; }
+.opt.w { opacity:.5; }
+.opt.w::before { content:'✗ '; color:#c44a4a; }
+.faq-tip { font-size:.71rem; color:#a09060; margin-top:.6rem; padding-top:.6rem; border-top:1px solid var(--border); line-height:1.55; }
+.faq-tip strong { color:#d0c8a0; }
+
+.vf-t { width:100%; border-collapse:collapse; font-size:.74rem; }
+.vf-t th { background:#0d0d16; color:var(--muted); font-size:.55rem; letter-spacing:.12em; text-transform:uppercase; padding:.45rem .6rem; text-align:left; border-bottom:1px solid var(--border); }
+.vf-t td { padding:.45rem .6rem; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.4; }
+.vf-t tr:last-child td { border-bottom:none; }
+.vt { color:#6dd098; font-weight:700; white-space:nowrap; }
+.vf { color:#e09090; font-weight:700; white-space:nowrap; }
+
+/* LEYENDA */
+.legend { display:flex; flex-wrap:wrap; gap:.8rem; justify-content:center; padding:1rem 1rem .5rem; border-top:1px solid var(--border); }
+.legend-item { display:flex; align-items:center; gap:.35rem; font-size:.65rem; color:var(--muted); }
+.legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+footer { text-align:center; font-size:.62rem; color:var(--muted); padding:1rem 1rem 2rem; border-top:1px solid var(--border); }
+footer span { color:var(--gold); }
+
+.modal::-webkit-scrollbar { width:5px; }
+.modal::-webkit-scrollbar-track { background:transparent; }
+.modal::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Red conceptual interactiva · Final</p>
+  <h1>Guía IPC · Cátedra Lopreite</h1>
+  <p class="header-sub">Basada en el análisis de 4 versiones del examen final (dic. 2025 y feb. 2026). Hacé clic en cada nodo para ver las preguntas concretas y sus respuestas.</p>
+  <p class="hint">👆 Tocá cualquier nodo para abrir el contenido</p>
+</header>
+
+<div id="tree-container">
+<svg id="tree" width="980" height="580" viewBox="0 0 980 580">
+
+  <!-- CONECTORES: Centro → nivel 1 -->
+  <path class="connector" d="M490,115 C490,165 200,175 200,190" style="stroke:#c44a4a;opacity:.35"/>
+  <path class="connector" d="M490,115 C490,165 390,175 390,190" style="stroke:#3aaa6a;opacity:.35"/>
+  <path class="connector" d="M490,115 C490,165 490,175 490,190" style="stroke:#c44a8a;opacity:.35"/>
+  <path class="connector" d="M490,115 C490,165 660,175 660,190" style="stroke:#3aacaa;opacity:.35"/>
+  <path class="connector" d="M490,115 C490,165 830,175 830,190" style="stroke:#8a5ac4;opacity:.35"/>
+
+  <!-- Centro → nivel 2 -->
+  <path class="connector" d="M490,115 C490,290 130,310 130,335" style="stroke:#4a7ec4;opacity:.25"/>
+  <path class="connector" d="M490,115 C490,290 290,310 290,335" style="stroke:#c47a2a;opacity:.25"/>
+  <path class="connector" d="M490,115 C490,290 450,310 450,335" style="stroke:#c9a84c;opacity:.25"/>
+  <path class="connector" d="M490,115 C490,290 630,310 630,335" style="stroke:#5aaa5a;opacity:.25"/>
+  <path class="connector" d="M490,115 C490,290 820,310 820,335" style="stroke:#4a9ac4;opacity:.25"/>
+
+  <!-- Centro → nivel 3 -->
+  <path class="connector" d="M490,115 C490,430 250,445 250,460" style="stroke:#c44a6a;opacity:.18"/>
+  <path class="connector" d="M490,115 C490,430 490,445 490,460" style="stroke:#aa4ac4;opacity:.18"/>
+  <path class="connector" d="M490,115 C490,430 730,445 730,460" style="stroke:#c44a4a;opacity:.18"/>
+
+  <!-- NODO CENTRAL -->
+  <g class="node" id="node-center" onclick="openModal('center')">
+    <circle cx="490" cy="78" r="55" fill="#14101a" stroke="var(--gold)" stroke-width="2"/>
+    <circle cx="490" cy="78" r="51" fill="#1a1410" stroke="var(--gold)" stroke-width=".5" opacity=".5"/>
+    <text x="490" y="68" class="node-label" style="font-size:11px;fill:var(--gold);font-family:'Playfair Display',serif">FINAL IPC</text>
+    <text x="490" y="83" class="node-sublabel" style="font-size:9px">Cátedra Lopreite</text>
+    <text x="490" y="96" class="node-sublabel" style="font-size:8px">Plan de estudio</text>
+  </g>
+
+  <!-- ══ NIVEL 1: CRÍTICOS ══ -->
+
+  <!-- DAHL -->
+  <g class="node" id="node-dahl" onclick="openModal('dahl')">
+    <circle cx="200" cy="240" r="48" fill="#0b1a10" stroke="#3aaa6a" stroke-width="2.5"/>
+    <rect x="167" y="193" width="66" height="13" rx="6.5" class="badge-critica"/>
+    <text x="200" y="200" style="font-size:7.5px;fill:#e09090;text-anchor:middle;font-weight:700;letter-spacing:.05em">CRÍTICO · 4/4</text>
+    <text x="200" y="234" class="node-label" style="font-size:12px">Dahl</text>
+    <text x="200" y="248" class="node-sublabel">Democracia</text>
+    <text x="200" y="259" class="node-sublabel">y sus críticos</text>
+  </g>
+
+  <!-- LINZ -->
+  <g class="node" id="node-linz" onclick="openModal('linz')">
+    <circle cx="390" cy="240" r="48" fill="#180808" stroke="#c44a4a" stroke-width="2.5"/>
+    <rect x="357" y="193" width="66" height="13" rx="6.5" class="badge-critica"/>
+    <text x="390" y="200" style="font-size:7.5px;fill:#e09090;text-anchor:middle;font-weight:700;letter-spacing:.05em">CRÍTICO · 4/4</text>
+    <text x="390" y="234" class="node-label" style="font-size:12px">Linz</text>
+    <text x="390" y="248" class="node-sublabel">Problemas de</text>
+    <text x="390" y="259" class="node-sublabel">las democracias</text>
+  </g>
+
+  <!-- LOPREITE -->
+  <g class="node" id="node-lopreite" onclick="openModal('lopreite')">
+    <circle cx="490" cy="240" r="48" fill="#1a0812" stroke="#c44a8a" stroke-width="2.5"/>
+    <rect x="457" y="193" width="66" height="13" rx="6.5" class="badge-critica"/>
+    <text x="490" y="200" style="font-size:7.5px;fill:#e09090;text-anchor:middle;font-weight:700;letter-spacing:.05em">CRÍTICO · 4/4</text>
+    <text x="490" y="228" class="node-label" style="font-size:11px">Lopreite &</text>
+    <text x="490" y="241" class="node-label" style="font-size:11px">Rodríguez Gusta</text>
+    <text x="490" y="255" class="node-sublabel">Feminismo</text>
+    <text x="490" y="265" class="node-sublabel">de Estado</text>
+  </g>
+
+  <!-- WELP -->
+  <g class="node" id="node-welp" onclick="openModal('welp')">
+    <circle cx="660" cy="240" r="48" fill="#14100a" stroke="#c9a84c" stroke-width="2.5"/>
+    <rect x="627" y="193" width="66" height="13" rx="6.5" class="badge-critica"/>
+    <text x="660" y="200" style="font-size:7.5px;fill:#e09090;text-anchor:middle;font-weight:700;letter-spacing:.05em">CRÍTICO · 4/4</text>
+    <text x="660" y="234" class="node-label" style="font-size:12px">Welp</text>
+    <text x="660" y="248" class="node-sublabel">Debate</text>
+    <text x="660" y="259" class="node-sublabel">Siglo XXI</text>
+  </g>
+
+  <!-- ZELAZNIK -->
+  <g class="node" id="node-zelaznik" onclick="openModal('zelaznik')">
+    <circle cx="830" cy="240" r="48" fill="#120818" stroke="#8a5ac4" stroke-width="2.5"/>
+    <rect x="797" y="193" width="66" height="13" rx="6.5" class="badge-critica"/>
+    <text x="830" y="200" style="font-size:7.5px;fill:#e09090;text-anchor:middle;font-weight:700;letter-spacing:.05em">CRÍTICO · 4/4</text>
+    <text x="830" y="234" class="node-label" style="font-size:12px">Zelaznik</text>
+    <text x="830" y="248" class="node-sublabel">Gobierno</text>
+    <text x="830" y="259" class="node-sublabel">y presidencialismo</text>
+  </g>
+
+  <!-- SEPARADOR -->
+  <line x1="50" y1="298" x2="930" y2="298" stroke="var(--border)" stroke-width=".8" stroke-dasharray="4,4" opacity=".5"/>
+
+  <!-- ══ NIVEL 2: ALTA ══ -->
+
+  <!-- BULCOURF -->
+  <g class="node" id="node-bulcourf" onclick="openModal('bulcourf')">
+    <circle cx="130" cy="385" r="42" fill="#0e1828" stroke="#4a7ec4" stroke-width="2"/>
+    <rect x="99" y="343" width="62" height="13" rx="6.5" class="badge-alta"/>
+    <text x="130" y="350" style="font-size:7px;fill:#dda870;text-anchor:middle;font-weight:700;letter-spacing:.04em">ALTA · 4/4</text>
+    <text x="130" y="380" class="node-label" style="font-size:10px">Bulcourf &</text>
+    <text x="130" y="392" class="node-label" style="font-size:10px">Vázquez</text>
+    <text x="130" y="405" class="node-sublabel">CP como</text>
+    <text x="130" y="415" class="node-sublabel">profesión</text>
+  </g>
+
+  <!-- BONVECCHI -->
+  <g class="node" id="node-bonvecchi" onclick="openModal('bonvecchi')">
+    <circle cx="290" cy="385" r="42" fill="#1a1008" stroke="#c47a2a" stroke-width="2"/>
+    <rect x="259" y="343" width="62" height="13" rx="6.5" class="badge-alta"/>
+    <text x="290" y="350" style="font-size:7px;fill:#dda870;text-anchor:middle;font-weight:700;letter-spacing:.04em">ALTA · 4/4</text>
+    <text x="290" y="378" class="node-label" style="font-size:10px">Bonvecchi &</text>
+    <text x="290" y="390" class="node-label" style="font-size:10px">Zelaznik</text>
+    <text x="290" y="402" class="node-sublabel">Presidencialismo</text>
+    <text x="290" y="413" class="node-sublabel">argentino</text>
+  </g>
+
+  <!-- MALAMUD -->
+  <g class="node" id="node-malamud" onclick="openModal('malamud')">
+    <circle cx="450" cy="385" r="42" fill="#0b1a1a" stroke="#3aacaa" stroke-width="2"/>
+    <rect x="419" y="343" width="62" height="13" rx="6.5" class="badge-alta"/>
+    <text x="450" y="350" style="font-size:7px;fill:#dda870;text-anchor:middle;font-weight:700;letter-spacing:.04em">ALTA · 4/4</text>
+    <text x="450" y="379" class="node-label" style="font-size:11px">Malamud</text>
+    <text x="450" y="392" class="node-sublabel">Estado ·</text>
+    <text x="450" y="403" class="node-sublabel">partidos · soberanía</text>
+  </g>
+
+  <!-- LEVITSKY -->
+  <g class="node" id="node-levitsky" onclick="openModal('levitsky')">
+    <circle cx="630" cy="385" r="42" fill="#0a140a" stroke="#5aaa5a" stroke-width="2"/>
+    <rect x="599" y="343" width="62" height="13" rx="6.5" class="badge-alta"/>
+    <text x="630" y="350" style="font-size:7px;fill:#dda870;text-anchor:middle;font-weight:700;letter-spacing:.04em">ALTA · 4/4</text>
+    <text x="630" y="379" class="node-label" style="font-size:11px">Levitsky</text>
+    <text x="630" y="392" class="node-sublabel">Construcción</text>
+    <text x="630" y="403" class="node-sublabel">de partidos</text>
+  </g>
+
+  <!-- DE LUCA -->
+  <g class="node" id="node-deluca" onclick="openModal('deluca')">
+    <circle cx="820" cy="385" r="42" fill="#0a1420" stroke="#4a9ac4" stroke-width="2"/>
+    <rect x="789" y="343" width="62" height="13" rx="6.5" class="badge-alta"/>
+    <text x="820" y="350" style="font-size:7px;fill:#dda870;text-anchor:middle;font-weight:700;letter-spacing:.04em">ALTA · 4/4</text>
+    <text x="820" y="379" class="node-label" style="font-size:11px">De Luca</text>
+    <text x="820" y="392" class="node-sublabel">Sistemas</text>
+    <text x="820" y="403" class="node-sublabel">electorales</text>
+  </g>
+
+  <!-- SEPARADOR -->
+  <line x1="50" y1="445" x2="930" y2="445" stroke="var(--border)" stroke-width=".8" stroke-dasharray="4,4" opacity=".35"/>
+
+  <!-- ══ NIVEL 3: MEDIA ══ -->
+
+  <!-- FRANCESCHET -->
+  <g class="node" id="node-franceschet" onclick="openModal('franceschet')">
+    <circle cx="250" cy="510" r="36" fill="#1a0810" stroke="#c44a6a" stroke-width="1.8"/>
+    <rect x="222" y="473" width="56" height="12" rx="6" class="badge-media"/>
+    <text x="250" y="480" style="font-size:7px;fill:#6dd098;text-anchor:middle;font-weight:700;letter-spacing:.04em">MEDIA · 2/4</text>
+    <text x="250" y="506" class="node-label" style="font-size:10px">Franceschet</text>
+    <text x="250" y="519" class="node-sublabel">Cuotas género</text>
+  </g>
+
+  <!-- TULA -->
+  <g class="node" id="node-tula" onclick="openModal('tula')">
+    <circle cx="490" cy="510" r="36" fill="#180a1a" stroke="#aa4ac4" stroke-width="1.8"/>
+    <rect x="462" y="473" width="56" height="12" rx="6" class="badge-media"/>
+    <text x="490" y="480" style="font-size:7px;fill:#6dd098;text-anchor:middle;font-weight:700;letter-spacing:.04em">MEDIA · 2/4</text>
+    <text x="490" y="506" class="node-label" style="font-size:10px">Tula</text>
+    <text x="490" y="519" class="node-sublabel">Paridad género</text>
+  </g>
+
+  <!-- MALAMUD Y DE LUCA -->
+  <g class="node" id="node-malamuddeluca" onclick="openModal('malamuddeluca')">
+    <circle cx="730" cy="510" r="36" fill="#1a0808" stroke="#c44a4a" stroke-width="1.8"/>
+    <rect x="702" y="473" width="56" height="12" rx="6" class="badge-media"/>
+    <text x="730" y="480" style="font-size:7px;fill:#6dd098;text-anchor:middle;font-weight:700;letter-spacing:.04em">MEDIA · 2/4</text>
+    <text x="730" y="503" class="node-label" style="font-size:10px">Malamud</text>
+    <text x="730" y="515" class="node-label" style="font-size:10px">& De Luca</text>
+    <text x="730" y="527" class="node-sublabel">Partidos 1983-2015</text>
+  </g>
+
+  <!-- Etiquetas de nivel -->
+  <text x="940" y="244" style="font-size:9px;fill:#c44a4a;font-weight:700;letter-spacing:.08em;text-anchor:middle;opacity:.7">CRÍTICO</text>
+  <text x="940" y="388" style="font-size:9px;fill:#c47a2a;font-weight:700;letter-spacing:.08em;text-anchor:middle;opacity:.7">ALTA</text>
+  <text x="940" y="512" style="font-size:9px;fill:#3aaa6a;font-weight:700;letter-spacing:.08em;text-anchor:middle;opacity:.7">MEDIA</text>
+
+  <!-- Separador nivel 1 -->
+  <line x1="50" y1="155" x2="930" y2="155" stroke="var(--border)" stroke-width=".8" stroke-dasharray="4,4" opacity=".5"/>
+
+</svg>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#c44a4a"></div>Crítico — en los 4 exámenes</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#c47a2a"></div>Alta — muy probable</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#3aaa6a"></div>Media — aparece en 2 de 4</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeOnOverlay(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-header" id="modal-header">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <p class="modal-author-tag" id="modal-tag"></p>
+      <p class="modal-title" id="modal-title"></p>
+      <p class="modal-sub" id="modal-sub"></p>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<footer>
+  Red conceptual · Final IPC (22) · Cátedra <span>Lopreite</span> · Basada en análisis de 4 versiones del examen final
+</footer>
+
+<script>
+const DATA = {
+
+  center: {
+    tag: "Plan de estudio · Final IPC",
+    title: "Cómo usar esta guía",
+    sub: "20 preguntas × 0,5 punto · Necesitás 8 correctas para aprobar",
+    color: "var(--gold)",
+    body: `
+      <div class="key-box">
+        <strong>Lo que encontramos analizando 4 versiones del final:</strong> el examen usa el mismo banco de preguntas rotando entre Tema 1 y Tema 2, y entre el final de diciembre y el de febrero (remanentes). Los mismos autores aparecen en los 4 exámenes con los mismos conceptos.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Prioridad crítica — en los 4 exámenes</p>
+        <span class="opt c">Dahl — La democracia y sus críticos (cap. 15)</span>
+        <span class="opt c">Linz — Problemas de las democracias</span>
+        <span class="opt c">Lopreite & Rodríguez Gusta — Feminismo de Estado</span>
+        <span class="opt c">Welp — El debate en el Siglo XXI</span>
+        <span class="opt c">Zelaznik — Gobierno</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Prioridad alta — muy probables</p>
+        <span class="opt c">Bulcourf & Vázquez — CP como profesión</span>
+        <span class="opt c">Bonvecchi & Zelaznik — Presidencialismo argentino</span>
+        <span class="opt c">Malamud — Estado, soberanía, partidos</span>
+        <span class="opt c">Levitsky — Construcción de partidos</span>
+        <span class="opt c">De Luca — Sistemas electorales</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Prioridad media — aparecen en 2 de 4</p>
+        <span class="opt c">Franceschet — Cuotas de género</span>
+        <span class="opt c">Tula — Paridad de género</span>
+        <span class="opt c">Malamud & De Luca — Sistema de partidos argentino 1983-2015</span>
+      </div>
+    `
+  },
+
+  dahl: {
+    tag: "Autor 01 · Aparece en los 4 exámenes",
+    title: "Robert Dahl",
+    sub: "La democracia y sus críticos (cap. 15) · La democracia",
+    color: "var(--dahl)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> Dahl defiende la democracia respondiendo a sus críticos. Las críticas son legítimas pero no suficientes para rechazarla. La democracia se adapta a sociedades cambiantes. El acceso a la información y las libertades civiles son centrales.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Limitación de la democracia (cap. 15)</p>
+        <p class="faq-q">En el Capítulo 15 de "La democracia y sus críticos", Dahl discute sobre una limitación común de los sistemas democráticos, que es:</p>
+        <span class="opt w">A. La incapacidad de producir políticas públicas efectivas</span>
+        <span class="opt w">B. La concentración de poder en los sistemas judicial y ejecutivo</span>
+        <span class="opt c">C. La falta de acceso a la información por parte de los ciudadanos</span>
+        <span class="opt w">D. La sobrecarga de participación electoral</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Característica esencial (cap. 15)</p>
+        <p class="faq-q">En el Capítulo 15, Dahl afirma que una característica esencial de la democracia es que:</p>
+        <span class="opt w">A. Casi siempre refleja de manera perfecta la voluntad popular</span>
+        <span class="opt w">B. Requiere de una estructura elitista para ser efectiva</span>
+        <span class="opt w">C. Es el único sistema que asegura la igualdad económica</span>
+        <span class="opt c">D. Se adapta y responde a las demandas de una sociedad cambiante</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Crítica común a la democracia</p>
+        <p class="faq-q">Dahl en "La democracia" menciona que una crítica común a la democracia es:</p>
+        <span class="opt w">A. La incapacidad de proteger los derechos de las mayorías</span>
+        <span class="opt c">B. La tendencia a la ineficiencia en la toma de decisiones</span>
+        <span class="opt w">C. La falta de legitimidad de las instituciones democráticas</span>
+        <span class="opt w">D. La imposibilidad de generar participación ciudadana</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Crítica filosófica</p>
+        <p class="faq-q">Según Dahl, ¿cuál es una de las principales críticas a la democracia desde una perspectiva filosófica?</p>
+        <span class="opt w">A. La falta de eficiencia en la toma de decisiones</span>
+        <span class="opt w">B. La escasa participación ciudadana</span>
+        <span class="opt c">C. La incapacidad de garantizar igualdad real</span>
+        <span class="opt w">D. La imposibilidad de adaptarse a sociedades modernas</span>
+      </div>
+      <table class="vf-t">
+        <tr><th>V/F más repetidas</th><th>R.</th></tr>
+        <tr><td>Una democracia no puede ser tal si no respeta las libertades civiles de los individuos.</td><td class="vt">V</td></tr>
+        <tr><td>Una democracia no puede ser tal si no tiene un sistema electoral proporcional.</td><td class="vf">F</td></tr>
+        <tr><td>Una democracia no puede ser tal si no tiene una sola religión oficial.</td><td class="vf">F</td></tr>
+        <tr><td>Una democracia no puede ser tal si carece de una constitución rígida.</td><td class="vf">F</td></tr>
+        <tr><td>La pluralidad de voces en democracia sirve para fortalecer la deliberación pública y la representación.</td><td class="vt">V</td></tr>
+        <tr><td>La pluralidad de voces sirve para fomentar el consenso entre la elite política.</td><td class="vf">F</td></tr>
+        <tr><td>Las críticas a la democracia son legítimas, pero no suficientes para rechazarla. (cap. 15)</td><td class="vt">V</td></tr>
+        <tr><td>La igualdad política es un principio esencial para que una democracia sea justa.</td><td class="vt">V</td></tr>
+        <tr><td>La representación proporcional es un principio esencial para que una democracia sea justa.</td><td class="vf">F</td></tr>
+      </table>
+    `
+  },
+
+  linz: {
+    tag: "Autor 02 · Aparece en los 4 exámenes",
+    title: "Juan Linz",
+    sub: "Los problemas de las democracias y la diversidad de democracias",
+    color: "var(--linz)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> Linz identifica factores que desestabilizan la democracia y sostiene que los sistemas presidenciales son más susceptibles a crisis que los parlamentarios. La diversidad institucional distingue a las democracias contemporáneas.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Factor desestabilizador</p>
+        <p class="faq-q">Según Linz, uno de los factores que puede desestabilizar a una democracia es:</p>
+        <span class="opt c">A. La alta fragmentación social y política</span>
+        <span class="opt w">B. La creación de leyes inclusivas</span>
+        <span class="opt w">C. El multipartidismo en exceso</span>
+        <span class="opt w">D. La existencia de una clase media fuerte</span>
+        <p class="faq-tip"><strong>Truco:</strong> B, C y D son trampas — la clase media fuerte y las leyes inclusivas estabilizan. El multipartidismo por sí solo no desestabiliza según Linz.</p>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Régimen más susceptible a crisis</p>
+        <p class="faq-q">¿Qué tipo de régimen considera Linz más susceptible a las crisis políticas?</p>
+        <span class="opt c">A. Los sistemas presidenciales</span>
+        <span class="opt w">B. Los sistemas parlamentarios</span>
+        <span class="opt w">C. Los sistemas mixtos</span>
+        <span class="opt w">D. Las dictaduras</span>
+        <p class="faq-tip">Argumento central de Linz: el presidencialismo genera rigidez institucional porque tanto el ejecutivo como el legislativo tienen mandatos fijos y legitimidades democráticas separadas → más difícil resolver crisis.</p>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Qué distingue a las democracias contemporáneas</p>
+        <p class="faq-q">Según Linz, ¿qué elemento distingue a las democracias contemporáneas?</p>
+        <span class="opt w">A. La homogeneidad política</span>
+        <span class="opt c">B. La diversidad institucional</span>
+        <span class="opt w">C. La eliminación de los partidos políticos</span>
+        <span class="opt w">D. La centralización del poder en una sola figura</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Desafío clave</p>
+        <p class="faq-q">¿Qué problema menciona Linz como un desafío clave para las democracias modernas?</p>
+        <span class="opt c">A. La falta de consenso entre las élites políticas</span>
+        <span class="opt w">B. La imposición de dictaduras militares</span>
+        <span class="opt w">C. La falta de pluralismo en la sociedad</span>
+        <span class="opt w">D. La baja inclusión de las mujeres en la política</span>
+      </div>
+    `
+  },
+
+  lopreite: {
+    tag: "Autor 03 · Aparece en los 4 exámenes",
+    title: "Lopreite & Rodríguez Gusta",
+    sub: "Feminismo de Estado en Argentina (1983-2021)",
+    color: "var(--lopreite)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> el feminismo de Estado se caracteriza por la incorporación de la agenda feminista en las políticas públicas. Los organismos internacionales son aliados clave pero no determinantes. El hito más citado es la Ley de IVE (2020).
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Qué caracteriza al feminismo de Estado</p>
+        <p class="faq-q">¿Qué caracteriza al feminismo de Estado en Argentina desde 1983?</p>
+        <span class="opt w">A. La creación de movimientos feministas radicales</span>
+        <span class="opt w">B. La influencia de organismos internacionales en la temática de género</span>
+        <span class="opt c">C. La incorporación de la agenda feminista en las políticas públicas</span>
+        <span class="opt w">D. El activismo judicial en temas de género</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Hito en la institucionalización</p>
+        <p class="faq-q">¿Qué evento clave marcó un hito en la institucionalización del feminismo de Estado en Argentina?</p>
+        <span class="opt w">A. La elección presidencial de 1989</span>
+        <span class="opt w">B. La creación del Consejo Nacional de las Mujeres en 1992</span>
+        <span class="opt w">C. La sanción de la Ley de Paridad de Género en 2017</span>
+        <span class="opt c">D. La promulgación de la Ley de IVE en 2020</span>
+        <p class="faq-tip">La Ley de Interrupción Voluntaria del Embarazo (IVE, 2020) es el hito que el examen identifica como el más significativo en los 4 exámenes.</p>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Rol de los organismos internacionales</p>
+        <p class="faq-q">¿Qué rol desempeñan los organismos internacionales en el desarrollo del feminismo de Estado en Argentina?</p>
+        <span class="opt w">A. Son los principales actores detrás de la implementación de políticas feministas</span>
+        <span class="opt w">B. Son irrelevantes en la agenda feminista</span>
+        <span class="opt w">C. Obstaculizan la progresión de las políticas de género</span>
+        <span class="opt c">D. Actúan como aliados clave, pero no son determinantes en las decisiones nacionales</span>
+      </div>
+    `
+  },
+
+  welp: {
+    tag: "Autor 04 · Aparece en los 4 exámenes",
+    title: "Yanina Welp",
+    sub: "El debate en el Siglo XXI · Democracia digital y desafíos contemporáneos",
+    color: "var(--welp)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> Welp analiza los desafíos de la democracia en el siglo XXI. La desafección ciudadana y la polarización son los principales problemas. Las tecnologías amplían participación pero generan riesgos de manipulación. La exclusión digital es un reto clave.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Reto de la democracia digital</p>
+        <p class="faq-q">En "El debate en el Siglo XXI" Welp sostiene que uno de los retos para la democracia digital es:</p>
+        <span class="opt w">A. La concentración del poder en las redes sociales</span>
+        <span class="opt c">B. La exclusión de los ciudadanos que no tienen acceso a tecnología</span>
+        <span class="opt w">C. El crecimiento desmedido de las organizaciones internacionales</span>
+        <span class="opt w">D. La desaparición de los movimientos sociales</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Principal desafío del siglo XXI</p>
+        <p class="faq-q">Welp sostiene que uno de los principales desafíos de las democracias en el siglo XXI es:</p>
+        <span class="opt w">A. El crecimiento de la participación electoral</span>
+        <span class="opt c">B. La desafección ciudadana hacia las instituciones democráticas</span>
+        <span class="opt w">C. La continuidad de los partidos políticos tradicionales</span>
+        <span class="opt w">D. La creación de nuevas formas de monarquía constitucional</span>
+      </div>
+      <table class="vf-t">
+        <tr><th>V/F más repetidas</th><th>R.</th></tr>
+        <tr><td>Riesgos del siglo XXI: la manipulación de la información a través de redes sociales.</td><td class="vt">V</td></tr>
+        <tr><td>Riesgos del siglo XXI: la disminución del poder de los ejecutivos.</td><td class="vf">F</td></tr>
+        <tr><td>Riesgos del siglo XXI: el fortalecimiento de los partidos minoritarios.</td><td class="vf">F</td></tr>
+        <tr><td>Las nuevas tecnologías han aumentado las posibilidades de participación política directa.</td><td class="vt">V</td></tr>
+        <tr><td>Las nuevas tecnologías han reemplazado a los partidos políticos tradicionales.</td><td class="vf">F</td></tr>
+        <tr><td>Las democracias contemporáneas deben enfrentar la polarización extrema entre ciudadanos.</td><td class="vt">V</td></tr>
+        <tr><td>Las democracias contemporáneas deben enfrentar la creciente centralización del poder.</td><td class="vf">F</td></tr>
+      </table>
+    `
+  },
+
+  zelaznik: {
+    tag: "Autor 05 · Aparece en los 4 exámenes",
+    title: "Javier Zelaznik",
+    sub: "Gobierno · Presidencialismo en Argentina",
+    color: "var(--zelaznik)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> el gobierno es una institución presente tanto en democracias como en regímenes autoritarios. Zelaznik lo define como un conjunto de instituciones y personas que ejercen el poder dentro de un marco normativo. La legitimidad es fundamental.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Banco de V/F — El más repetido del final</p>
+        <p class="faq-q">De acuerdo al artículo "Gobierno" de Zelaznik, ¿cuáles son verdaderas?</p>
+        <span class="opt c">V — Zelaznik define al gobierno como un conjunto de instituciones y personas que ejercen el poder dentro de un marco normativo.</span>
+        <span class="opt c">V — Zelaznik menciona que la legitimidad es una característica fundamental de cualquier tipo de gobierno.</span>
+        <span class="opt c">V — El gobierno está presente tanto en democracias como en regímenes autoritarios.</span>
+        <span class="opt c">V — El gobierno es el encargado de aplicar y hacer cumplir las leyes, pero no de crearlas.</span>
+        <span class="opt w">F — El objetivo principal del gobierno es concentrar el poder en una sola institución para lograr estabilidad.</span>
+        <span class="opt w">F — El concepto de gobierno se refiere solo a la estructura formal del poder ejecutivo.</span>
+        <span class="opt w">F — En un sistema parlamentario, el poder ejecutivo y el legislativo están completamente separados.</span>
+        <span class="opt w">F — Los sistemas democráticos necesitan un gobierno con poderes absolutos para ser eficaces.</span>
+        <p class="faq-tip"><strong>Truco:</strong> todas las afirmaciones que hablan de "solo", "completamente", "absolutos", "únicamente" → FALSAS. Zelaznik siempre matiza.</p>
+      </div>
+    `
+  },
+
+  bulcourf: {
+    tag: "Autor 06 · Aparece en los 4 exámenes",
+    title: "Bulcourf & Vázquez",
+    sub: "La ciencia política como profesión",
+    color: "var(--bulcourf)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> las asociaciones profesionales son esenciales para consolidar y legitimar la disciplina. La producción de conocimiento independiente es la característica fundamental de una disciplina como profesión. La formación fue impulsada por el desarrollo de programas de grado en universidades nacionales.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Rol de las asociaciones profesionales</p>
+        <p class="faq-q">¿Qué rol juegan las asociaciones profesionales en el campo de la ciencia política?</p>
+        <span class="opt w">A. Se centran en la regulación de la actividad política</span>
+        <span class="opt w">B. Facilitan la creación de nuevas teorías políticas</span>
+        <span class="opt c">C. Son esenciales para la consolidación y legitimación de la disciplina</span>
+        <span class="opt w">D. Promueven el activismo político de los académicos</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Característica fundamental de una disciplina como profesión</p>
+        <p class="faq-q">¿Qué característica consideran Bulcourf y Vázquez fundamental para considerar a una disciplina como profesión?</p>
+        <span class="opt w">A. La creación de un centro de estudios académicos</span>
+        <span class="opt c">B. La producción de conocimiento independiente</span>
+        <span class="opt w">C. La búsqueda de relevancia política</span>
+        <span class="opt w">D. La competencia con otras ciencias sociales</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Formación de profesionales en Argentina</p>
+        <p class="faq-q">¿Por qué fue impulsada la formación de profesionales en ciencia política en Argentina?</p>
+        <span class="opt w">A. La necesidad de profesionales en el sector privado</span>
+        <span class="opt w">B. Las demandas de organismos internacionales</span>
+        <span class="opt c">C. El desarrollo de programas de grado en universidades nacionales</span>
+        <span class="opt w">D. La creciente influencia de los medios de comunicación</span>
+      </div>
+    `
+  },
+
+  bonvecchi: {
+    tag: "Autor 07 · Aparece en los 4 exámenes",
+    title: "Bonvecchi & Zelaznik",
+    sub: "Recursos de gobierno y presidencialismo en Argentina",
+    color: "var(--bonvecchi)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> el factor clave del presidencialismo argentino es la relación entre el presidente y los gobernadores provinciales. El Congreso colabora pero delega frecuentemente su poder al ejecutivo. Los gobernadores son actores clave que pueden limitar al presidente.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Factor clave del presidencialismo</p>
+        <p class="faq-q">¿Qué factor consideran Bonvecchi y Zelaznik como clave para el funcionamiento del presidencialismo en Argentina?</p>
+        <span class="opt w">A. El control del Congreso por parte del presidente</span>
+        <span class="opt w">B. La delegación de poderes legislativos al ejecutivo</span>
+        <span class="opt c">C. La relación entre el presidente y los gobernadores provinciales</span>
+        <span class="opt w">D. La ausencia de partidos políticos opositores fuertes</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Relación Congreso/Presidente</p>
+        <p class="faq-q">¿Cómo describen Bonvecchi y Zelaznik la relación entre el Congreso y el presidente en Argentina?</p>
+        <span class="opt w">A. Es una relación conflictiva que bloquea asiduamente al gobierno</span>
+        <span class="opt c">B. Es una relación de colaboración, pero el Congreso delega frecuentemente su poder al ejecutivo</span>
+        <span class="opt w">C. No hay una relación institucionalizada entre ambas ramas</span>
+        <span class="opt w">D. El presidente se arroga facultades netamente legislativas</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Factor de estabilidad</p>
+        <p class="faq-q">¿Qué aspecto del presidencialismo destacan Bonvecchi y Zelaznik como un factor de estabilidad?</p>
+        <span class="opt w">A. La independencia total del Congreso</span>
+        <span class="opt c">B. La capacidad del presidente para negociar con distintos actores políticos</span>
+        <span class="opt w">C. La reelección del presidente y la figura del jefe de gabinete</span>
+        <span class="opt w">D. El sistema unificado de control judicial sobre el ejecutivo</span>
+      </div>
+      <table class="vf-t">
+        <tr><th>V/F sobre gobernadores provinciales</th><th>R.</th></tr>
+        <tr><td>Los gobernadores son actores clave que pueden limitar el poder del presidente.</td><td class="vt">V</td></tr>
+        <tr><td>Los gobernadores suelen funcionar como una extensión del poder ejecutivo nacional.</td><td class="vf">F</td></tr>
+        <tr><td>Los gobernadores no tienen per se influencia en el sistema presidencialista.</td><td class="vf">F</td></tr>
+        <tr><td>Los gobernadores solo actúan en su ámbito local sin impacto en el nivel nacional.</td><td class="vf">F</td></tr>
+      </table>
+    `
+  },
+
+  malamud: {
+    tag: "Autor 08 · Aparece en los 4 exámenes",
+    title: "Andrés Malamud",
+    sub: "El Estado · Soberanía · Partidos políticos en América Latina",
+    color: "var(--malamud)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> la soberanía estatal está debilitada por la globalización (no obsoleta, no absoluta). El autor clásico citado por Malamud al definir el Estado es Max Weber. Los partidos en América Latina se caracterizan por inestabilidad y personalismo.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Soberanía estatal</p>
+        <p class="faq-q">Siguiendo el artículo "El Estado" de Malamud, ¿cómo describe el concepto de soberanía estatal en el contexto contemporáneo?</p>
+        <span class="opt c">A. Como un principio debilitado por la globalización</span>
+        <span class="opt w">B. Como una noción obsoleta</span>
+        <span class="opt w">C. Como un poder absoluto sobre el territorio nacional</span>
+        <span class="opt w">D. Como una herramienta de dominación colonial</span>
+        <p class="faq-tip"><strong>Truco:</strong> "debilitado" ≠ "obsoleto". La soberanía sigue existiendo pero con menos fuerza. "Obsoleto" sería demasiado radical para Malamud.</p>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Autor clásico citado</p>
+        <p class="faq-q">¿Qué autor clásico es citado por Malamud al definir el concepto de Estado?</p>
+        <span class="opt w">A. Thomas Hobbes</span>
+        <span class="opt w">B. Karl Marx</span>
+        <span class="opt c">C. Max Weber</span>
+        <span class="opt w">D. John Locke</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Partidos en América Latina</p>
+        <p class="faq-q">De acuerdo con Malamud, los partidos políticos en América Latina han tenido una evolución marcada por:</p>
+        <span class="opt c">A. La inestabilidad y el personalismo</span>
+        <span class="opt w">B. La estabilidad institucional</span>
+        <span class="opt w">C. El control de las fuerzas armadas</span>
+        <span class="opt w">D. El crecimiento económico sostenido</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Cambio de los partidos</p>
+        <p class="faq-q">Malamud menciona que los partidos políticos tienden a cambiar según:</p>
+        <span class="opt w">A. La economía del país</span>
+        <span class="opt w">B. El desarrollo tecnológico</span>
+        <span class="opt c">C. Las características del sistema electoral</span>
+        <span class="opt w">D. Las ideologías de la sociedad</span>
+      </div>
+    `
+  },
+
+  levitsky: {
+    tag: "Autor 09 · Aparece en los 4 exámenes",
+    title: "Steven Levitsky",
+    sub: "Construcción de partidos en épocas de incertidumbre",
+    color: "var(--levitsky)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> construir partidos en épocas de incertidumbre requiere una base sólida de apoyo popular. Para reconstruir la confianza en los partidos es necesario promover la participación ciudadana y la transparencia. La polarización política contribuye al resurgimiento autoritario.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Construcción de partidos</p>
+        <p class="faq-q">Levitsky menciona que la construcción de partidos en épocas de incertidumbre requiere:</p>
+        <span class="opt w">A. Una fuerte conexión con la élite económica</span>
+        <span class="opt w">B. El monopolio de los medios de comunicación</span>
+        <span class="opt w">C. La cooperación entre las fuerzas armadas</span>
+        <span class="opt c">D. La creación de una base sólida de apoyo popular</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Reconstruir confianza</p>
+        <p class="faq-q">Levitsky señala que, para reconstruir la confianza en los partidos, es necesario:</p>
+        <span class="opt w">A. Reforzar los mecanismos de control estatal</span>
+        <span class="opt c">B. Promover la participación ciudadana y la transparencia</span>
+        <span class="opt w">C. Eliminar el financiamiento público a los partidos</span>
+        <span class="opt w">D. Crear nuevos organismos de supervisión internacional</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Resurgimiento autoritario</p>
+        <p class="faq-q">¿Cuál de los siguientes factores, según Levitsky, ha contribuido al resurgimiento de actitudes autoritarias en América Latina?</p>
+        <span class="opt w">A. La inestabilidad económica</span>
+        <span class="opt c">B. La polarización política</span>
+        <span class="opt w">C. El fortalecimiento de las instituciones democráticas</span>
+        <span class="opt w">D. El aumento del comercio internacional</span>
+      </div>
+    `
+  },
+
+  deluca: {
+    tag: "Autor 10 · Aparece en los 4 exámenes",
+    title: "Miguel De Luca",
+    sub: "Elecciones y sistemas electorales",
+    color: "var(--deluca)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> un sistema mixto combina elementos de representación mayoritaria y proporcional. Esta pregunta aparece en los 4 exámenes con la misma respuesta.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">La pregunta más repetida de De Luca</p>
+        <p class="faq-q">Según el artículo "Elecciones y sistemas electorales" de De Luca, un sistema mixto combina elementos de:</p>
+        <span class="opt c">A. Representación mayoritaria y representación proporcional</span>
+        <span class="opt w">B. Voto directo y voto indirecto</span>
+        <span class="opt w">C. Participación política y económica</span>
+        <span class="opt w">D. Elección de representantes y referendos populares</span>
+        <p class="faq-tip">Esta pregunta aparece literalmente idéntica en los 4 exámenes con la misma respuesta. Es la más fácil de todo el final.</p>
+      </div>
+    `
+  },
+
+  franceschet: {
+    tag: "Autor 11 · Aparece en 2 de 4 exámenes",
+    title: "Susan Franceschet",
+    sub: "¿Promueven las cuotas de género los intereses de las mujeres? (2008)",
+    color: "var(--franceschet)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> el principal desafío de las leyes de cuotas de género es que a menudo no se aplican correctamente. La representación formal (cuotas) no garantiza la representación sustantiva (defensa de intereses).
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Desafío de las cuotas</p>
+        <p class="faq-q">Según Franceschet, un desafío para las leyes de cuotas de género es que:</p>
+        <span class="opt c">A. A menudo no se aplican correctamente</span>
+        <span class="opt w">B. Favorecen el liderazgo de los hombres en los partidos</span>
+        <span class="opt w">C. Generan un aumento en la violencia política contra las mujeres</span>
+        <span class="opt w">D. Crean desigualdad en las campañas electorales</span>
+      </div>
+    `
+  },
+
+  tula: {
+    tag: "Autor 12 · Aparece en 2 de 4 exámenes",
+    title: "María Inés Tula",
+    sub: "Elecciones, cuotas de género y paridad en Argentina",
+    color: "var(--tula)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> cuotas = representación mínima. Paridad = igualdad numérica. Esta distinción es lo único que pregunta el examen sobre Tula.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">La pregunta más repetida de Tula</p>
+        <p class="faq-q">¿Qué diferencia marca Tula entre las cuotas de género y la paridad de género?</p>
+        <span class="opt w">A. Las cuotas son temporales, mientras que la paridad es permanente</span>
+        <span class="opt c">B. Las cuotas exigen una representación mínima, mientras que la paridad asegura igualdad numérica</span>
+        <span class="opt w">C. Las cuotas solo benefician a los hombres, mientras que la paridad beneficia a las mujeres</span>
+        <span class="opt w">D. Las cuotas se aplican solo a partidos de izquierda, mientras que la paridad es universal</span>
+        <p class="faq-tip"><strong>Memorizar:</strong> cuotas = piso mínimo (ej. 30%). Paridad = 50/50 exacto.</p>
+      </div>
+    `
+  },
+
+  malamuddeluca: {
+    tag: "Autor 13 · Aparece en 2 de 4 exámenes",
+    title: "Malamud & De Luca",
+    sub: "¿Todo sigue igual que ayer? Sistema de partidos argentino (1983-2015)",
+    color: "var(--linz)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> la principal ruptura en el sistema de partidos argentino entre 1983 y 2015 fue la fragmentación interna del Partido Justicialista.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">La pregunta que aparece en 2 exámenes</p>
+        <p class="faq-q">Malamud y De Luca señalan que una de las principales rupturas en el sistema de partidos argentino (1983-2015) fue:</p>
+        <span class="opt w">A. El surgimiento de una tercera fuerza política estable</span>
+        <span class="opt w">B. La aparición de partidos de extrema derecha</span>
+        <span class="opt c">C. La fragmentación interna del Partido Justicialista</span>
+        <span class="opt w">D. La consolidación del Partido Socialista</span>
+        <p class="faq-tip">El PJ se fragmentó con el duhaldismo, el kirchnerismo y otras corrientes internas que compitieron entre sí. Esa fragmentación es la ruptura clave del período.</p>
+      </div>
+    `
+  }
+};
+
+function openModal(id) {
+  const d = DATA[id];
+  if (!d) return;
+  const header = document.getElementById('modal-header');
+  header.style.borderBottom = `2px solid ${d.color}`;
+  document.getElementById('modal-tag').style.color = d.color;
+  document.getElementById('modal-tag').textContent = d.tag;
+  document.getElementById('modal-title').textContent = d.title;
+  document.getElementById('modal-sub').textContent = d.sub;
+  document.getElementById('modal-body').innerHTML = d.body;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeOnOverlay(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>

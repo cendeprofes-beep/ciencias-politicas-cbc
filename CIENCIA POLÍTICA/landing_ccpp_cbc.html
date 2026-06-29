@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Recursos Ciencias Políticas · CBC · UBA — Prof. Claudio Damián Sacco</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #07070a;
+  --surface:  #0f0f14;
+  --card:     #13131a;
+  --border:   #1e1e2a;
+  --gold:     #c9a84c;
+  --gold-d:   #4a3a08;
+  --gold-glow:rgba(201,168,76,.12);
+  --text:     #dcd8ca;
+  --muted:    #55555f;
+  --white:    #f0ecd8;
+  --red:      #c44a4a;
+  --amber:    #c47a2a;
+  --green:    #3aaa6a;
+  --blue:     #4a7ec4;
+  --violet:   #8a5ac4;
+  --teal:     #3aacaa;
+  --rose:     #c44a8a;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(7,7,10,.96);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.8rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.nav-brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--gold); white-space: nowrap;
+  text-decoration: none;
+}
+.nav-links {
+  display: flex; gap: .5rem; overflow-x: auto;
+  -webkit-overflow-scrolling: touch; flex-wrap: wrap;
+}
+.nav-links a {
+  color: var(--text); text-decoration: none;
+  font-size: .88rem; letter-spacing: .04em;
+  font-weight: 600; padding: .45rem 1rem;
+  border-radius: 4px; border: 1px solid var(--border);
+  background: var(--surface);
+  transition: all .2s; white-space: nowrap; flex-shrink: 0;
+}
+.nav-links a:hover { color: var(--gold); background: var(--gold-glow); border-color: var(--gold-d); }
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  padding: 4rem 1.5rem 3rem;
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: 'Ciencias Políticas';
+  position: absolute;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(6rem, 22vw, 16rem);
+  font-weight: 900;
+  color: rgba(201,168,76,.025);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none; letter-spacing: .2em; white-space: nowrap;
+}
+.hero-eyebrow {
+  font-size: .6rem; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--gold); font-weight: 700; margin-bottom: .7rem;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 6vw, 3.6rem);
+  font-weight: 900; color: var(--white); line-height: 1.1;
+  margin-bottom: .8rem;
+}
+.hero-sub {
+  font-size: 1.15rem; font-weight: 700; color: var(--text);
+  max-width: 680px; margin: 0 auto 1.5rem;
+  line-height: 1.7;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: .6rem;
+  background: var(--surface); border: 1px solid var(--gold-d);
+  border-radius: 20px; padding: .7rem 1.8rem;
+  font-size: 1.25rem; color: var(--gold); font-weight: 800;
+  letter-spacing: .03em;
+}
+
+/* ── SECCIÓN ── */
+.section {
+  max-width: 900px; margin: 0 auto;
+  padding: 2.5rem 1.2rem 0;
+  scroll-margin-top: 55px;
+}
+.section-header {
+  margin-bottom: 1.2rem;
+  padding-bottom: .8rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+}
+.section-eyebrow {
+  font-size: .57rem; letter-spacing: .22em; text-transform: uppercase;
+  font-weight: 700; margin-bottom: .25rem;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem; font-weight: 700; color: var(--white);
+}
+.section-meta {
+  font-size: 1rem; font-weight: 700; color: var(--text); font-style: italic;
+  white-space: nowrap;
+}
+
+/* ── GRILLA DE CARDS ── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: .9rem;
+  margin-bottom: 2.5rem;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  transition: border-color .2s, transform .2s;
+  text-decoration: none;
+  cursor: pointer;
+}
+.card:hover {
+  transform: translateY(-2px);
+}
+.card-top {
+  height: 4px; flex-shrink: 0;
+}
+.card-body {
+  padding: 1.1rem 1.2rem .9rem;
+  flex: 1; display: flex; flex-direction: column; gap: .5rem;
+}
+.card-tag {
+  font-size: .85rem; letter-spacing: .1em; text-transform: uppercase;
+  font-weight: 700;
+}
+.card-title {
+  font-size: 1.2rem; font-weight: 700; color: var(--white); line-height: 1.3;
+}
+.card-desc {
+  font-size: 1rem; font-weight: 600; color: var(--text); line-height: 1.6; flex: 1;
+}
+.card-footer {
+  padding: .9rem 1.2rem;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-type {
+  font-size: .88rem; letter-spacing: .05em; text-transform: uppercase;
+  font-weight: 700; color: var(--muted);
+  display: flex; align-items: center; gap: .3rem;
+}
+.card-arrow {
+  font-size: 1.1rem; color: var(--muted); transition: color .2s, transform .2s;
+}
+.card:hover .card-arrow { transform: translateX(3px); }
+
+/* colores por sección */
+.c-red    { border-color: rgba(196,74,74,.35); }
+.c-red:hover { border-color: rgba(196,74,74,.7); }
+.c-red .card-top { background: var(--red); }
+.c-red .card-tag { color: var(--red); }
+.c-red .card-arrow { color: var(--red); }
+
+.c-amber  { border-color: rgba(196,122,42,.35); }
+.c-amber:hover { border-color: rgba(196,122,42,.7); }
+.c-amber .card-top { background: var(--amber); }
+.c-amber .card-tag { color: var(--amber); }
+.c-amber .card-arrow { color: var(--amber); }
+
+.c-teal   { border-color: rgba(58,172,170,.35); }
+.c-teal:hover { border-color: rgba(58,172,170,.7); }
+.c-teal .card-top { background: var(--teal); }
+.c-teal .card-tag { color: var(--teal); }
+.c-teal .card-arrow { color: var(--teal); }
+
+.c-blue   { border-color: rgba(74,126,196,.35); }
+.c-blue:hover { border-color: rgba(74,126,196,.7); }
+.c-blue .card-top { background: var(--blue); }
+.c-blue .card-tag { color: var(--blue); }
+.c-blue .card-arrow { color: var(--blue); }
+
+.c-violet { border-color: rgba(138,90,196,.35); }
+.c-violet:hover { border-color: rgba(138,90,196,.7); }
+.c-violet .card-top { background: var(--violet); }
+.c-violet .card-tag { color: var(--violet); }
+.c-violet .card-arrow { color: var(--violet); }
+
+.c-green  { border-color: rgba(58,170,106,.35); }
+.c-green:hover { border-color: rgba(58,170,106,.7); }
+.c-green .card-top { background: var(--green); }
+.c-green .card-tag { color: var(--green); }
+.c-green .card-arrow { color: var(--green); }
+
+.c-rose   { border-color: rgba(196,74,138,.35); }
+.c-rose:hover { border-color: rgba(196,74,138,.7); }
+.c-rose .card-top { background: var(--rose); }
+.c-rose .card-tag { color: var(--rose); }
+.c-rose .card-arrow { color: var(--rose); }
+
+.c-gold   { border-color: rgba(201,168,76,.35); }
+.c-gold:hover { border-color: rgba(201,168,76,.7); }
+.c-gold .card-top { background: var(--gold); }
+.c-gold .card-tag { color: var(--gold); }
+.c-gold .card-arrow { color: var(--gold); }
+
+.c-gold   { border-color: rgba(201,168,76,.35); }
+.c-gold:hover { border-color: rgba(201,168,76,.7); }
+.c-gold .card-top { background: var(--gold); }
+.c-gold .card-tag { color: var(--gold); }
+.c-gold .card-arrow { color: var(--gold); }
+
+/* ── BADGE TIPO ── */
+.badge {
+  display: inline-flex; align-items: center; gap: .3rem;
+  font-size: .88rem; font-weight: 700; padding: .3rem .75rem;
+  border-radius: 3px; letter-spacing: .04em; text-transform: uppercase;
+}
+.badge-red   { background:rgba(196,74,74,.15);  color:#e09090; }
+.badge-net   { background:rgba(58,172,170,.15);  color:#6dd4d2; }
+.badge-map   { background:rgba(138,90,196,.15);  color:#b098e0; }
+.badge-guide { background:rgba(196,122,42,.15); color:#dda870; }
+
+/* ── DIVISOR ── */
+.divider {
+  max-width: 900px; margin: 0 auto;
+  border: none; border-top: 1px solid var(--border);
+}
+
+/* ── INFO BOX ── */
+.info-box {
+  max-width: 900px; margin: 2rem auto 0; padding: 0 1.2rem;
+}
+.info-inner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 4px;
+  padding: 1.4rem 1.6rem;
+  font-size: 1rem; font-weight: 600; color: var(--text); line-height: 1.75;
+}
+.info-inner strong { color: var(--white); font-weight: 800; }
+
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  padding: 2.5rem 1.5rem 2.5rem;
+  margin-top: 3rem;
+  border-top: 1px solid var(--border);
+}
+.footer-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem; font-weight: 700; color: var(--gold);
+  margin-bottom: .4rem;
+}
+.footer-sub {
+  font-size: .95rem; color: var(--muted); line-height: 1.8;
+}
+.footer-contact {
+  margin-top: 1rem;
+  display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap;
+}
+.footer-contact a {
+  font-size: .88rem; color: var(--muted); text-decoration: none;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: .35rem .9rem;
+  transition: all .2s;
+}
+.footer-contact a:hover { color: var(--gold); border-color: var(--gold-d); }
+
+@media(max-width:600px){
+  .cards { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .hero-badge { font-size: .95rem; padding: .55rem 1.2rem; }
+  .hero-sub { font-size: .95rem; }
+  .section-meta { white-space: normal; font-size: .88rem; }
+  .card-desc { font-size: .9rem; }
+  .card-title { font-size: 1.05rem; }
+  .info-inner { font-size: .9rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#">Ciencias Políticas · CBC</a>
+  <div class="nav-links">
+    <a href="#marin-parcial">Parcial Marín</a>
+    <a href="#lopreite-final">Final Lopreite</a>
+    <a href="#lopreite-unidades">Unidades Lopreite</a>
+    <a href="#recursos-generales">Vocabulario · Infografías · Línea de tiempo</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-eyebrow">Recursos para estudiantes · CBC · UBA</p>
+  <h1>Ciencias<br>Políticas</h1>
+  <p class="hero-sub">Guías de estudio, redes conceptuales y mapas por unidad basados en el análisis de exámenes reales de las cátedras Marín y Lopreite.</p>
+  <span class="hero-badge">✦ Prof. de Historia CLAUDIO DAMIÁN SACCO</span>
+</div>
+
+<!-- INFO BOX -->
+<div class="info-box">
+  <div class="info-inner">
+    <strong>¿Cómo usar estos recursos?</strong> Cada tarjeta abre un archivo HTML independiente. Las <strong>redes conceptuales</strong> son interactivas: hacé clic en cada nodo para ver preguntas concretas y sus respuestas. Las <strong>guías</strong> son documentos de lectura lineal. Los <strong>mapas de unidad</strong> organizan los autores y conceptos de cada unidad del programa.
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     SECCIÓN 1: MARÍN — PARCIAL
+══════════════════════════════ -->
+<div class="section" id="marin-parcial">
+  <div class="section-header">
+    <div>
+      <p class="section-eyebrow" style="color:var(--red)">Cátedra B · Marín</p>
+      <p class="section-title">1° Parcial</p>
+    </div>
+    <span class="section-meta">Basado en 6 versiones del examen · Abril 2024</span>
+  </div>
+
+  <div class="cards">
+
+    <!-- Red conceptual Marín -->
+    <a class="card c-red" href="red_conceptual_ccpp_marin.html" target="_blank">
+      <div class="card-top"></div>
+      <div class="card-body">
+        <p class="card-tag">Recurso principal</p>
+        <p class="card-title">Red Conceptual Interactiva</p>
+        <p class="card-desc">Árbol jerárquico con los 9 autores del parcial organizados por prioridad. Hacé clic en cada nodo para ver las preguntas concretas que aparecieron en los 6 exámenes y sus respuestas.</p>
+        <div style="margin-top:.3rem">
+          <span class="badge badge-net">🕸 Red interactiva</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-type">Weber · Sartori · Morlino · Dahl · Lijphart + 4 más</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- Guía lineal Marín -->
+    <a class="card c-amber" href="guia_parcial_ccpp_marin.html" target="_blank">
+      <div class="card-top"></div>
+      <div class="card-body">
+        <p class="card-tag">Guía de emergencia · 2–3 días</p>
+        <p class="card-title">Guía Lineal de Estudio</p>
+        <p class="card-desc">Plan de 3 días para llegar al 4. Cada autor con su clave conceptual, preguntas con opciones marcadas, tablas V/F y trucos mnemotécnicos. Ideal para leer antes del examen.</p>
+        <div style="margin-top:.3rem">
+          <span class="badge badge-guide">📋 Guía lineal</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-type">20 preguntas · 0,5 pt c/u · Aprobás con 8</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     SECCIÓN 2: LOPREITE — FINAL
+══════════════════════════════ -->
+<hr class="divider">
+<div class="section" id="lopreite-final">
+  <div class="section-header">
+    <div>
+      <p class="section-eyebrow" style="color:var(--teal)">Cátedra A · Lopreite</p>
+      <p class="section-title">Final</p>
+    </div>
+    <span class="section-meta">Basado en 4 versiones del examen · Dic. 2025 y Feb. 2026</span>
+  </div>
+
+  <div class="cards">
+
+    <!-- Red conceptual Lopreite Final -->
+    <a class="card c-teal" href="red_conceptual_final_lopreite.html" target="_blank">
+      <div class="card-top"></div>
+      <div class="card-body">
+        <p class="card-tag">Recurso principal</p>
+        <p class="card-title">Red Conceptual — Final</p>
+        <p class="card-desc">Árbol jerárquico con los 13 autores del final organizados por prioridad. Cada nodo abre un modal con las preguntas reales del examen, opciones marcadas y trucos para no confundirse.</p>
+        <div style="margin-top:.3rem">
+          <span class="badge badge-net">🕸 Red interactiva</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-type">Dahl · Linz · Welp · Zelaznik · Lopreite + 8 más</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     SECCIÓN 3: LOPREITE — UNIDADES
+══════════════════════════════ -->
+<hr class="divider">
+<div class="section" id="lopreite-unidades">
+  <div class="section-header">
+    <div>
+      <p class="section-eyebrow" style="color:var(--violet)">Cátedra A · Lopreite</p>
+      <p class="section-title">Mapas conceptuales por unidad</p>
+    </div>
+    <span class="section-meta">Unidades 1 a 6 · Programa completo</span>
+  </div>
+
+  <div class="cards">
+
+    <!-- Unidad 1 -->
+    <a class="card c-blue" href="mapa_unidad1.html" target="_blank">
+      <div class="card-top"></div>
+      <div class="card-body">
+        <p class="card-tag">Unidad 1</p>
+        <p class="card-title">La ciencia política como disciplina</p>
+        <p class="card-desc">Bobbio y Bulcourf & Vázquez. Orígenes y profesionalización de la ciencia política. Mapa con clusters de conceptos y tabla comparativa de autores.</p>
+        <div style="margin-top:.3rem">
+          <span class="badge badge-map">🗺 Mapa conceptual</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-type">Bobbio · Bulcourf & Vázquez</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- Unidad 2 -->
+    <a class="card c-violet" href="unidad2_estado.html" target="_blank">
+      <div class="card-top"></div>
+      <div class="card-body">
+        <p class="card-tag">Unidad 2</p>
+        <p class="card-title">El Estado</p>
+        <p class="card-desc">Malamud, Bulcourf & Cardozo, Lopreite & Rodríguez Gusta. Tipos de Estado, agencias estatales y feminismo de Estado en Argentina 1983–2021.</p>
+        <div style="margin-top:.3rem">
+          <span class="badge badge-map">🗺 Mapa conceptual</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-type">Malamud · Lopreite & Rodríguez Gusta</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- Unidad 3 -->
+    <a class="card c-green" href="unidad3_democracia.html" target="_blank">
+      <div class="card-top"></div>
+      <div class="card-body">
+        <p class="card-tag">Unidad 3</p>
+        <p class="card-title">La democracia</p>
+        <p class="card-desc">Dahl, Linz, Welp. Poliarquía, problemas de las democracias y debate del siglo XXI. Timeline histórico y galería de filósofos con síntesis crítica.</p>
+        <div style="margin-top:.3rem">
+          <span class="badge badge-map">🗺 Mapa conceptual</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-type">Dahl · Linz · Welp</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- Unidad 4 -->
+    <a class="card c-amber" href="unidad4_gobierno.html" target="_blank">
+      <div class="card-top"></div>
+      <div class="card-body">
+        <p class="card-tag">Unidad 4</p>
+        <p class="card-title">El gobierno</p>
+        <p class="card-desc">Zelaznik y Bonvecchi & Zelaznik. Sistemas de gobierno comparados, presidencialismo argentino, recursos del Ejecutivo y flujo del DNU.</p>
+        <div style="margin-top:.3rem">
+          <span class="badge badge-map">🗺 Mapa conceptual</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-type">Zelaznik · Bonvecchi & Zelaznik</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- Unidad 5 -->
+    <a class="card c-red" href="unidad5_elecciones.html" target="_blank">
+      <div class="card-top"></div>
+      <div class="card-body">
+        <p class="card-tag">Unidad 5</p>
+        <p class="card-title">Elecciones y partidos políticos</p>
+        <p class="card-desc">De Luca, Levitsky, Malamud, Malamud & De Luca. Sistemas electorales, construcción de partidos y evolución del sistema partidario argentino 1983–2015.</p>
+        <div style="margin-top:.3rem">
+          <span class="badge badge-map">🗺 Mapa conceptual</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-type">De Luca · Levitsky · Malamud & De Luca</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- Unidad 6 -->
+    <a class="card c-rose" href="unidad6_genero.html" target="_blank">
+      <div class="card-top"></div>
+      <div class="card-body">
+        <p class="card-tag">Unidad 6</p>
+        <p class="card-title">Género, movimientos sociales y representación</p>
+        <p class="card-desc">Franceschet, Tilly & Wood, Tula, Welp, Dahl. Cuotas y paridad en Argentina, movimientos sociales, protesta digital. Timeline género 1947–2019.</p>
+        <div style="margin-top:.3rem">
+          <span class="badge badge-map">🗺 Mapa conceptual</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-type">Franceschet · Tula · Tilly & Wood</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     SECCIÓN 4: RECURSOS GENERALES
+══════════════════════════════ -->
+<hr class="divider">
+<div class="section" id="recursos-generales">
+  <div class="section-header">
+    <div>
+      <p class="section-eyebrow" style="color:var(--gold)">Recursos generales · Programa completo</p>
+      <p class="section-title">Vocabulario · Infografías · Línea de tiempo</p>
+    </div>
+    <span class="section-meta">Unidades 1 a 6 · Cátedra Lopreite</span>
+  </div>
+
+  <div class="cards">
+
+    <!-- Vocabulario -->
+    <a class="card c-gold" href="vocabulario_ciencias_politicas.html" target="_blank">
+      <div class="card-top"></div>
+      <div class="card-body">
+        <p class="card-tag">Recurso general</p>
+        <p class="card-title">Vocabulario Politológico</p>
+        <p class="card-desc">80 términos del programa completo (Unidades 1–6) con definición, autor, unidad y badge de si entra en examen. Buscador en tiempo real y filtros por unidad y por autor.</p>
+        <div style="margin-top:.3rem">
+          <span class="badge badge-guide">📖 Vocabulario interactivo</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-type">Búsqueda · Filtro por unidad · Filtro por autor</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- Infografías -->
+    <a class="card c-teal" href="infografias.html" target="_blank">
+      <div class="card-top"></div>
+      <div class="card-body">
+        <p class="card-tag">Recurso general</p>
+        <p class="card-title">Infografías por unidad</p>
+        <p class="card-desc">Visor de infografías organizadas por unidad (U1 a U6). Una infografía por texto más una síntesis comparativa por unidad. Zoom con pellizco en móvil y rueda del mouse en PC.</p>
+        <div style="margin-top:.3rem">
+          <span class="badge badge-net">🖼 Visor con zoom</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-type">38 infografías · Pinch-to-zoom · Navegación por flechas</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- Línea de tiempo -->
+    <a class="card c-amber" href="timeline_politologia.html" target="_blank">
+      <div class="card-top"></div>
+      <div class="card-body">
+        <p class="card-tag">Recurso general</p>
+        <p class="card-title">Línea de tiempo de la politología</p>
+        <p class="card-desc">Desde 1840 hasta la actualidad. Tres bandas: cronología, transformaciones de la disciplina y pensadores clave con año de publicación. Semblanzas biográficas con fotografía al hacer clic.</p>
+        <div style="margin-top:.3rem">
+          <span class="badge badge-map">📅 Timeline interactivo</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-type">22 pensadores · 10 hitos disciplinares · Scroll horizontal</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p class="footer-name">Prof. de Historia CLAUDIO DAMIÁN SACCO</p>
+  <p class="footer-sub">
+    Profesor en Historia · UBA<br>
+    Recursos elaborados con asistencia técnica de Claude (Anthropic)
+  </p>
+  <div class="footer-contact">
+    <a href="https://wa.me/5491156358610" target="_blank">💬 WhatsApp</a>
+    <a href="mailto:cendeprofes@gmail.com">✉ cendeprofes@gmail.com</a>
+  </div>
+</footer>
+
+</body>
+</html>

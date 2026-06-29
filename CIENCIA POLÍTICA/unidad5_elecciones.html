@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Unidad 5 — Elecciones y Partidos | IPC · CBC · UBA</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #09090b;
+  --surface:  #111116;
+  --card:     #14141a;
+  --border:   #1e1e28;
+  --gold:     #c9a84c;
+  --gold-dim: #4a3a08;
+  --teal:     #3aacaa;
+  --blue:     #4a7ec4;
+  --amber:    #c47a2a;
+  --rose:     #c44a7a;
+  --green:    #3aaa6a;
+  --red:      #c44a4a;
+  --violet:   #7a5ac4;
+  --text:     #dcd8ca;
+  --muted:    #585860;
+  --white:    #f0ecd8;
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(9,9,11,.95); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: .4rem;
+  padding: .65rem 1.2rem; overflow-x: auto; white-space: nowrap;
+}
+nav a { color: var(--muted); text-decoration: none; font-size: .65rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; padding: .3rem .65rem; border-radius: 3px; transition: all .2s; flex-shrink: 0; }
+nav a:hover { color: var(--gold); background: rgba(201,168,76,.08); }
+nav .sep { color: var(--border); }
+
+/* HERO */
+.hero { text-align: center; padding: 4rem 1.5rem 3.5rem; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+.hero::before { content: 'VOTOS'; position: absolute; font-family: 'Playfair Display', serif; font-size: clamp(5rem, 22vw, 16rem); font-weight: 900; color: rgba(201,168,76,.03); top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; letter-spacing: .15em; }
+.eyebrow { font-size:.62rem; letter-spacing:.3em; text-transform:uppercase; color:var(--gold); font-weight:600; margin-bottom:.7rem; }
+h1 { font-family:'Playfair Display',serif; font-size:clamp(2.2rem,6vw,4rem); font-weight:900; color:var(--white); line-height:1.1; margin-bottom:.8rem; }
+.hero-sub { font-size:.85rem; color:var(--muted); max-width:580px; margin:0 auto 2rem; }
+.pills { display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center; }
+.pill { font-size:.62rem; letter-spacing:.08em; font-weight:600; padding:.3rem .85rem; border-radius:20px; text-transform:uppercase; }
+.p-teal   { background:rgba(58,172,170,.15); color:#6dd4d2; border:1px solid rgba(58,172,170,.35); }
+.p-amber  { background:rgba(196,122,42,.15);  color:#dda870; border:1px solid rgba(196,122,42,.35); }
+.p-violet { background:rgba(122,90,196,.15);  color:#b098e0; border:1px solid rgba(122,90,196,.35); }
+.p-rose   { background:rgba(196,74,122,.15);  color:#e098b8; border:1px solid rgba(196,74,122,.35); }
+
+/* PREGUNTA GLOBAL */
+.global-q { max-width:820px; margin:2.5rem auto; padding:0 1.2rem; }
+.gq-box { background:linear-gradient(135deg,#0e130e 0%,#0a0a14 100%); border:1px solid var(--gold-dim); border-left:4px solid var(--gold); border-radius:4px; padding:1.5rem 1.8rem; }
+.gq-label { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:.6rem; }
+.gq-text { font-family:'Playfair Display',serif; font-size:1.1rem; font-style:italic; color:var(--white); line-height:1.55; }
+
+/* SECCIÓN AUTOR */
+.author-section { max-width:920px; margin:0 auto 3.5rem; padding:0 1.2rem; scroll-margin-top:60px; }
+.author-banner { border-radius:6px 6px 0 0; padding:1.4rem 1.8rem 1.1rem; }
+.b-teal   { background:linear-gradient(135deg,#0b1a1a 0%,#0e2020 100%); border:1px solid rgba(58,172,170,.3); border-bottom:none; }
+.b-amber  { background:linear-gradient(135deg,#1a1008 0%,#201408 100%); border:1px solid rgba(196,122,42,.3);  border-bottom:none; }
+.b-violet { background:linear-gradient(135deg,#120a1a 0%,#180e22 100%); border:1px solid rgba(122,90,196,.3);  border-bottom:none; }
+.b-rose   { background:linear-gradient(135deg,#1a0a10 0%,#220e18 100%); border:1px solid rgba(196,74,122,.3);  border-bottom:none; }
+
+.author-num { font-size:.6rem; letter-spacing:.2em; font-weight:700; text-transform:uppercase; margin-bottom:.3rem; }
+.n-teal   { color:var(--teal); }
+.n-amber  { color:var(--amber); }
+.n-violet { color:var(--violet); }
+.n-rose   { color:var(--rose); }
+
+.author-name { font-family:'Playfair Display',serif; font-size:1.45rem; font-weight:700; color:var(--white); }
+.author-work { font-size:.73rem; color:var(--muted); font-style:italic; margin-top:.2rem; }
+
+.content-body { background:var(--card); border:1px solid var(--border); border-top:none; border-radius:0 0 6px 6px; padding:1.6rem; display:flex; flex-direction:column; gap:1.3rem; }
+
+/* Q block */
+.q-block { background:rgba(201,168,76,.04); border-left:3px solid var(--gold-dim); border-radius:0 4px 4px 0; padding:.9rem 1.2rem; }
+.q-label { font-size:.57rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:.5rem; }
+.q-block ul { list-style:none; padding:0; }
+.q-block li { font-size:.8rem; font-style:italic; color:#b8a870; padding:.2rem 0 .35rem .8rem; border-left:1px solid var(--gold-dim); margin-bottom:.35rem; }
+
+/* Concepto */
+.concept { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:1rem 1.2rem; }
+.concept-label { font-size:.57rem; letter-spacing:.18em; text-transform:uppercase; font-weight:700; margin-bottom:.4rem; }
+.l-teal   { color:var(--teal); }
+.l-amber  { color:var(--amber); }
+.l-violet { color:var(--violet); }
+.l-rose   { color:var(--rose); }
+.l-gold   { color:var(--gold); }
+.l-red    { color:var(--red); }
+.l-green  { color:var(--green); }
+
+.concept-title { font-size:.95rem; font-weight:600; color:var(--white); margin-bottom:.5rem; }
+.concept-body { font-size:.79rem; color:#9a9070; line-height:1.65; }
+.concept-body strong { color:#d0c8a0; }
+.concept-body em { color:#b09850; font-style:normal; font-weight:500; }
+
+/* Tags */
+.tags { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.7rem; }
+.tag { font-size:.6rem; padding:.18rem .52rem; border-radius:2px; font-weight:600; letter-spacing:.04em; }
+.t-t  { background:rgba(58,172,170,.12); color:#6dd4d2; border:1px solid rgba(58,172,170,.25); }
+.t-a  { background:rgba(196,122,42,.12);  color:#dda870; border:1px solid rgba(196,122,42,.25); }
+.t-v  { background:rgba(122,90,196,.12);  color:#b098e0; border:1px solid rgba(122,90,196,.25); }
+.t-r  { background:rgba(196,74,122,.12);  color:#e098b8; border:1px solid rgba(196,74,122,.25); }
+.t-g  { background:rgba(201,168,76,.1);   color:#c9a84c; border:1px solid rgba(201,168,76,.25); }
+.t-gr { background:rgba(58,170,106,.12);  color:#6dd098; border:1px solid rgba(58,170,106,.25); }
+.t-red { background:rgba(196,74,74,.12);  color:#e09090; border:1px solid rgba(196,74,74,.25); }
+
+/* Dos/tres columnas */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; }
+.three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.8rem; }
+@media(max-width:640px){ .two-col,.three-col { grid-template-columns:1fr; } }
+
+/* Tarjeta genérica */
+.mini-card { background:#0d0d14; border:1px solid var(--border); border-radius:4px; padding:.85rem 1rem; }
+.mc-title { font-size:.8rem; font-weight:700; color:var(--white); margin-bottom:.35rem; }
+.mc-body { font-size:.73rem; color:var(--muted); line-height:1.55; }
+.mc-note { font-size:.67rem; margin-top:.45rem; font-weight:600; }
+
+/* Tipos de elecciones */
+.elec-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.7rem; }
+@media(max-width:620px){ .elec-grid { grid-template-columns:1fr; } }
+.elec-card { background:#0d0d14; border:1px solid var(--border); border-radius:4px; padding:.9rem 1rem; }
+.elec-title { font-size:.78rem; font-weight:700; margin-bottom:.35rem; }
+.elec-body { font-size:.73rem; color:var(--muted); line-height:1.5; }
+
+/* Fórmulas electorales */
+.formula-grid { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; }
+@media(max-width:560px){ .formula-grid { grid-template-columns:1fr; } }
+.formula-card { background:#0d0d14; border:1px solid var(--border); border-radius:4px; padding:.9rem 1rem; }
+.formula-title { font-size:.75rem; font-weight:700; color:var(--white); margin-bottom:.3rem; }
+.formula-body { font-size:.72rem; color:var(--muted); line-height:1.5; }
+.formula-body ul { padding-left:1rem; margin-top:.3rem; }
+.formula-body li { margin-bottom:.2rem; }
+
+/* Tabla partidos */
+.partido-table { background:var(--surface); border:1px solid var(--border); border-radius:4px; overflow:hidden; }
+.pt-row { display:grid; grid-template-columns:1.4fr 1fr 1fr; border-bottom:1px solid var(--border); }
+.pt-row:last-child { border-bottom:none; }
+@media(max-width:560px){ .pt-row { grid-template-columns:1fr 1fr; } }
+.pt-cell { padding:.7rem .9rem; border-right:1px solid var(--border); font-size:.74rem; line-height:1.45; }
+.pt-cell:last-child { border-right:none; }
+.pt-cell.hdr { font-size:.58rem; letter-spacing:.15em; text-transform:uppercase; font-weight:700; color:var(--muted); background:#0d0d16; }
+.pt-cell.axis { color:var(--gold); font-weight:600; font-size:.76rem; }
+
+/* Paradojas */
+.paradox-grid { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; }
+@media(max-width:560px){ .paradox-grid { grid-template-columns:1fr; } }
+.paradox-card { background:#0d0d14; border:1px solid var(--border); border-left:3px solid var(--amber); border-radius:3px; padding:.9rem 1rem; }
+.paradox-label { font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--amber); font-weight:700; margin-bottom:.35rem; }
+.paradox-title { font-size:.82rem; font-weight:700; color:var(--white); margin-bottom:.35rem; }
+.paradox-body { font-size:.73rem; color:var(--muted); line-height:1.55; }
+
+/* Timeline Argentina */
+.ar-timeline { display:flex; flex-direction:column; gap:.6rem; }
+.ar-event { background:#0d0d14; border:1px solid var(--border); border-left:3px solid var(--rose); border-radius:3px; padding:.8rem 1rem; display:grid; grid-template-columns:80px 1fr; gap:.7rem; align-items:start; }
+.ar-year { font-size:.75rem; font-weight:700; color:var(--rose); padding-top:.05rem; }
+.ar-desc { font-size:.75rem; color:var(--muted); line-height:1.5; }
+.ar-desc strong { color:#d0c8a0; }
+
+/* CONFRONTACION */
+.confrontation { max-width:920px; margin:0 auto 3.5rem; padding:0 1.2rem; scroll-margin-top:60px; }
+.conf-header { background:#12101a; border:1px solid var(--gold-dim); border-bottom:none; border-radius:6px 6px 0 0; padding:1.2rem 1.8rem; }
+.conf-header h2 { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--gold); }
+.conf-header p { font-size:.73rem; color:var(--muted); margin-top:.3rem; font-style:italic; }
+.conf-body { background:var(--card); border:1px solid var(--border); border-radius:0 0 6px 6px; }
+.conf-row { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; border-bottom:1px solid var(--border); }
+.conf-row:last-child { border-bottom:none; }
+@media(max-width:660px){ .conf-row { grid-template-columns:1fr 1fr; } }
+.conf-cell { padding:.85rem 1rem; border-right:1px solid var(--border); font-size:.75rem; line-height:1.5; }
+.conf-cell:last-child { border-right:none; }
+.conf-cell.hdr-c { font-size:.58rem; letter-spacing:.15em; text-transform:uppercase; font-weight:700; color:var(--muted); background:#0d0d16; }
+.conf-cell.axis-c { color:var(--gold); font-weight:600; font-size:.77rem; }
+
+/* NOTA FINAL */
+.final-note { max-width:760px; margin:0 auto 4rem; padding:0 1.2rem; }
+.fn-bar { height:3px; border-radius:3px 3px 0 0; background:var(--gold); }
+.fn-inner { background:var(--surface); border:1px solid var(--border); border-top:none; border-radius:0 0 6px 6px; padding:1.5rem 1.8rem; }
+.fn-label { font-size:.58rem; letter-spacing:.2em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:.6rem; }
+.fn-text { font-size:.81rem; color:#a09870; line-height:1.7; }
+.fn-text strong { color:var(--white); }
+
+footer { text-align:center; font-size:.66rem; color:var(--muted); padding:1.5rem 1rem 2.5rem; border-top:1px solid var(--border); letter-spacing:.04em; }
+footer span { color:var(--gold); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#deluca">De Luca — Elecciones</a>
+  <span class="sep">·</span>
+  <a href="#levitsky">Levitsky — Partidos en LATAM</a>
+  <span class="sep">·</span>
+  <a href="#malamud">Malamud — Partidos</a>
+  <span class="sep">·</span>
+  <a href="#deluca-malamud">De Luca & Malamud — Argentina</a>
+  <span class="sep">·</span>
+  <a href="#confrontacion">Confrontación</a>
+</nav>
+
+<div class="hero">
+  <p class="eyebrow">IPC · CBC · UBA · Cátedra Lopreite</p>
+  <h1>Unidad 5<br>Elecciones y Partidos</h1>
+  <p class="hero-sub">¿Las elecciones eligen o confirman? ¿Los partidos representan o administran el acceso al poder?</p>
+  <div class="pills">
+    <span class="pill p-teal">Miguel De Luca</span>
+    <span class="pill p-amber">Steven Levitsky</span>
+    <span class="pill p-violet">Andrés Malamud</span>
+    <span class="pill p-rose">De Luca & Malamud</span>
+  </div>
+</div>
+
+<div class="global-q">
+  <div class="gq-box">
+    <p class="gq-label">La pregunta que recorre toda la unidad</p>
+    <p class="gq-text">Si los sistemas electorales pueden fabricar mayorías que no existen, si los partidos se construyen mejor en las dictaduras que en las democracias, y si la crisis argentina del 2001 terminó con los mismos partidos que la causaron — ¿qué transforma realmente una elección?</p>
+  </div>
+</div>
+
+
+<!-- ══════════ AUTOR 1: DE LUCA ══════════ -->
+<div class="author-section" id="deluca">
+  <div class="author-banner b-teal">
+    <p class="author-num n-teal">Autor 01</p>
+    <p class="author-name">Miguel De Luca</p>
+    <p class="author-work">"Elecciones y Sistemas Electorales"</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>¿Una elección garantiza democracia — o solo garantiza que alguien gana y alguien pierde con las reglas que otro fijó?</li>
+        <li>Si el trazado de los distritos electorales es una decisión política, ¿la geografía del voto es neutral o es poder disfrazado de cartografía?</li>
+        <li>¿El sistema electoral que "fabrica mayorías" para garantizar gobernabilidad es una herramienta democrática o un dispositivo para que las minorías gobiernen con cara de mayoría?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-teal">Definición</p>
+      <p class="concept-title">¿Qué es una elección? Más complejo de lo que parece</p>
+      <p class="concept-body">
+        De Luca define la elección como el <em>mecanismo a través del cual un grupo de individuos expresa sus preferencias para decidir quiénes se desempeñarán en los puestos de un órgano con atribuciones de gobierno</em>. Requiere tres elementos: un corpus electoral previo, una votación con al menos un candidato, y una regla de cómputo que convierte votos en cargos.<br><br>
+        La elección es relativamente reciente como procedimiento para designar autoridades públicas. Su expansión está directamente ligada al principio del <strong>gobierno basado en la voluntad del pueblo</strong> — principio que, como vimos en las unidades anteriores, tiene una historia accidentada y selectiva.<br><br>
+        Una distinción clave que suele pasarse por alto: <strong>elecciones de primer orden</strong> (nacionales: presidente, diputados, senadores) versus <strong>elecciones de segundo orden</strong> (subnacionales: gobernadores, intendentes). Las segundas tienen menor participación — pero históricamente sirven como barómetro del humor ciudadano hacia el gobierno nacional. En Argentina se vota a gobernador y se manda un mensaje a la Casa Rosada.
+      </p>
+      <div class="tags">
+        <span class="tag t-t">elección</span><span class="tag t-t">corpus electoral</span>
+        <span class="tag t-t">primer orden</span><span class="tag t-t">segundo orden</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-teal">Tipología</p>
+      <p class="concept-title">Tres tipos de elecciones: competitivas, semi-competitivas y no competitivas</p>
+      <div class="elec-grid">
+        <div class="elec-card">
+          <p class="elec-title" style="color:#6dd4d2">Elecciones competitivas</p>
+          <p class="elec-body">Las propias de la democracia. Permiten elegir un gobierno, controlar a los gobernantes (premiando o castigando con el voto) y participar institucionalmente. Los líderes están <em>vulnerables al voto popular</em>. Ginsberg agrega el dato incómodo: también <strong>expanden el poder de los líderes</strong> sobre los votantes al legitimar sus decisiones.</p>
+        </div>
+        <div class="elec-card">
+          <p class="elec-title" style="color:#dda870">Elecciones semi-competitivas</p>
+          <p class="elec-body">Aparentan respetar los principios democráticos pero los vulneran en la práctica: privación de voto por razones políticas, padrón falsificado, proscripción de candidatos, compra de votos, ausencia de información plural. Los opositores compiten sin posibilidad real de ganar. Propias de regímenes autoritarios que necesitan imagen internacional.</p>
+        </div>
+        <div class="elec-card">
+          <p class="elec-title" style="color:#e09090">Elecciones no competitivas</p>
+          <p class="elec-body">El votante no puede decidir ni expresarse libremente. No legitiman ni reajustan el poder: son <strong>ejercicios de movilización de masas</strong>. Propias de regímenes totalitarios. La participación es el objetivo — no la elección. El voto es un acto de lealtad, no de preferencia.</p>
+        </div>
+      </div>
+      <div class="tags" style="margin-top:.8rem">
+        <span class="tag t-t">competitiva</span><span class="tag t-a">semi-competitiva</span>
+        <span class="tag t-red">no competitiva</span><span class="tag t-red">legitimación autoritaria</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-teal">Reglas del voto</p>
+      <p class="concept-title">Universal, igual, secreto y obligatorio — con asteriscos</p>
+      <p class="concept-body">
+        <strong>Voto universal:</strong> libre de condicionamientos políticos, económicos, sociales o de género. Históricamente se obtuvo eliminando el voto calificado (solo para letrados) y el voto censitario (solo para propietarios). Pero "universal" no significa que vota toda la población: excluye a menores de edad, personas sin ciudadanía y quienes tienen inhabilitación legal.<br><br>
+        <strong>Voto igual:</strong> un ciudadano = un voto. En teoría. En la práctica, el <em>malapportionment</em> (distribución injusta de la base poblacional entre distritos) hace que votar en una provincia pequeña valga más que votar en una grande. En Argentina, un senador patagónico representa a miles de personas; uno bonaerense, a millones. No es el mismo voto.<br><br>
+        <strong>Voto secreto:</strong> protege al ciudadano de presiones, especialmente a los <em>económicamente dependientes</em> — los que podían ser castigados por su patrón si votaban "mal".<br><br>
+        <strong>Voto obligatorio:</strong> garantiza participación de los sectores más pobres y marginados. Sin obligatoriedad, la abstención tiende a concentrarse en los sectores más vulnerables, que son exactamente quienes más necesitan que su voto cuente.
+      </p>
+      <div class="tags">
+        <span class="tag t-t">sufragio universal</span><span class="tag t-t">voto secreto</span>
+        <span class="tag t-t">voto obligatorio</span><span class="tag t-red">malapportionment</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-teal">Sistema electoral</p>
+      <p class="concept-title">Los atributos que deciden quién gana: el poder de las reglas</p>
+      <p class="concept-body" style="margin-bottom:.9rem">
+        El sistema electoral convierte votos en cargos. Todos producen un <strong>efecto reductor</strong>: no todos los partidos que compiten obtienen representación. Los sistemas favorecen a los que sacan más votos y perjudican a los minoritarios. Los atributos centrales:
+      </p>
+      <div class="two-col">
+        <div class="mini-card">
+          <p class="mc-title">Distrito electoral</p>
+          <p class="mc-body">Sección en que se divide el electorado para asignar bancas. <strong>Uninominal</strong> (1 banca) o <strong>plurinominal</strong> (2 o más). A mayor magnitud del distrito, más partidos pueden obtener representación. El <em>gerrymandering</em> — dibujar distritos para beneficiar al partido que dibuja — es manipulación pura: poder disfrazado de geografía.</p>
+          <p class="mc-note" style="color:var(--red)">→ El gerrymandering no es una disfunción: es la regla del que llega primero.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Barrera o umbral de exclusión</p>
+          <p class="mc-body">Número mínimo de votos para acceder al reparto de cargos. Objetivo declarado: evitar fragmentación y garantizar gobernabilidad. Objetivo real: excluir a los partidos pequeños. Hay <strong>barrera legal</strong> (fijada por ley) y <strong>barrera efectiva</strong> (lo que realmente hace falta para conseguir una banca). Siempre la efectiva es más alta que la legal.</p>
+          <p class="mc-note" style="color:var(--amber)">→ La barrera protege la gobernabilidad de los grandes a costa de la representación de los chicos.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Estructura de la boleta</p>
+          <p class="mc-body"><strong>Lista cerrada y bloqueada:</strong> el votante apoya la lista completa sin modificar el orden (Argentina hasta hace poco). El poder de ordenar candidatos lo tiene el partido, no el ciudadano.<br><strong>Lista cerrada y desbloqueada:</strong> se puede cambiar el orden pero no los nombres.<br><strong>Lista abierta:</strong> el votante puede alterar orden y nombres, incluso de distintos partidos.</p>
+          <p class="mc-note" style="color:var(--teal)">→ Cuanto más cerrada la lista, más poder tienen las cúpulas partidarias — menos el votante.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Apparentement</p>
+          <p class="mc-body">Distintos partidos que se presentan por separado pueden unir sus votos como si fueran una sola lista para el reparto de bancas. Permite que partidos pequeños sumen fuerzas sin fusionarse. En Argentina se lo conoce como "unión de listas" y fue protagonista de múltiples acuerdos electorales.</p>
+          <p class="mc-note" style="color:var(--teal)">→ Una herramienta técnica que puede ser genuinamente democratizadora… o un arreglo de cúpulas.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-teal">Fórmulas electorales</p>
+      <p class="concept-title">Mayoritarias vs. Proporcionales: dos filosofías, dos resultados</p>
+      <div class="formula-grid">
+        <div class="formula-card">
+          <p class="formula-title" style="color:#dda870">Fórmulas mayoritarias</p>
+          <p class="formula-body">
+            Objetivo: <strong>fabricar mayorías</strong> y garantizar gobernabilidad. Producen ganadores claros aunque no representen a todos.
+            <ul>
+              <li><strong>Mayoría relativa (simple):</strong> gana quien tiene más votos, aunque sea el 25%. Un voto de diferencia alcanza.</li>
+              <li><strong>Mayoría absoluta + doble vuelta (balotaje):</strong> si nadie supera el 50%, los dos primeros van a segunda vuelta. Más representativo pero más caro y más lento.</li>
+            </ul>
+          </p>
+        </div>
+        <div class="formula-card">
+          <p class="formula-title" style="color:#6dd4d2">Fórmulas proporcionales</p>
+          <p class="formula-body">
+            Objetivo: que las bancas sean <strong>espejo del electorado</strong>. Más representativas pero pueden producir parlamentos muy fragmentados.
+            <ul>
+              <li><strong>Voto Único Transferible (VUT):</strong> el votante ordena candidatos por preferencia. Si su favorito ya tiene suficientes votos o es eliminado, el voto se transfiere al siguiente.</li>
+              <li><strong>Listas proporcionales:</strong> reparto según cuota (resto mayor) o cocientes sucesivos (promedio mayor / método D'Hondt).</li>
+            </ul>
+          </p>
+        </div>
+      </div>
+      <div class="tags" style="margin-top:.8rem">
+        <span class="tag t-a">mayoritaria</span><span class="tag t-t">proporcional</span>
+        <span class="tag t-a">balotaje</span><span class="tag t-t">D'Hondt</span>
+        <span class="tag t-red">fabricación de mayorías</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-teal">Otros mecanismos</p>
+      <p class="concept-title">Revocatoria, plebiscito, referéndum e iniciativa popular</p>
+      <div class="three-col">
+        <div class="mini-card">
+          <p class="mc-title">Revocatoria (recall)</p>
+          <p class="mc-body">Destituir a un funcionario antes de que termine su mandato, mediante petición ciudadana y elección especial. Herramienta de control directo. En Argentina existe en algunas provincias pero no a nivel nacional para el presidente.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Plebiscito</p>
+          <p class="mc-body">Convocado por los gobernantes para decidir sobre eventos excepcionales no previstos en la Constitución. El poder de la pregunta — y de elegir cuándo preguntar — lo tiene quien gobierna. Puede ser democratizador o manipulatorio.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Referéndum e iniciativa popular</p>
+          <p class="mc-body">El referéndum es obligatorio por la Constitución para ciertos asuntos. La iniciativa popular permite que ciudadanos propongan leyes con firmas. Ambos amplían la democracia directa — con los riesgos que Welp (Unidad 3) ya describió.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════ AUTOR 2: LEVITSKY ══════════ -->
+<div class="author-section" id="levitsky">
+  <div class="author-banner b-amber">
+    <p class="author-num n-amber">Autor 02</p>
+    <p class="author-name">Steven Levitsky</p>
+    <p class="author-work">"La construcción de partidos en América Latina en épocas de incertidumbre, desafección política y actitudes autoritarias"</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>Si los partidos más fuertes de América Latina nacieron de conflictos, dictaduras o guerrillas, ¿qué dice eso sobre la relación entre violencia y organización política?</li>
+        <li>¿La "paradoja de la democracia" de Levitsky es una paradoja — o es la prueba de que la democracia liberal no tiene interés real en fortalecer las organizaciones populares?</li>
+        <li>Si el populismo genera los lazos identitarios que la democracia no logra crear, ¿es el populismo un problema para la democracia o su condición de posibilidad en LATAM?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-amber">Diagnóstico regional</p>
+      <p class="concept-title">La descomposición de los sistemas de partidos en América Latina</p>
+      <p class="concept-body">
+        Levitsky abre con un diagnóstico directo: en América Latina, los partidos tradicionales comenzaron a morir — y <strong>no fueron reemplazados por partidos nuevos y sólidos</strong>. El resultado es una descomposición del sistema de partidos. Paradójicamente, esto ocurre en el período de mayor estabilidad democrática electoral de la historia de la región: nunca hubo tanta democracia por tanto tiempo, y sin embargo los partidos se debilitaron.<br><br>
+        El dato más llamativo: <strong>salvo Brasil, ningún país latinoamericano tiene un partido exitoso nacido en plena democracia</strong>. Los partidos fuertes de la región vienen de antes — de la conflictividad, la represión, la movilización y hasta de las estructuras heredadas de los regímenes autoritarios.
+      </p>
+      <div class="tags">
+        <span class="tag t-a">descomposición partidaria</span><span class="tag t-a">LATAM</span>
+        <span class="tag t-red">partidos débiles en democracia</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-amber">¿Qué necesita un partido para sobrevivir?</p>
+      <p class="concept-title">Identidad partidaria + organización: las dos condiciones de la consolidación</p>
+      <div class="two-col">
+        <div class="mini-card">
+          <p class="mc-title">Identidad partidaria</p>
+          <p class="mc-body">Los partidos fuertes requieren adherentes con <strong>lealtades fuertes</strong>: gente que se identifique con el partido y lo vote consistentemente. La clave es una <em>marca partidaria</em> clara: el partido representa un conjunto de ideas con las que un grupo social se identifica. Sin marca, hay candidatos pero no partido.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Organización</p>
+          <p class="mc-body">Redes amplias de militantes con <strong>interés ideológico, profesional y/o material</strong> en que el partido sobreviva. Sin organización, el partido muere cuando muere su líder. La organización es lo que distingue a un partido de un movimiento personal.</p>
+        </div>
+      </div>
+      <div class="tags" style="margin-top:.8rem">
+        <span class="tag t-a">identidad</span><span class="tag t-a">marca partidaria</span>
+        <span class="tag t-a">organización</span><span class="tag t-a">militancia</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-amber">Tres caminos de construcción partidaria en LATAM</p>
+      <p class="concept-title">El conflicto como partera de la política organizada</p>
+      <div class="three-col">
+        <div class="mini-card">
+          <p class="mc-title">I. El conflicto</p>
+          <p class="mc-body">La fuente principal. Los partidos más duros de la historia latinoamericana nacieron en períodos de conflicto intenso: huelgas, represiones, guerras civiles. El conflicto crea identidades colectivas fuertes y necesidad de organización para sobrevivir.</p>
+          <p class="mc-note" style="color:var(--amber)">→ La paz institucional no genera los lazos que genera la lucha.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">II. Herencia organizacional autoritaria</p>
+          <p class="mc-body">Los partidos heredan estructuras, marcas y bases electorales de los regímenes autoritarios. Los dictadores, al polarizar, generan oposición — pero también apoyo leal que luego se convierte en base partidaria. El peronismo en Argentina es un ejemplo clásico.</p>
+          <p class="mc-note" style="color:var(--amber)">→ La dictadura fabrica sin querer los partidos que la sobreviven.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">III. Movimientos guerrilleros</p>
+          <p class="mc-body">Partidos surgidos de movimientos armados (Frente Amplio de Uruguay, PT de Brasil en parte, FMLN de El Salvador) cuentan con bases de apoyo y redes de militantes ya constituidas. La guerrilla también polariza — y la polarización construye identidades.</p>
+          <p class="mc-note" style="color:var(--amber)">→ La violencia organizada deja estructuras que la democracia hereda.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-red">Las dos paradojas</p>
+      <p class="concept-title">Lo que Levitsky llama "paradojas" son en realidad contradicciones estructurales</p>
+      <div class="paradox-grid">
+        <div class="paradox-card">
+          <p class="paradox-label">Paradoja de la democracia</p>
+          <p class="paradox-title">Los partidos fuertes son necesarios para la democracia — pero la democracia estable no los crea</p>
+          <p class="paradox-body">Sin partidos fuertes no hay democracia representativa funcional. Pero una democracia estable, sin conflicto intenso, sin crisis, sin represión, no genera las condiciones para construir partidos sólidos. El momento de mayor estabilidad institucional es el peor para la organización política popular.</p>
+        </div>
+        <div class="paradox-card">
+          <p class="paradox-label">Paradoja del populismo</p>
+          <p class="paradox-title">El populismo es "antipartido" — pero genera exactamente lo que los partidos necesitan</p>
+          <p class="paradox-body">El populismo se asocia con el rechazo a los partidos y la apelación directa al pueblo. Pero genera polarización, identidades fuertes y movilizaciones que dan lugar a organizaciones — burocráticas e informales — que terminan siendo partidarias. El populismo destruye partidos viejos y fabrica, sin querer, los nuevos.</p>
+        </div>
+      </div>
+      <div class="tags" style="margin-top:.8rem">
+        <span class="tag t-a">paradoja democrática</span>
+        <span class="tag t-a">paradoja populista</span>
+        <span class="tag t-red">contradicción estructural</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-amber">El establishment político y su declive</p>
+      <p class="concept-title">Internet, outsiders y la nueva política sin intermediarios</p>
+      <p class="concept-body">
+        El <em>establishment político</em> son los actores que controlan los recursos para ganar elecciones: <strong>partidos</strong> (controlan candidaturas), <strong>medios</strong> (dan acceso al electorado), <strong>empresas y sindicatos</strong> (financian campañas).<br><br>
+        Internet y la democratización interna de los partidos rompieron ese monopolio. Los <em>outsiders</em> tienen hoy más facilidades que antes: pueden comunicarse directo con el electorado sin pasar por los medios tradicionales ni por el partido. El resultado: quienes "responden más al electorado" que al establishment se vuelven más populistas. <strong>El populismo se convierte en táctica electoral eficiente</strong> en contextos de alta desafección institucional.<br><br>
+        Dato propio relevante: en 2024, Milei en Argentina usó exactamente este manual — redes sociales, YouTube, podcasts — para llegar a la presidencia sin estructura partidaria previa. Levitsky lo habría predicho.
+      </p>
+      <div class="tags">
+        <span class="tag t-a">establishment</span><span class="tag t-a">outsiders</span>
+        <span class="tag t-a">populismo como táctica</span><span class="tag t-red">desafección institucional</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════ AUTOR 3: MALAMUD ══════════ -->
+<div class="author-section" id="malamud">
+  <div class="author-banner b-violet">
+    <p class="author-num n-violet">Autor 03</p>
+    <p class="author-name">Andrés Malamud</p>
+    <p class="author-work">"Partidos Políticos" — Orígenes, naturaleza, tipos y sistemas</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>¿Los partidos representan a la sociedad en el Estado o representan al Estado ante la sociedad? ¿La diferencia importa?</li>
+        <li>Si los partidos se definen por su "sociología" (base de clase), ¿qué pasa cuando un partido obrero abandona a la clase obrera? ¿Deja de ser ese partido?</li>
+        <li>¿El partido "profesional-electoral" que reemplazó al partido de masas es más democrático — o simplemente más eficiente para ganar sin transformar?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-violet">Origen histórico</p>
+      <p class="concept-title">Los partidos como consecuencia no buscada de la modernidad política</p>
+      <p class="concept-body">
+        Para Malamud, los partidos son la <em>consecuencia no buscada</em> de la masificación de las sociedades y la expansión territorial de los estados — que hicieron inevitable la representación política. Sin representación no hay partidos; sin masificación no hay representación.<br><br>
+        Tres teorías sobre su origen:
+      </p>
+      <div class="three-col" style="margin-top:.7rem">
+        <div class="mini-card">
+          <p class="mc-title">Teoría institucional (Duverger)</p>
+          <p class="mc-body">Los partidos surgieron como organizaciones auxiliares del parlamento, para coordinar a los legisladores. Primero el parlamento; después el partido.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Teoría histórico-comparativa (Lipset & Rokkan)</p>
+          <p class="mc-body">Los partidos nacen de <em>clivajes</em>: rupturas históricas que dividieron a las sociedades (centro-periferia, Estado-Iglesia, campo-ciudad, capital-trabajo). Cada clivaje genera un partido.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Teoría del desarrollo (La Palombara & Weiner)</p>
+          <p class="mc-body">Los partidos son consecuencia natural de la modernización social. A medida que la sociedad se complejiza, necesita organizaciones que procesen sus demandas.</p>
+        </div>
+      </div>
+      <div class="tags" style="margin-top:.8rem">
+        <span class="tag t-v">Duverger</span><span class="tag t-v">Lipset & Rokkan</span>
+        <span class="tag t-v">clivajes</span><span class="tag t-v">modernización</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-violet">La naturaleza de los partidos</p>
+      <p class="concept-title">Tres ejes: base social, ideología, organización</p>
+      <div class="three-col">
+        <div class="mini-card">
+          <p class="mc-title">Base social</p>
+          <p class="mc-body">Los partidos como agentes de identidad de clase (marxismo) o como vehículos de integración policlasista (populismo). La taxonomía clásica: partidos <strong>obreros</strong> vs. <strong>burgueses</strong>. Lo que define al partido, dice Malamud, es su sociología.</p>
+          <p class="mc-note" style="color:var(--violet)">→ Cuando un partido "obrero" gobierna para el capital, ¿qué es?</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Ideología</p>
+          <p class="mc-body">El eje izquierda-derecha como clasificador principal, complementado por el grado de radicalización de los postulados. Los partidos más moderados tienden a converger al centro — y a parecerse cada vez más entre sí.</p>
+          <p class="mc-note" style="color:var(--violet)">→ ¿Qué queda de la ideología cuando todos quieren gobernar para todos?</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Organización</p>
+          <p class="mc-body">Los partidos como organizaciones con fines propios que trascienden los objetivos originales — e incluso los intereses de sus miembros. La burocracia partidaria tiene vida propia.</p>
+          <p class="mc-note" style="color:var(--violet)">→ La "ley de hierro de la oligarquía" de Michels: toda organización tiende a ser gobernada por una élite.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-violet">Tipos históricos de partidos</p>
+      <p class="concept-title">De los notables al partido profesional-electoral: la historia de una pérdida</p>
+      <div class="partido-table">
+        <div class="pt-row">
+          <div class="pt-cell hdr">Dimensión</div>
+          <div class="pt-cell hdr" style="color:#c0c0a0">Partido de notables (s. XIX)</div>
+          <div class="pt-cell hdr" style="color:#b098e0">Partido burocrático de masas (fines s. XIX – s. XX)</div>
+        </div>
+        <div class="pt-row">
+          <div class="pt-cell axis">Base</div>
+          <div class="pt-cell" style="color:#c0c0a0">Caballeros/notables. Organización individual y laxa.</div>
+          <div class="pt-cell" style="color:#b098e0">Clase obrera. Afiliación masiva y lealtad fuerte.</div>
+        </div>
+        <div class="pt-row">
+          <div class="pt-cell axis">Ideología</div>
+          <div class="pt-cell" style="color:#c0c0a0">Débil o inexistente. El representante vota según conciencia propia.</div>
+          <div class="pt-cell" style="color:#b098e0">Fuerte. Doctrina socialista, labor, cristiana según el caso.</div>
+        </div>
+        <div class="pt-row">
+          <div class="pt-cell axis">Financiación</div>
+          <div class="pt-cell" style="color:#c0c0a0">Patrimonio personal de los notables.</div>
+          <div class="pt-cell" style="color:#b098e0">Cuotas de afiliados y actividades partidarias.</div>
+        </div>
+        <div class="pt-row">
+          <div class="pt-cell axis">Papel central</div>
+          <div class="pt-cell" style="color:#c0c0a0">El representante individual.</div>
+          <div class="pt-cell" style="color:#b098e0">La burocracia del partido.</div>
+        </div>
+      </div>
+      <p class="concept-body" style="margin-top:.8rem">El <strong>partido profesional-electoral</strong> (fines s. XX en adelante): surge con el desarrollo económico y los medios masivos. Electoralista, se dirige a un electorado de "opinión" (no de clase), financia con grupos de interés y fondos públicos, tiene ideología débil y profesionales en lugar de burocracia. Representa a todos — y por lo tanto no representa profundamente a nadie.</p>
+      <div class="tags" style="margin-top:.8rem">
+        <span class="tag t-v">notables</span><span class="tag t-v">masas</span>
+        <span class="tag t-v">profesional-electoral</span>
+        <span class="tag t-red">pérdida de arraigo de clase</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-violet">Definición y funciones</p>
+      <p class="concept-title">Sartori: qué es un partido — y qué queda afuera</p>
+      <p class="concept-body">
+        Sartori: <em>"Un partido es cualquier grupo político identificado con una etiqueta oficial que presenta a las elecciones candidatos a cargos públicos"</em>. Quedan excluidos: los grupos autoritarios que proscriben a los demás y los partidos que jamás obtienen cargos (candidaturas no viables).<br><br>
+        Las funciones del partido tienen dos corrientes: <strong>ascendente</strong> (sociedad → Estado): agrega demandas, moviliza, estructura el voto. <strong>Descendente</strong> (Estado → sociedad): recluta élites, toma decisiones, forma políticas públicas.<br><br>
+        La actividad partidaria se resume en dos palabras: <strong>representación</strong> (de la sociedad en el Estado) y <strong>gobierno</strong> (sobre la sociedad por el Estado). La tensión entre ambas define toda la política partidaria moderna.
+      </p>
+      <div class="tags">
+        <span class="tag t-v">Sartori</span><span class="tag t-v">etiqueta oficial</span>
+        <span class="tag t-v">representación</span><span class="tag t-v">gobierno</span>
+        <span class="tag t-red">tensión ascendente/descendente</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-violet">Sistema de partidos</p>
+      <p class="concept-title">Propiedades clave y taxonomías: Duverger y Sartori</p>
+      <p class="concept-body" style="margin-bottom:.8rem">El sistema de partidos es la <em>estructura de cooperación y competencia</em> entre partidos. Sus propiedades más relevantes:</p>
+      <div class="two-col">
+        <div class="mini-card">
+          <p class="mc-title">Propiedades del sistema</p>
+          <p class="mc-body">
+            <strong>Volatilidad:</strong> cambio agregado de votos entre elecciones.<br>
+            <strong>Polarización:</strong> distancia ideológica entre partidos.<br>
+            <strong>Número efectivo de partidos:</strong> calculado por bancas, no por votos.<br>
+            <strong>Desproporcionalidad:</strong> diferencia entre votos y bancas obtenidas.<br>
+            <strong>Dimensiones de clivaje:</strong> cuántos ejes de conflicto estructuran la competencia.
+          </p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Taxonomía Duverger / Sartori</p>
+          <p class="mc-body">
+            <strong>Unipartidismo:</strong> propio de regímenes totalitarios. Un solo partido = no hay competencia real.<br>
+            <strong>Bipartidismo:</strong> característico de democracias "estables" (EE.UU., Reino Unido). En realidad, estabilidad de la alternancia en el mismo sistema.<br>
+            <strong>Multipartidismo:</strong> fragmentación política. Sartori combina dimensión cuantitativa (número) con cualitativa (ideología) para clasificar.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════ AUTOR 4: DE LUCA & MALAMUD ══════════ -->
+<div class="author-section" id="deluca-malamud">
+  <div class="author-banner b-rose">
+    <p class="author-num n-rose">Autor 04</p>
+    <p class="author-name">De Luca & Malamud</p>
+    <p class="author-work">"¿Todo sigue igual que ayer? Continuidad y ruptura en el sistema de partidos argentino (1983–2015)"</p>
+  </div>
+  <div class="content-body">
+
+    <div class="q-block">
+      <p class="q-label">Preguntas disparadoras</p>
+      <ul>
+        <li>Si después del "que se vayan todos" del 2001 los partidos que causaron la crisis siguieron gobernando, ¿qué capacidad real tiene la ciudadanía de cambiar el sistema político?</li>
+        <li>¿El sistema de partidos argentino es estable o rígido? ¿Cuál es la diferencia?</li>
+        <li>¿La reforma electoral de 1994 democratizó el acceso al poder — o simplemente cambió las reglas para que los mismos actores siguieran ganando?</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-rose">Estructura del sistema</p>
+      <p class="concept-title">Tres sistemas simples más uno compuesto: la arquitectura electoral argentina</p>
+      <p class="concept-body">
+        El sistema de partidos argentino no es uno solo: es una combinación de <strong>tres sistemas autónomos de competencia</strong> — el presidencial, el senatorial y el de Diputados — más un cuarto sistema compuesto que resulta de su interacción.<br><br>
+        La característica central: <strong>la inestabilidad y multiplicación de etiquetas partidarias contrasta con la estabilidad de los líderes políticos</strong>. Los partidos cambian de nombre, se dividen, se fusionan — pero los mismos dirigentes permanecen. En Argentina los partidos son más frágiles que sus caudillos.
+      </p>
+      <div class="tags">
+        <span class="tag t-r">sistema tripartito</span><span class="tag t-r">inestabilidad de etiquetas</span>
+        <span class="tag t-r">estabilidad de líderes</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-rose">Reformas electorales</p>
+      <p class="concept-title">1994 y 2015: dos momentos de cambio en las reglas del juego</p>
+      <div class="two-col">
+        <div class="mini-card">
+          <p class="mc-title">Reforma constitucional de 1994</p>
+          <p class="mc-body">
+            Hasta 1994 el presidente era elegido por colegio electoral — mecanismo que dificultaba construir mayorías. La reforma estableció:<br>
+            <strong>• Elección directa con balotaje</strong> (si nadie supera el 45%).<br>
+            <strong>• Senado ampliado</strong> a 3 senadores por provincia, mandato de 6 años, elección directa, renovación por tercios.<br>
+            Los autores señalan que los cambios no alteraron el balance de poder real: el PJ mantuvo entre el 50 y 60% del Senado.
+          </p>
+          <p class="mc-note" style="color:var(--rose)">→ Cambió el procedimiento; no cambió quién ganaba.</p>
+        </div>
+        <div class="mini-card">
+          <p class="mc-title">Reforma electoral de 2015 (PASO)</p>
+          <p class="mc-body">
+            <strong>• PASO:</strong> elecciones primarias abiertas simultáneas y obligatorias. Solo pasan al comicio general los partidos que superen el 1,5% de los votos.<br>
+            <strong>• Número mínimo de afiliados</strong> para reconocimiento jurídico.<br>
+            <strong>• Prohibición de financiamiento empresarial</strong> a partidos.<br>
+            <strong>• Distribución reglamentada</strong> de espacios comunicativos en campaña.<br>
+            <strong>• Prohibición de publicidad pagada</strong>.
+          </p>
+          <p class="mc-note" style="color:var(--rose)">→ Limpieza parcial de la campaña — pero quien tiene más militantes sigue teniendo más alcance.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-red">El momento más honesto del texto</p>
+      <p class="concept-title">La crisis del 2001: "que se vayan todos" y se quedaron todos</p>
+      <p class="concept-body">
+        En las elecciones legislativas del 2001, casi la mitad del electorado argentino votó en blanco, anuló su voto o no fue a votar. El <strong>"voto bronca"</strong> fue un repudio masivo a los partidos y a sus líderes, crystallizado en la consigna "que se vayan todos".<br><br>
+        Lo que De Luca y Malamud documentan con precisión es el resultado: <strong>los movimientos de protesta no llevaron a una renovación de la dirigencia política</strong>. Se disiparon o fueron absorbidos por las organizaciones partidarias ya existentes. El PJ y la UCR sobrevivieron. Los mismos actores que administraron la crisis de 2001 siguieron siendo los actores centrales de la política argentina en los años siguientes.<br><br>
+        La sociología del caso: el bipartidismo argentino PJ-UCR mostró una resiliencia extraordinaria incluso ante la crisis más profunda de la historia democrática reciente. Los partidos con territorio, estructura y militancia sobreviven aunque sus votantes los odien.
+      </p>
+      <div class="tags">
+        <span class="tag t-r">crisis 2001</span><span class="tag t-r">voto bronca</span>
+        <span class="tag t-r">que se vayan todos</span><span class="tag t-red">resiliencia partidaria</span>
+      </div>
+    </div>
+
+    <div class="concept">
+      <p class="concept-label l-rose">Composición de los tres espacios electorales (1983–2015)</p>
+      <p class="concept-title">¿Quién ganó qué durante 32 años de democracia?</p>
+      <div class="ar-timeline">
+        <div class="ar-event">
+          <p class="ar-year">Presidencial</p>
+          <p class="ar-desc"><strong>8 elecciones (1983–2015).</strong> PJ ganó 5; UCR ganó 3. Hasta 2001 ambos mostraban buena recuperación ante derrotas. Desde la crisis, la UCR se debilitó. Terceros partidos llegaron al segundo lugar pero no ganaron — hasta el <strong>triunfo del PRO en el balotaje de 2015</strong>, que fue el primer quiebre real del bipartidismo presidencial.</p>
+        </div>
+        <div class="ar-event">
+          <p class="ar-year">Senado</p>
+          <p class="ar-desc">El <strong>duopolio PJ-UCR fue absoluto</strong>: entre el 80 y 90% de las bancas siempre. El PJ mantuvo entre 50 y 60% del Senado de forma sostenida. Las reformas de 1994 no alteraron este balance. El Senado fue la cámara más inercial del sistema.</p>
+        </div>
+        <div class="ar-event">
+          <p class="ar-year">Diputados</p>
+          <p class="ar-desc">La <strong>arena más dinámica</strong>: 12 composiciones distintas en 12 períodos legislativos. Terceros partidos participaron activamente. Mayorías absolutas poco frecuentes. El PJ tuvo 2 mayorías absolutas y 1 simple; la UCR 3 absolutas y 1 simple. <strong>5 partidos distintos</strong> se turnaron para ocupar el tercer lugar.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════ CONFRONTACIÓN ══════════ -->
+<div class="confrontation" id="confrontacion">
+  <div class="conf-header">
+    <h2>Cuatro miradas sobre el mismo problema</h2>
+    <p>¿Elecciones que eligen, partidos que representan — o un sistema que se reproduce a sí mismo?</p>
+  </div>
+  <div class="conf-body">
+    <div class="conf-row">
+      <div class="conf-cell hdr-c">Eje</div>
+      <div class="conf-cell hdr-c" style="color:#6dd4d2">De Luca</div>
+      <div class="conf-cell hdr-c" style="color:#dda870">Levitsky</div>
+      <div class="conf-cell hdr-c" style="color:#b098e0">Malamud</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis-c">¿Qué son las elecciones?</div>
+      <div class="conf-cell" style="color:#6dd4d2">Mecanismo de selección de gobierno y de control ciudadano sobre los gobernantes</div>
+      <div class="conf-cell" style="color:#dda870">El terreno donde los partidos prueban su fortaleza o revelan su debilidad estructural</div>
+      <div class="conf-cell" style="color:#b098e0">La condición de posibilidad de los partidos: sin elecciones no hay partido; sin partido no hay elección competitiva</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis-c">¿Qué son los partidos?</div>
+      <div class="conf-cell" style="color:#6dd4d2">Organizaciones que presentan candidatos y articulan preferencias ciudadanas</div>
+      <div class="conf-cell" style="color:#dda870">Organizaciones que necesitan conflicto para construirse y que la democracia estable debilita</div>
+      <div class="conf-cell" style="color:#b098e0">La consecuencia no buscada de la representación masiva: nexo entre sociedad y Estado</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis-c">¿Dónde está el poder real?</div>
+      <div class="conf-cell" style="color:#6dd4d2">En las reglas: quién diseña el sistema electoral condiciona quién gana</div>
+      <div class="conf-cell" style="color:#dda870">En el establishment (partidos, medios, empresas) — aunque internet lo está erosionando</div>
+      <div class="conf-cell" style="color:#b098e0">En la organización: los partidos con estructura territorial sobreviven a las crisis que destruyen a los líderes sin raíces</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis-c">¿Qué pasa en Argentina?</div>
+      <div class="conf-cell" style="color:#6dd4d2">Un sistema con reglas que favorecen a los grandes (PASO, umbral, malapportionment histórico)</div>
+      <div class="conf-cell" style="color:#dda870">Partidos débiles ideológicamente pero resilientes organizativamente; outsiders con creciente ventaja</div>
+      <div class="conf-cell" style="color:#b098e0">Bipartidismo PJ-UCR con grietas: etiquetas inestables, líderes estables, crisis que no derrumban el sistema</div>
+    </div>
+    <div class="conf-row">
+      <div class="conf-cell axis-c">La pregunta que no se hacen</div>
+      <div class="conf-cell" style="color:#6dd4d2">¿Por qué el sistema electoral siempre favorece a quienes lo diseñan? ¿Quién controla al árbitro?</div>
+      <div class="conf-cell" style="color:#dda870">¿Qué intereses de clase construyeron los partidos latinoamericanos — y a quiénes siguen sirviendo?</div>
+      <div class="conf-cell" style="color:#b098e0">¿Puede un partido "obrero" que gobierna para el capital seguir llamándose de izquierda — o solo tiene una etiqueta vieja y una práctica nueva?</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- NOTA FINAL MARXISTA -->
+<div class="final-note">
+  <div class="fn-bar"></div>
+  <div class="fn-inner">
+    <p class="fn-label">Síntesis crítica · Perspectiva marxista</p>
+    <p class="fn-text">
+      La Unidad 5 es la que más cerca está de nombrar lo que las anteriores evitaban: el poder de clase en la política organizada. <strong>De Luca</strong> describe con cuidado cómo las reglas electorales fabrican resultados — el gerrymandering, el malapportionment, los umbrales de exclusión — sin preguntar quién fijó esas reglas y a quién benefician. <strong>Levitsky</strong> hace el aporte más honesto al mostrar que los partidos fuertes de LATAM nacieron del conflicto, la represión y la guerrilla — no del consenso democrático liberal. <strong>Malamud</strong> recupera la dimensión de clase al clasificar partidos en obreros y burgueses — y luego muestra cómo esa distinción se fue diluyendo en el partido profesional-electoral que no representa a nadie en particular porque quiere representar a todos. <strong>De Luca y Malamud</strong> documentan el caso más elocuente: en 2001, la mitad de los argentinos rechazó masivamente al sistema de partidos — y el sistema de partidos los sobrevivió sin transformarse.
+      <br><br>
+      La conclusión que los cuatro textos rozan pero ninguno formula: <strong>los sistemas electorales y los partidos políticos no son dispositivos neutrales de representación popular — son el campo donde las clases dominantes aprenden a ceder lo mínimo necesario para seguir dominando</strong>. En democracia, el pueblo elige quién administra el sistema. Lo que el sistema hace — y para quién — no está en la boleta.
+    </p>
+  </div>
+</div>
+
+<footer>
+  Unidad 5 · IPC · CBC · UBA &nbsp;|&nbsp; Cátedra <span>Lopreite</span> &nbsp;|&nbsp; Prof. Claudio Damián Sacco
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Red Conceptual — 1° Parcial IPC · Cátedra Marín</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #07070a;
+  --surface: #0f0f14;
+  --card:    #13131a;
+  --border:  #1e1e2a;
+  --gold:    #c9a84c;
+  --gold-d:  #4a3a08;
+  --text:    #dcd8ca;
+  --muted:   #55555f;
+  --white:   #f0ecd8;
+
+  /* colores por autor */
+  --weber:    #4a7ec4;
+  --sartori:  #c47a2a;
+  --morlino:  #c44a4a;
+  --dahl:     #3aaa6a;
+  --lijphart: #8a5ac4;
+  --malamud:  #3aacaa;
+  --abal:     #c44a8a;
+  --harari:   #c9a84c;
+  --graeber:  #5aaa5a;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+header {
+  text-align: center;
+  padding: 2.5rem 1.5rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: 'IPC';
+  position: absolute;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(5rem, 20vw, 14rem);
+  font-weight: 900;
+  color: rgba(201,168,76,.03);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+  letter-spacing: .2em;
+}
+.eyebrow {
+  font-size: .6rem; letter-spacing: .28em; text-transform: uppercase;
+  color: var(--gold); font-weight: 700; margin-bottom: .5rem;
+}
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  font-weight: 900; color: var(--white); line-height: 1.15;
+  margin-bottom: .5rem;
+}
+.header-sub {
+  font-size: .75rem; color: var(--muted); max-width: 500px; margin: 0 auto;
+}
+.hint {
+  display: inline-flex; align-items: center; gap: .4rem;
+  margin-top: 1rem; font-size: .68rem; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: .3rem .8rem;
+}
+
+/* ── ÁRBOL SVG CONTAINER ── */
+#tree-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 2rem 1rem 1rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+svg#tree {
+  display: block;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+/* ── LÍNEAS CONECTOR ── */
+.connector {
+  stroke: var(--border);
+  stroke-width: 1.5;
+  fill: none;
+  transition: stroke .3s;
+}
+.connector.active {
+  stroke-width: 2;
+}
+
+/* ── NODOS ── */
+.node { cursor: pointer; }
+
+.node-circle {
+  transition: r .25s, filter .25s;
+  filter: drop-shadow(0 0 0px transparent);
+}
+.node:hover .node-circle {
+  filter: drop-shadow(0 0 10px currentColor);
+}
+.node:hover .node-circle,
+.node.active .node-circle {
+  r: var(--hover-r, 36px);
+}
+
+.node-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+  fill: var(--white);
+  font-size: 11px;
+  letter-spacing: .01em;
+}
+.node-sublabel {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+  fill: rgba(220,216,200,.55);
+  font-size: 9px;
+}
+
+/* prioridad badge en nodo */
+.badge-critica { fill: rgba(196,74,74,.25); stroke: rgba(196,74,74,.6); stroke-width:1; }
+.badge-alta    { fill: rgba(196,122,42,.22); stroke: rgba(196,122,42,.55); stroke-width:1; }
+.badge-media   { fill: rgba(58,170,106,.2);  stroke: rgba(58,170,106,.5);  stroke-width:1; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s;
+}
+.modal-overlay.open {
+  opacity: 1; pointer-events: all;
+}
+.modal {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 100%; max-width: 640px;
+  max-height: 88vh;
+  overflow-y: auto;
+  transform: translateY(18px) scale(.97);
+  transition: transform .25s;
+  position: relative;
+}
+.modal-overlay.open .modal {
+  transform: translateY(0) scale(1);
+}
+
+.modal-header {
+  padding: 1.3rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--card); z-index: 2;
+  border-radius: 8px 8px 0 0;
+}
+.modal-author-tag {
+  font-size: .57rem; letter-spacing: .2em; text-transform: uppercase;
+  font-weight: 700; margin-bottom: .25rem;
+}
+.modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem; font-weight: 700; color: var(--white);
+  line-height: 1.2; margin-bottom: .2rem;
+}
+.modal-sub { font-size: .7rem; color: var(--muted); font-style: italic; }
+.modal-close {
+  position: absolute; top: 1rem; right: 1.2rem;
+  background: none; border: none; cursor: pointer;
+  color: var(--muted); font-size: 1.3rem; line-height: 1;
+  transition: color .2s; padding: .2rem;
+}
+.modal-close:hover { color: var(--white); }
+
+.modal-body { padding: 1.2rem 1.5rem 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+
+/* clave */
+.key-box {
+  background: rgba(201,168,76,.05);
+  border-left: 3px solid var(--gold-d);
+  border-radius: 0 4px 4px 0;
+  padding: .8rem 1rem;
+  font-size: .78rem; color: #b8a870; line-height: 1.6;
+}
+.key-box strong { color: var(--white); }
+
+/* pregunta */
+.faq-block {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 4px; padding: .9rem 1rem;
+}
+.faq-tag {
+  font-size: .55rem; letter-spacing: .18em; text-transform: uppercase;
+  font-weight: 700; color: var(--gold); margin-bottom: .4rem;
+}
+.faq-q {
+  font-size: .82rem; font-weight: 600; color: var(--white);
+  margin-bottom: .6rem; line-height: 1.4;
+}
+.opt {
+  font-size: .76rem; padding: .28rem .6rem; border-radius: 3px;
+  border: 1px solid var(--border); color: var(--muted);
+  background: #0d0d14; margin-bottom: .22rem; display: block;
+}
+.opt.c { background: rgba(58,170,106,.1); color: #6dd098; border-color: rgba(58,170,106,.35); font-weight:600; }
+.opt.c::before { content: '✓ '; }
+.opt.w { opacity: .5; }
+.opt.w::before { content: '✗ '; color: #c44a4a; }
+.faq-tip {
+  font-size: .71rem; color: #a09060; margin-top: .6rem; padding-top: .6rem;
+  border-top: 1px solid var(--border); line-height: 1.55;
+}
+.faq-tip strong { color: #d0c8a0; }
+
+/* tabla vf */
+.vf-t { width:100%; border-collapse:collapse; font-size:.74rem; }
+.vf-t th { background:#0d0d16; color:var(--muted); font-size:.55rem; letter-spacing:.12em; text-transform:uppercase; padding:.45rem .6rem; text-align:left; border-bottom:1px solid var(--border); }
+.vf-t td { padding:.45rem .6rem; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.4; }
+.vf-t tr:last-child td { border-bottom:none; }
+.vt { color:#6dd098; font-weight:700; white-space:nowrap; }
+.vf { color:#e09090; font-weight:700; white-space:nowrap; }
+
+/* ── LEYENDA ── */
+.legend {
+  display: flex; flex-wrap: wrap; gap: .8rem;
+  justify-content: center; padding: 1rem 1rem .5rem;
+  border-top: 1px solid var(--border);
+}
+.legend-item {
+  display: flex; align-items: center; gap: .35rem;
+  font-size: .65rem; color: var(--muted);
+}
+.legend-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+/* ── FOOTER ── */
+footer {
+  text-align:center; font-size:.62rem; color:var(--muted);
+  padding: 1rem 1rem 2rem; border-top: 1px solid var(--border);
+}
+footer span { color: var(--gold); }
+
+/* scrollbar modal */
+.modal::-webkit-scrollbar { width: 5px; }
+.modal::-webkit-scrollbar-track { background: transparent; }
+.modal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <p class="eyebrow">Red conceptual interactiva · 1° Parcial</p>
+  <h1>Guía IPC · Cátedra Marín</h1>
+  <p class="header-sub">Basada en el análisis de 6 versiones del mismo examen. Hacé clic en cada autor para ver las preguntas concretas y sus respuestas.</p>
+  <p class="hint">👆 Tocá cualquier nodo para abrir el contenido</p>
+</header>
+
+<!-- ÁRBOL SVG -->
+<div id="tree-container">
+  <svg id="tree" width="900" height="520" viewBox="0 0 900 520">
+    <defs>
+      <filter id="glow-weber">    <feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="glow-sartori">  <feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="glow-morlino">  <feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="glow-dahl">     <feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="glow-lijphart"> <feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="glow-malamud">  <feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="glow-abal">     <feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="glow-harari">   <feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="glow-graeber">  <feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+
+    <!-- CONNECTORS: Centro → Autores -->
+    <!-- Centro está en 450,80 -->
+    <!-- Fila crítica: Weber(130,220) Sartori(330,220) Morlino(580,220) -->
+    <!-- Fila alta: Dahl(130,370) Lijphart(280,370) Malamud(450,370) Abal(620,370) -->
+    <!-- Fila media: Harari(300,470) Graeber(600,470) -->
+
+    <!-- Centro → fila critica -->
+    <path class="connector" d="M450,115 C450,165 130,170 130,185" style="stroke:#4a7ec4;opacity:.35"/>
+    <path class="connector" d="M450,115 C450,165 330,170 330,185" style="stroke:#c47a2a;opacity:.35"/>
+    <path class="connector" d="M450,115 C450,165 580,170 580,185" style="stroke:#c44a4a;opacity:.35"/>
+    <!-- Centro → fila alta -->
+    <path class="connector" d="M450,115 C450,260 130,300 130,335" style="stroke:#3aaa6a;opacity:.25"/>
+    <path class="connector" d="M450,115 C450,260 280,300 280,335" style="stroke:#8a5ac4;opacity:.25"/>
+    <path class="connector" d="M450,115 C450,260 450,300 450,335" style="stroke:#3aacaa;opacity:.25"/>
+    <path class="connector" d="M450,115 C450,260 620,300 620,335" style="stroke:#c44a8a;opacity:.25"/>
+    <!-- Centro → fila media -->
+    <path class="connector" d="M450,115 C450,350 300,400 300,435" style="stroke:#c9a84c;opacity:.18"/>
+    <path class="connector" d="M450,115 C450,350 600,400 600,435" style="stroke:#5aaa5a;opacity:.18"/>
+
+    <!-- NODO CENTRO -->
+    <g class="node" id="node-center" onclick="openModal('center')">
+      <circle cx="450" cy="80" r="52" fill="#14101a" stroke="var(--gold)" stroke-width="2"/>
+      <circle cx="450" cy="80" r="48" fill="#1a1410" stroke="var(--gold)" stroke-width=".5" opacity=".5"/>
+      <text x="450" y="72" class="node-label" style="font-size:12px;fill:var(--gold);font-family:'Playfair Display',serif">1° PARCIAL</text>
+      <text x="450" y="87" class="node-sublabel" style="font-size:9px">IPC · Cátedra Marín</text>
+      <text x="450" y="100" class="node-sublabel" style="font-size:8px">Plan de estudio</text>
+    </g>
+
+    <!-- ── FILA CRÍTICA ── -->
+
+    <!-- WEBER -->
+    <g class="node" id="node-weber" onclick="openModal('weber')">
+      <circle cx="130" cy="220" r="50" fill="#0e1828" stroke="#4a7ec4" stroke-width="2.5"/>
+      <rect x="96" y="172" width="68" height="14" rx="7" class="badge-critica"/>
+      <text x="130" y="179" style="font-size:8px;fill:#e09090;text-anchor:middle;font-weight:700;letter-spacing:.05em">CRÍTICO · 6/6</text>
+      <text x="130" y="214" class="node-label" style="font-size:12px">Weber</text>
+      <text x="130" y="229" class="node-sublabel">Dominación</text>
+      <text x="130" y="241" class="node-sublabel">tipos · casos</text>
+    </g>
+
+    <!-- SARTORI -->
+    <g class="node" id="node-sartori" onclick="openModal('sartori')">
+      <circle cx="330" cy="220" r="50" fill="#1a1008" stroke="#c47a2a" stroke-width="2.5"/>
+      <rect x="296" y="172" width="68" height="14" rx="7" class="badge-critica"/>
+      <text x="330" y="179" style="font-size:8px;fill:#e09090;text-anchor:middle;font-weight:700;letter-spacing:.05em">CRÍTICO · 6/6</text>
+      <text x="330" y="214" class="node-label" style="font-size:12px">Sartori</text>
+      <text x="330" y="229" class="node-sublabel">Animal político</text>
+      <text x="330" y="241" class="node-sublabel">vs. social</text>
+    </g>
+
+    <!-- MORLINO -->
+    <g class="node" id="node-morlino" onclick="openModal('morlino')">
+      <circle cx="580" cy="220" r="50" fill="#180808" stroke="#c44a4a" stroke-width="2.5"/>
+      <rect x="546" y="172" width="68" height="14" rx="7" class="badge-critica"/>
+      <text x="580" y="179" style="font-size:8px;fill:#e09090;text-anchor:middle;font-weight:700;letter-spacing:.05em">CRÍTICO · 6/6</text>
+      <text x="580" y="214" class="node-label" style="font-size:12px">Morlino</text>
+      <text x="580" y="229" class="node-sublabel">3 regímenes</text>
+      <text x="580" y="241" class="node-sublabel">no democráticos</text>
+    </g>
+
+    <!-- ── FILA ALTA ── -->
+
+    <!-- DAHL -->
+    <g class="node" id="node-dahl" onclick="openModal('dahl')">
+      <circle cx="130" cy="370" r="42" fill="#0b1a10" stroke="#3aaa6a" stroke-width="2"/>
+      <rect x="99" y="328" width="62" height="13" rx="6.5" class="badge-alta"/>
+      <text x="130" y="335" style="font-size:7.5px;fill:#dda870;text-anchor:middle;font-weight:700;letter-spacing:.05em">ALTA · 6/6</text>
+      <text x="130" y="365" class="node-label" style="font-size:11px">Dahl</text>
+      <text x="130" y="378" class="node-sublabel">Poliarquía</text>
+      <text x="130" y="389" class="node-sublabel">democracia</text>
+    </g>
+
+    <!-- LIJPHART -->
+    <g class="node" id="node-lijphart" onclick="openModal('lijphart')">
+      <circle cx="280" cy="370" r="42" fill="#12081a" stroke="#8a5ac4" stroke-width="2"/>
+      <rect x="249" y="328" width="62" height="13" rx="6.5" class="badge-alta"/>
+      <text x="280" y="335" style="font-size:7.5px;fill:#dda870;text-anchor:middle;font-weight:700;letter-spacing:.05em">ALTA · 6/6</text>
+      <text x="280" y="365" class="node-label" style="font-size:11px">Lijphart</text>
+      <text x="280" y="378" class="node-sublabel">Mayorías</text>
+      <text x="280" y="389" class="node-sublabel">vs. consenso</text>
+    </g>
+
+    <!-- MALAMUD -->
+    <g class="node" id="node-malamud" onclick="openModal('malamud')">
+      <circle cx="450" cy="370" r="42" fill="#0b1a1a" stroke="#3aacaa" stroke-width="2"/>
+      <rect x="419" y="328" width="62" height="13" rx="6.5" class="badge-alta"/>
+      <text x="450" y="335" style="font-size:7.5px;fill:#dda870;text-anchor:middle;font-weight:700;letter-spacing:.05em">ALTA · 6/6</text>
+      <text x="450" y="365" class="node-label" style="font-size:11px">Malamud</text>
+      <text x="450" y="378" class="node-sublabel">CP, filosofía</text>
+      <text x="450" y="389" class="node-sublabel">neopluralismo</text>
+    </g>
+
+    <!-- ABAL MEDINA -->
+    <g class="node" id="node-abal" onclick="openModal('abal')">
+      <circle cx="620" cy="370" r="42" fill="#1a0810" stroke="#c44a8a" stroke-width="2"/>
+      <rect x="589" y="328" width="62" height="13" rx="6.5" class="badge-alta"/>
+      <text x="620" y="335" style="font-size:7.5px;fill:#dda870;text-anchor:middle;font-weight:700;letter-spacing:.05em">ALTA · 6/6</text>
+      <text x="620" y="365" class="node-label" style="font-size:11px">Abal Medina</text>
+      <text x="620" y="378" class="node-sublabel">4 teorías</text>
+      <text x="620" y="389" class="node-sublabel">individualismo</text>
+    </g>
+
+    <!-- ── FILA MEDIA ── -->
+
+    <!-- HARARI -->
+    <g class="node" id="node-harari" onclick="openModal('harari')">
+      <circle cx="300" cy="470" r="36" fill="#14100a" stroke="#c9a84c" stroke-width="1.8"/>
+      <rect x="272" y="433" width="56" height="12" rx="6" class="badge-media"/>
+      <text x="300" y="440" style="font-size:7px;fill:#6dd098;text-anchor:middle;font-weight:700;letter-spacing:.04em">MEDIA · 4/6</text>
+      <text x="300" y="466" class="node-label" style="font-size:10px">Harari</text>
+      <text x="300" y="478" class="node-sublabel">Animismo</text>
+    </g>
+
+    <!-- GRAEBER -->
+    <g class="node" id="node-graeber" onclick="openModal('graeber')">
+      <circle cx="600" cy="470" r="36" fill="#0a140a" stroke="#5aaa5a" stroke-width="1.8"/>
+      <rect x="572" y="433" width="56" height="12" rx="6" class="badge-media"/>
+      <text x="600" y="440" style="font-size:7px;fill:#6dd098;text-anchor:middle;font-weight:700;letter-spacing:.04em">MEDIA · 4/6</text>
+      <text x="600" y="466" class="node-label" style="font-size:10px">Graeber</text>
+      <text x="600" y="478" class="node-sublabel">Deuda</text>
+    </g>
+
+    <!-- Etiqueta filas -->
+    <text x="760" y="225" style="font-size:9px;fill:#c44a4a;font-weight:700;letter-spacing:.1em;text-anchor:middle;opacity:.7">CRÍTICO</text>
+    <text x="760" y="375" style="font-size:9px;fill:#c47a2a;font-weight:700;letter-spacing:.1em;text-anchor:middle;opacity:.7">ALTA</text>
+    <text x="760" y="475" style="font-size:9px;fill:#3aaa6a;font-weight:700;letter-spacing:.1em;text-anchor:middle;opacity:.7">MEDIA</text>
+
+    <!-- líneas separadoras de nivel -->
+    <line x1="60" y1="153" x2="740" y2="153" stroke="var(--border)" stroke-width=".8" stroke-dasharray="4,4" opacity=".5"/>
+    <line x1="60" y1="308" x2="740" y2="308" stroke="var(--border)" stroke-width=".8" stroke-dasharray="4,4" opacity=".5"/>
+    <line x1="60" y1="425" x2="740" y2="425" stroke="var(--border)" stroke-width=".8" stroke-dasharray="4,4" opacity=".35"/>
+  </svg>
+</div>
+
+<!-- LEYENDA -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#c44a4a"></div>Crítico — en los 6 exámenes</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#c47a2a"></div>Alta prioridad — muy probable</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#3aaa6a"></div>Media — aparece en 4 de 6</div>
+</div>
+
+<!-- ════════════════════════════════
+     MODAL OVERLAY
+════════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeOnOverlay(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-header" id="modal-header">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <p class="modal-author-tag" id="modal-tag"></p>
+      <p class="modal-title" id="modal-title"></p>
+      <p class="modal-sub" id="modal-sub"></p>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<footer>
+  Red conceptual · 1° Parcial IPC (22) · Cátedra <span>Marín</span> · Basada en análisis de 6 versiones del examen
+</footer>
+
+<script>
+// ── DATOS DE CADA NODO ──────────────────────────────────────
+const DATA = {
+
+  center: {
+    tag: "Plan de estudio · 2–3 días",
+    title: "Cómo usar esta guía",
+    sub: "20 preguntas × 0,5 punto · Necesitás 8 correctas para aprobar",
+    color: "var(--gold)",
+    body: `
+      <div class="key-box">
+        <strong>El secreto del parcial:</strong> el examen usa un banco fijo de preguntas que rota entre los 6 temas (versiones). Siempre aparecen los mismos autores, los mismos conceptos y a veces las mismas preguntas literales. Esta red está construida sobre el análisis de esas 6 versiones.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Día 1 — Lo que entra seguro (prioridad crítica)</p>
+        <p class="faq-q">Estudiá estos tres autores primero. Aparecen en los 6 exámenes y juntos garantizan al menos 3 preguntas correctas:</p>
+        <span class="opt c">Weber — tipos de dominación con caso aplicado</span>
+        <span class="opt c">Sartori — animal político vs. animal social</span>
+        <span class="opt c">Morlino — 3 tipos de régimen no democrático</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Día 2 — Alta probabilidad</p>
+        <span class="opt c">Dahl — poliarquía y condiciones de la democracia</span>
+        <span class="opt c">Lijphart — mayorías vs. consenso con caso real</span>
+        <span class="opt c">Malamud — qué es la CP, neopluralismo</span>
+        <span class="opt c">Abal Medina — las 4 teorías del individualismo metodológico</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Día 3 — Refuerzo para superar el 4</p>
+        <span class="opt c">Harari — animismo vs. religiones teístas</span>
+        <span class="opt c">Graeber — deuda primordial, patrón oro, mito del trueque</span>
+      </div>
+    `
+  },
+
+  weber: {
+    tag: "Autor 01 · Aparece en los 6 exámenes",
+    title: "Max Weber",
+    sub: "Tipos de dominación · Función del funcionario político",
+    color: "var(--weber)",
+    body: `
+      <div class="key-box">
+        <strong>Lo único que necesitás saber:</strong> identificar el tipo de dominación a partir de un caso concreto. El examen siempre presenta un fragmento narrativo. Aprendé las palabras clave de cada tipo.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo A — San Martín en Lima</p>
+        <p class="faq-q">"San Martín ingresó a Lima sin disparar un tiro... fue honrado con el cargo de Protector de la Libertad del Perú". ¿Qué tipo de dominación es?</p>
+        <span class="opt w">a. Racional y legal</span>
+        <span class="opt w">b. Tradicional</span>
+        <span class="opt c">c. Carismática</span>
+        <p class="faq-tip"><strong>Clave:</strong> carismática = cualidad extraordinaria de una persona. Los seguidores obedecen por devoción personal. San Martín, Perón, líderes religiosos → carismática.</p>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo B — Monarca inglés</p>
+        <p class="faq-q">"El monarca inglés conserva el mando de las fuerzas armadas desde que Alfredo El Grande expulsó a los vikingos en el año 885". ¿Qué tipo de dominación es?</p>
+        <span class="opt w">a. Racional y legal</span>
+        <span class="opt c">b. Tradicional</span>
+        <span class="opt w">c. Carismática</span>
+        <p class="faq-tip"><strong>Clave:</strong> tradicional = "desde tiempo inmemorial", herencia, costumbre. Monarquías hereditarias → tradicional.</p>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo C — Fallo Marbury v. Madison</p>
+        <p class="faq-q">"El principio establece que toda ley contraria a la Constitución es nula". ¿Qué tipo de dominación es?</p>
+        <span class="opt c">a. Racional y legal</span>
+        <span class="opt w">b. Tradicional</span>
+        <span class="opt w">c. Carismática</span>
+        <p class="faq-tip"><strong>Clave:</strong> racional-legal = se obedece la norma impersonal, no a la persona. Constituciones, leyes, burocracia → racional-legal.</p>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo D — Función del funcionario</p>
+        <p class="faq-q">Según Weber, ¿qué función se atribuye al funcionario político?</p>
+        <span class="opt c">a. Administrar imparcialmente</span>
+        <span class="opt w">b. Dirigir técnicamente el Estado</span>
+        <span class="opt w">c. Ser líder demagógico</span>
+        <span class="opt w">d. Crear su propio poder</span>
+        <p class="faq-tip"><strong>Frase clave:</strong> "sine ira et studio" = sin ira y sin prevención. El funcionario ejecuta, no decide.</p>
+      </div>
+      <table class="vf-t">
+        <tr><th>Afirmaciones V/F</th><th>R.</th></tr>
+        <tr><td>La innovación de Weber fue definir al Estado por su recurso específico (la violencia) y no por su función.</td><td class="vt">V</td></tr>
+        <tr><td>En la asociación estamental el cuadro administrativo es propietario de los medios; en la burocrática, está separado de ellos.</td><td class="vt">V</td></tr>
+        <tr><td>Desde la instauración de la democracia, la figura típica del jefe político en Occidente es el demagogo.</td><td class="vt">V</td></tr>
+      </table>
+    `
+  },
+
+  sartori: {
+    tag: "Autor 02 · Aparece en los 6 exámenes",
+    title: "Giovanni Sartori",
+    sub: "Animal político vs. social · Sesgo de valoración · CP como ciencia",
+    color: "var(--sartori)",
+    body: `
+      <div class="key-box">
+        <strong>La pregunta más repetida de todo el parcial:</strong> la distinción entre animal político y animal social aparece en 4 de 6 exámenes. Siempre con la misma trampa: la afirmación falsa dice que son "dos facetas del mismo hombre".
+      </div>
+      <table class="vf-t">
+        <tr><th>Las V/F más repetidas — memorizalas</th><th>R.</th></tr>
+        <tr><td>Los griegos no distinguían lo político de lo social. Para Aristóteles, "político" significaba las dos cosas a la vez.</td><td class="vt">V</td></tr>
+        <tr><td>El animal político y el animal social griego aluden a dos facetas de un mismo hombre.</td><td class="vf">F — son dos antropologías que se SUSTITUYEN</td></tr>
+        <tr><td>La ideología, la doctrina, la teoría y la opinión son elementos comunes entre filosofía y ciencia.</td><td class="vf">F — solo la teoría es común</td></tr>
+        <tr><td>No es posible eliminar el sesgo de valoración, por eso no vale la pena intentarlo.</td><td class="vf">F — sí debe eliminarse (neutralización)</td></tr>
+        <tr><td>La diferencia crucial entre filosofía y ciencia reside en el objeto.</td><td class="vf">F — reside en el MÉTODO</td></tr>
+      </table>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Cuándo aparece la CP en sentido estricto</p>
+        <p class="faq-q">Según Sartori, ¿cuándo aparece la ciencia política en sentido estricto?</p>
+        <span class="opt w">a. Con Maquiavelo</span>
+        <span class="opt w">b. Con Aristóteles</span>
+        <span class="opt c">c. Con la escuela behaviorista (~1950)</span>
+        <span class="opt w">d. Con los estados-nación</span>
+        <p class="faq-tip">El behaviorismo introdujo técnicas cuantitativas. Eso es lo nuevo para Sartori.</p>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — La CP se pregunta…</p>
+        <p class="faq-q">Según Sartori, la ciencia política se pregunta…</p>
+        <span class="opt w">a. El "por qué" (eso es la filosofía)</span>
+        <span class="opt c">b. El "cómo" de los fenómenos</span>
+        <span class="opt w">c. El "cómo" y el "por qué"</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Mayor necesidad de la CP</p>
+        <p class="faq-q">¿Cuál es la mayor necesidad de la CP en sentido estricto según Sartori?</p>
+        <span class="opt w">a. Hacerse cuantitativa y estadística</span>
+        <span class="opt w">b. Independizarse de la filosofía</span>
+        <span class="opt c">c. Observar directamente los fenómenos, construir definiciones operacionales y crear un lenguaje observador-perceptivo con disposición empírica</span>
+        <span class="opt w">d. Explicar problemas y proponer soluciones</span>
+      </div>
+    `
+  },
+
+  morlino: {
+    tag: "Autor 03 · Aparece en los 6 exámenes",
+    title: "Leonardo Morlino",
+    sub: "Regímenes no democráticos: autoritarismo · totalitarismo · tradicional",
+    color: "var(--morlino)",
+    body: `
+      <div class="key-box">
+        <strong>La lógica del examen:</strong> cada versión pregunta por uno de los tres tipos. La descripción es larga pero siempre tiene 2–3 palabras clave que te dicen cuál es. Aprendé esas palabras.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Los tres tipos con sus palabras clave</p>
+        <p class="faq-q">¿Cómo identificar cada régimen en la pregunta?</p>
+        <span class="opt c">AUTORITARISMO → "pluralismo limitado" + "desideologizado" + "baja movilización" + "líder carismático o pequeño grupo dirigencial"</span>
+        <span class="opt c">TOTALITARISMO → "sin pluralismo" + "ideología claramente articulada" + "movilización continua de TODA la población" + "poderes sin límites ni previsibilidad"</span>
+        <span class="opt c">RÉGIMEN TRADICIONAL → "patrimonialismo" + "miedo y recompensas" + "decisiones arbitrarias" + "sin ideología precisa" + "fuerzas armadas y policía preponderantes"</span>
+        <p class="faq-tip"><strong>Truco:</strong> ¿Menciona "ideología articulada" + "movilización total"? → Totalitarismo. ¿Menciona "patrimonialismo" + "arbitrario" + "sin ideología"? → Tradicional. ¿Menciona "pluralismo limitado" + "desideologizado"? → Autoritarismo.</p>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta concreta que apareció en T5 y T6</p>
+        <p class="faq-q">¿En cuál existe pluralismo aunque limitado, régimen desideologizado, baja movilización política, líder carismático o pequeño grupo dirigencial?</p>
+        <span class="opt c">a. Autoritarismo ✓</span>
+        <span class="opt w">b. Totalitarismo</span>
+        <span class="opt w">c. Régimen tradicional</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta concreta que apareció en T1 y T2</p>
+        <p class="faq-q">¿En cuál no existe ningún pluralismo, hay ideología claramente articulada, movilización de toda la población, poderes sin límites ni previsibilidad?</p>
+        <span class="opt w">a. Autoritarismo</span>
+        <span class="opt c">b. Totalitarismo ✓</span>
+        <span class="opt w">c. Régimen tradicional</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta concreta que apareció en T3 y T4</p>
+        <p class="faq-q">¿En cuál existe noción patrimonialista, colaboradores atados por miedo y recompensas, decisiones arbitrarias, sin ideología precisa, fuerzas armadas preponderantes?</p>
+        <span class="opt w">a. Autoritarismo</span>
+        <span class="opt w">b. Totalitarismo</span>
+        <span class="opt c">c. Régimen tradicional ✓</span>
+      </div>
+    `
+  },
+
+  dahl: {
+    tag: "Autor 04 · Aparece en los 6 exámenes",
+    title: "Robert Dahl",
+    sub: "Poliarquía · 4 tipos de régimen · Condiciones de la democracia",
+    color: "var(--dahl)",
+    body: `
+      <div class="key-box">
+        <strong>Concepto central:</strong> democracia = ideal teórico inalcanzable. Poliarquía = lo más cercano al ideal que existe en la realidad. Ningún régimen está totalmente democratizado.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Por qué "poliarquía"</p>
+        <p class="faq-q">¿Por qué Dahl llama poliarquías a los regímenes que comúnmente llamamos democracias?</p>
+        <span class="opt w">a. Porque el término democracia es ambiguo</span>
+        <span class="opt c">b. Porque no hay ningún régimen de dimensión considerable totalmente democratizado</span>
+        <span class="opt w">c. Porque no considera democrático a ningún régimen</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Característica fundamental</p>
+        <p class="faq-q">¿Cuál es para Dahl la característica fundamental de un gobierno democrático?</p>
+        <span class="opt w">a. La convocatoria a elecciones periódicas</span>
+        <span class="opt w">b. La libertad de expresión y de asociación</span>
+        <span class="opt c">c. La continua aptitud para responder a las preferencias de los ciudadanos</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Los 4 tipos de régimen</p>
+        <p class="faq-q">Si un régimen de hegemonía cerrada amplía la participación (sufragio universal) pero no el debate público, ¿en qué se convierte?</p>
+        <span class="opt w">a. Poliarquía</span>
+        <span class="opt c">b. Hegemonía representativa</span>
+        <span class="opt w">c. Oligarquía competitiva</span>
+        <p class="faq-tip">Amplía participación (representación) pero NO debate público → hegemonía representativa. Si ampliara ambas → poliarquía.</p>
+      </div>
+      <table class="vf-t">
+        <tr><th>V/F frecuentes</th><th>R.</th></tr>
+        <tr><td>Las 3 condiciones de Dahl son fundamentales pero no suficientes para que exista la democracia.</td><td class="vt">V</td></tr>
+        <tr><td>Un sistema en el que se celebren elecciones periódicas puede calificarse de democrático.</td><td class="vf">F — se necesita también debate público</td></tr>
+        <tr><td>Dahl analiza siempre casos nacionales porque el sistema nacional se replica a nivel subnacional.</td><td class="vf">F — las subnacionales requieren estudio separado</td></tr>
+      </table>
+    `
+  },
+
+  lijphart: {
+    tag: "Autor 05 · Aparece en los 6 exámenes",
+    title: "Arend Lijphart",
+    sub: "Democracia de mayorías vs. democracia de consenso · Casos aplicados",
+    color: "var(--lijphart)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> dos modelos opuestos. El examen pregunta características de cada uno, o aplica un caso real (Alemania o España). Las opciones "trampa" asignan características del consenso a la pregunta sobre mayorías.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Características democracias de mayorías</p>
+        <p class="faq-q">Según Lijphart, ¿cuál de estos elementos caracteriza a las democracias de mayorías?</p>
+        <span class="opt w">a. Bicameralismo equilibrado</span>
+        <span class="opt w">b. Sistema de partidos multidimensional</span>
+        <span class="opt w">c. Constitución escrita y representación de la minoría</span>
+        <span class="opt c">d. Ninguna corresponde — todas son del modelo de consenso</span>
+        <p class="faq-tip"><strong>Trampa clásica:</strong> a, b y c son características del consenso. La mayorías se caracteriza por: sociedad homogénea + bipartidismo estable + mayorías que gobiernan solas.</p>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Caso aplicado — Alemania (Bundestag 2021)</p>
+        <p class="faq-q">Coalición de tres partidos (SPD + Verdes + FDP), 6 partidos en el parlamento. ¿Qué elemento del modelo de consenso presenta?</p>
+        <span class="opt w">a. Bicameralismo equilibrado</span>
+        <span class="opt w">b. Representación proporcional</span>
+        <span class="opt c">c. Participación del gabinete ejecutivo (coalición amplia)</span>
+        <span class="opt w">d. Sistema de partidos multidimensional</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Caso aplicado — España (investidura Sánchez)</p>
+        <p class="faq-q">PP y PSOE como actores necesarios pero no suficientes. ¿A qué modelo se asemeja?</p>
+        <span class="opt w">a. Democracia de consenso</span>
+        <span class="opt c">b. Democracia de mayorías</span>
+        <span class="opt w">c. Democracia de disenso</span>
+        <p class="faq-tip">España = bipartidismo dominante PP/PSOE + sociedad relativamente homogénea → mayorías.</p>
+      </div>
+    `
+  },
+
+  malamud: {
+    tag: "Autor 06 · Aparece en los 6 exámenes",
+    title: "Andrés Malamud",
+    sub: "Qué es la CP · Qué no es · Neopluralismo · Estado · Diádicos/triádicos",
+    color: "var(--malamud)",
+    body: `
+      <div class="key-box">
+        <strong>El banco de opciones más repetido del parcial:</strong> Malamud define la CP comparándola con lo que NO es. Las 4 opciones siempre son las mismas. Solo cambia cuál se pregunta.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Banco de definiciones — aprendelas de memoria</p>
+        <p class="faq-q">¿Cuál es la definición correcta de cada disciplina?</p>
+        <span class="opt c">Matemática / Modelos → "describe, explica y predice la realidad. Disciplina abstracta, sin aplicación concreta por sí misma."</span>
+        <span class="opt c">Literatura → "arte que usa la palabra para describir, sugerir e iluminar. Incapaz de probar ni refutar por sí misma."</span>
+        <span class="opt c">Filosofía → "madre de la ciencia. Indaga sobre la esencia de las cosas a través de juicios normativos o de valor, no de comprobaciones empíricas."</span>
+        <span class="opt c">Ciencia Política → "indaga y sistematiza conocimientos sobre actividades relacionadas con el poder. Objeto empírico: trabaja con hechos y conceptos."</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Neopluralismo</p>
+        <p class="faq-q">Según Malamud, ¿qué es el neopluralismo?</p>
+        <span class="opt w">a. Poder distribuido equitativamente entre grupos</span>
+        <span class="opt w">b. Estado fuerte y centralizado</span>
+        <span class="opt w">c. Estudio de cómo los dominantes manipulan el consenso</span>
+        <span class="opt c">d. Corriente que replanteó el mayor poder de los agentes económicos (Lindblom, años '60)</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Diádicos, triádicos, atenienses</p>
+        <p class="faq-q">¿Quiénes creen que los conflictos deben resolverse por el azar?</p>
+        <span class="opt c">a. Atenienses (ya no existen en la política contemporánea)</span>
+        <span class="opt w">b. Diádicos (solo entre las partes)</span>
+        <span class="opt w">c. Triádicos (con tercero árbitro)</span>
+      </div>
+      <table class="vf-t">
+        <tr><th>V/F frecuentes</th><th>R.</th></tr>
+        <tr><td>La presencia del Estado solo se percibe a partir de sus instrumentos, como la violencia.</td><td class="vf">F — también por sus efectos (orden político)</td></tr>
+        <tr><td>Los factores que dificultaron la integración nacional en LATAM fueron físicos, étnicos y culturales.</td><td class="vt">V</td></tr>
+      </table>
+    `
+  },
+
+  abal: {
+    tag: "Autor 07 · Aparece en los 6 exámenes",
+    title: "Juan Manuel Abal Medina",
+    sub: "Historia de la CP argentina · Individualismo metodológico · 4 teorías",
+    color: "var(--abal)",
+    body: `
+      <div class="key-box">
+        <strong>Lo más importante:</strong> el banco de las 4 teorías del individualismo metodológico. El examen siempre pregunta por una de ellas con las 4 opciones. Asociá cada teoría a su autor y su rasgo distintivo.
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Las 4 teorías — asociá autor + rasgo clave</p>
+        <span class="opt c">SCHUMPETER → votantes eligen como consumidores: percepciones, imágenes y gustos. Analogía mercado económico/político.</span>
+        <span class="opt c">DOWNS (Teoría Económica de la Democracia) → partidos van al CENTRO porque ahí está la mayoría (curva normal). Los indecisos definen la elección.</span>
+        <span class="opt c">ELECCIÓN RACIONAL / Chicago → individuos son actores racionales que maximizan preferencias. Racionalidad instrumental y utilitarista. Modelo deductivo formal.</span>
+        <span class="opt c">OLSON → dinámicas de grupos. Incentivos selectivos (positivos o negativos) para participar en acción colectiva y obtener bienes comunes.</span>
+        <p class="faq-tip"><strong>Cómo no confundir Schumpeter y Downs:</strong> Schumpeter habla del VOTANTE (elige como consume). Downs habla de la ESTRATEGIA DEL PARTIDO (se mueve al centro).</p>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Crisis 2001</p>
+        <p class="faq-q">¿Qué estudios se desarrollaron tras la caída de De la Rúa?</p>
+        <span class="opt w">a. Consolidación de la democracia</span>
+        <span class="opt w">b. Tendencia delegativa del menemismo</span>
+        <span class="opt c">c. Manifestaciones electorales, selección de candidatos, sistema de partidos y formas de protesta social</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Período menemista</p>
+        <p class="faq-q">¿Qué estudios predominaron durante Menem (1989-1999)?</p>
+        <span class="opt w">a. Ola democratizadora en LATAM</span>
+        <span class="opt c">b. Tendencia delegativa, debilidad de controles horizontales, personalización del poder</span>
+        <span class="opt w">c. Surgimiento de movimientos sociales y medios</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Período inicial (años '40)</p>
+        <p class="faq-q">¿Qué enfoque desarrollaba la CP argentina a fines de los '40 (Gino Germani)?</p>
+        <span class="opt c">a. Métodos empíricos bajo el modelo estructural-funcionalista y teoría de la modernización</span>
+        <span class="opt w">b. Investigación juridicista y formalista</span>
+        <span class="opt w">c. Rol de estructuras e instituciones en el plano internacional</span>
+      </div>
+    `
+  },
+
+  harari: {
+    tag: "Autor 08 · Aparece en 4 de 6 exámenes",
+    title: "Yuval Noah Harari",
+    sub: "Animismo · Religiones teístas · Revolución agrícola · Biblia",
+    color: "var(--harari)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> el animismo no separaba humanos de animales/naturaleza. Las religiones teístas silenciaron a todos esos actores. La revolución agrícola trajo Biblia + extinciones + domesticación (todas correctas a la vez).
+      </div>
+      <table class="vf-t">
+        <tr><th>V/F más repetidas</th><th>R.</th></tr>
+        <tr><td>Las religiones teístas transformaron las animistas, llevando al silencio a todos los actores excepto Dios, los hombres, y en algunos casos ángeles y demonios.</td><td class="vt">V</td></tr>
+        <tr><td>Las religiones teístas incorporaron nuevos actores como los animales a la explicación de la realidad.</td><td class="vf">F — los ELIMINARON, no incorporaron</td></tr>
+        <tr><td>La visión animista creía que los animales habían sido puestos por los dioses para que los humanos los consuman.</td><td class="vf">F — eso es la visión agrícola/teísta</td></tr>
+      </table>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Visión animista</p>
+        <p class="faq-q">Según Harari, la visión animista…</p>
+        <span class="opt w">a. Creían que los animales eran reencarnaciones de humanos</span>
+        <span class="opt c">b. Creían que no había separación esencial entre humanos y demás animales</span>
+        <span class="opt w">c. Creían que los animales eran dioses disfrazados</span>
+        <span class="opt w">d. Creían que los dioses pusieron a los animales para consumo humano</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Revolución agrícola</p>
+        <p class="faq-q">Según Harari, la revolución agrícola…</p>
+        <span class="opt w">a. Solo generó la Biblia</span>
+        <span class="opt w">b. Solo generó extinciones masivas</span>
+        <span class="opt w">c. Solo generó animales domesticados</span>
+        <span class="opt c">d. Todas las anteriores son correctas</span>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — La Biblia según Harari</p>
+        <p class="faq-q">Según Harari, la Biblia…</p>
+        <span class="opt w">a. Esconde el vestigio de creencias animistas</span>
+        <span class="opt w">b. Niega el poder de Dios si se acepta que descendemos de animales</span>
+        <span class="opt w">c. Asegura que el humano es una creación única</span>
+        <span class="opt c">d. Todas las anteriores son correctas</span>
+      </div>
+    `
+  },
+
+  graeber: {
+    tag: "Autor 09 · Aparece en 4 de 6 exámenes",
+    title: "David Graeber",
+    sub: "Deuda primordial · Patrón oro · Mito del trueque · Dinero como crédito",
+    color: "var(--graeber)",
+    body: `
+      <div class="key-box">
+        <strong>Lo esencial:</strong> la deuda con la sociedad es INFINITA, no cancelable. El Estado la custodia y por eso cobra impuestos. El mito del trueque nunca existió: la deuda precede al dinero. El patrón oro se abandonó a fines del s. XX.
+      </div>
+      <table class="vf-t">
+        <tr><th>V/F más repetidas</th><th>R.</th></tr>
+        <tr><td>Los impuestos son una medida de nuestra deuda hacia la sociedad que nos hizo.</td><td class="vt">V</td></tr>
+        <tr><td>El único que sabe cómo los individuos pueden cancelar su deuda con la sociedad es el Estado.</td><td class="vf">F — la deuda NO es cancelable, es infinita</td></tr>
+        <tr><td>Los Estados no son los únicos que crean el dinero.</td><td class="vt">V — el dinero es crédito, puede crearse por acuerdos privados</td></tr>
+        <tr><td>La mayoría de las deudas no tienen un origen moral y no son adquiridas de forma voluntaria.</td><td class="vt">V</td></tr>
+      </table>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Mito fundamental</p>
+        <p class="faq-q">Según Graeber, ¿qué mito es fundamental para todas las teorías económicas?</p>
+        <span class="opt w">a. El mito del valor agregado</span>
+        <span class="opt c">b. El mito del trueque</span>
+        <span class="opt w">c. El mito del libre intercambio</span>
+        <p class="faq-tip">Todas las teorías económicas imaginan una sociedad primitiva de trueque que Graeber dice que nunca existió. La deuda vino antes que el dinero.</p>
+      </div>
+      <div class="faq-block">
+        <p class="faq-tag">Pregunta tipo — Patrón monetario</p>
+        <p class="faq-q">Según Graeber, ¿qué patrón monetario se abandonó a fines del siglo XX?</p>
+        <span class="opt w">a. El patrón dólar</span>
+        <span class="opt c">b. El patrón oro</span>
+        <span class="opt w">c. Cada estado mantuvo su moneda excepto con el Euro</span>
+      </div>
+    `
+  }
+};
+
+// ── MODAL LOGIC ──────────────────────────────────────────────
+function openModal(id) {
+  const d = DATA[id];
+  if (!d) return;
+
+  // color del header
+  const header = document.getElementById('modal-header');
+  header.style.borderBottom = `2px solid ${d.color}`;
+
+  document.getElementById('modal-tag').style.color = d.color;
+  document.getElementById('modal-tag').textContent = d.tag;
+  document.getElementById('modal-title').textContent = d.title;
+  document.getElementById('modal-sub').textContent = d.sub;
+  document.getElementById('modal-body').innerHTML = d.body;
+
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeOnOverlay(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// hover glow en conectores
+document.querySelectorAll('.node').forEach(node => {
+  node.addEventListener('mouseenter', () => {
+    const id = node.id.replace('node-','');
+    document.querySelectorAll('.connector').forEach(c => {
+      if (c.style.stroke && c.style.stroke.includes(getComputedStyle(document.documentElement).getPropertyValue(`--${id}`).trim())) {
+        c.style.opacity = '.7';
+        c.style.strokeWidth = '2.5';
+      }
+    });
+  });
+  node.addEventListener('mouseleave', () => {
+    document.querySelectorAll('.connector').forEach(c => {
+      c.style.strokeWidth = '';
+    });
+  });
+});
+</script>
+</body>
+</html>

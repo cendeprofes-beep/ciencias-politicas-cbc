@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Línea de Tiempo · Historia de la Ciencia Política</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#07070a;--surface:#0f0f14;--card:#13131a;--border:#1e1e2a;
+  --gold:#c9a84c;--gold-d:#4a3a08;--text:#dcd8ca;--muted:#55555f;--white:#f0ecd8;
+  --banda-años:#0d0d16;
+  --banda-trans:#0a0f0a;
+  --banda-pens:#0d0a10;
+  --trans-color:#3aaa6a;
+  --pens-color:#c9a84c;
+  --line-color:#1e1e2a;
+}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;height:100%;overflow:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(7,7,10,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:.55rem 1.2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;height:48px;}
+.nav-brand{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--gold);text-decoration:none;white-space:nowrap;}
+.nav-hint{font-size:.78rem;color:var(--muted);white-space:nowrap;}
+.nav-right{display:flex;align-items:center;gap:.8rem;}
+.nav-back{font-size:.78rem;color:var(--muted);text-decoration:none;border:1px solid var(--border);border-radius:20px;padding:.2rem .6rem;transition:all .2s;}
+.nav-back:hover{color:var(--gold);border-color:var(--gold-d);}
+
+/* WRAPPER */
+#timeline-wrapper{
+  position:fixed;top:48px;left:0;right:0;bottom:0;
+  overflow-x:auto;overflow-y:hidden;
+  cursor:grab;user-select:none;
+  -webkit-overflow-scrolling:touch;
+}
+#timeline-wrapper:active{cursor:grabbing;}
+#timeline-wrapper::-webkit-scrollbar{height:6px;}
+#timeline-wrapper::-webkit-scrollbar-track{background:var(--surface);}
+#timeline-wrapper::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+#timeline-wrapper::-webkit-scrollbar-thumb:hover{background:var(--muted);}
+
+/* CANVAS TOTAL */
+#timeline-canvas{
+  display:flex;flex-direction:column;
+  height:100%;
+  min-width:max-content;
+  position:relative;
+}
+
+/* ── BANDAS ── */
+.banda{
+  flex-shrink:0;
+  display:flex;align-items:stretch;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+
+/* BANDA A: AÑOS */
+.banda-años{
+  height:62px;
+  background:var(--banda-años);
+  align-items:center;
+}
+.banda-años-label{
+  position:sticky;left:0;z-index:10;
+  width:130px;min-width:130px;
+  background:var(--banda-años);
+  border-right:1px solid var(--border);
+  padding:0 .8rem;
+  display:flex;align-items:center;
+  font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:700;color:var(--muted);
+  height:100%;
+}
+
+/* BANDA B: TRANSFORMACIONES */
+.banda-trans{
+  flex:1;
+  background:var(--banda-trans);
+  min-height:0;
+}
+.banda-trans-label{
+  position:sticky;left:0;z-index:10;
+  width:130px;min-width:130px;
+  background:var(--banda-trans);
+  border-right:1px solid var(--border);
+  padding:.5rem .8rem;
+  display:flex;align-items:center;
+  font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;color:var(--trans-color);
+}
+
+/* BANDA C: PENSADORES */
+.banda-pens{
+  flex:1;
+  background:var(--banda-pens);
+  min-height:0;
+  border-bottom:none;
+}
+.banda-pens-label{
+  position:sticky;left:0;z-index:10;
+  width:130px;min-width:130px;
+  background:var(--banda-pens);
+  border-right:1px solid var(--border);
+  padding:.5rem .8rem;
+  display:flex;align-items:center;
+  font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;color:var(--pens-color);
+}
+
+/* CONTENIDO SCROLL DE CADA BANDA */
+.banda-content{
+  display:flex;
+  align-items:stretch;
+  flex:1;
+  position:relative;
+}
+
+/* ── ÉPOCAS (fondo coloreado por era) ── */
+.era{
+  position:absolute;top:0;bottom:0;
+  opacity:.04;
+  pointer-events:none;
+}
+
+/* ── MARCA DE AÑO ── */
+.year-mark{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:var(--col-w);flex-shrink:0;
+  border-right:1px solid var(--line-color);
+  padding:0 .3rem;
+  position:relative;
+}
+.year-mark.decade{border-right-color:#2a2a3a;}
+.year-mark.century{border-right-color:#3a3a5a;}
+.year-num{font-size:.85rem;font-weight:700;color:var(--muted);letter-spacing:.04em;white-space:nowrap;}
+.year-mark.decade .year-num{color:#7878a0;}
+.year-mark.century .year-num{color:var(--gold);font-size:.95rem;}
+.tick{width:1px;height:8px;background:var(--muted);margin-top:3px;opacity:.4;}
+.year-mark.decade .tick{height:14px;opacity:.7;background:#7878a0;}
+.year-mark.century .tick{height:20px;opacity:1;background:var(--gold);}
+
+/* ── CELDA DE TRANSFORMACIÓN ── */
+.trans-col{
+  width:var(--col-w);flex-shrink:0;
+  border-right:1px solid var(--line-color);
+  position:relative;padding:.4rem .3rem;
+}
+.trans-item{
+  position:absolute;left:4px;right:4px;
+  background:rgba(58,170,106,.1);
+  border:1px solid rgba(58,170,106,.3);
+  border-radius:4px;
+  padding:.5rem .65rem;
+  font-size:.82rem;line-height:1.45;
+  color:#a0d8b0;
+  cursor:default;
+  transition:background .2s,border-color .2s;
+  z-index:2;
+}
+.trans-item:hover{
+  background:rgba(58,170,106,.2);
+  border-color:rgba(58,170,106,.6);
+  z-index:10;
+}
+.trans-item .ti-año{
+  font-size:.72rem;font-weight:700;color:var(--trans-color);
+  margin-bottom:.2rem;letter-spacing:.06em;
+}
+.trans-item .ti-titulo{font-weight:700;color:#c8f0d4;margin-bottom:.2rem;line-height:1.3;font-size:.88rem;}
+.trans-item .ti-desc{color:#80b890;font-size:.78rem;}
+
+/* ── CELDA DE PENSADOR ── */
+.pens-col{
+  width:var(--col-w);flex-shrink:0;
+  border-right:1px solid var(--line-color);
+  position:relative;
+}
+.pens-item{
+  position:absolute;left:4px;right:4px;
+  background:rgba(201,168,76,.08);
+  border:1px solid rgba(201,168,76,.25);
+  border-radius:4px;
+  padding:.5rem .65rem;
+  font-size:.82rem;line-height:1.45;
+  color:#d0b870;
+  cursor:default;
+  transition:background .2s,border-color .2s;
+  z-index:2;
+}
+.pens-item:hover{
+  background:rgba(201,168,76,.18);
+  border-color:rgba(201,168,76,.6);
+  z-index:10;
+}
+.pens-item .pi-año{font-size:.72rem;font-weight:700;color:var(--gold);margin-bottom:.2rem;letter-spacing:.06em;}
+.pens-item .pi-autor{font-weight:700;color:var(--white);font-family:'Playfair Display',serif;font-size:.95rem;}
+.pens-item .pi-obra{color:#a09050;font-size:.75rem;font-style:italic;margin-top:.2rem;line-height:1.35;}
+.pens-item .pi-aporte{color:#c8a860;font-size:.75rem;margin-top:.2rem;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .22s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:10px;width:100%;max-width:660px;max-height:88vh;overflow-y:auto;transform:translateY(14px) scale(.97);transition:transform .22s;position:relative;}
+.modal-overlay.open .modal{transform:translateY(0) scale(1);}
+.modal-close{position:absolute;top:1rem;right:1.2rem;background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.4rem;transition:color .2s;z-index:5;}
+.modal-close:hover{color:var(--white);}
+/* BIO HEADER con foto */
+.bio-header{display:flex;gap:1.4rem;align-items:flex-start;padding:1.6rem 1.8rem 1.2rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,#0f0f18,#13131a);border-radius:10px 10px 0 0;}
+.bio-photo-wrap{flex-shrink:0;width:110px;height:130px;border-radius:6px;overflow:hidden;border:2px solid var(--gold-d);background:var(--surface);position:relative;}
+.bio-photo-wrap img{width:100%;height:100%;object-fit:cover;object-position:top center;}
+.bio-photo-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--muted);}
+.bio-header-info{flex:1;min-width:0;}
+.bio-year-tag{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:var(--gold);margin-bottom:.3rem;}
+.bio-name{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:var(--white);line-height:1.1;margin-bottom:.3rem;}
+.bio-vida{font-size:.78rem;color:var(--muted);margin-bottom:.5rem;}
+.bio-obra-tag{font-size:.75rem;color:#a09050;font-style:italic;line-height:1.4;}
+/* BIO BODY */
+.bio-body{padding:1.3rem 1.8rem 1.8rem;display:flex;flex-direction:column;gap:1.1rem;}
+.bio-section-label{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--gold);margin-bottom:.4rem;}
+.bio-semblanza{font-size:.88rem;color:#b0a880;line-height:1.75;}
+.bio-semblanza strong{color:var(--white);}
+.bio-aportes{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--gold-d);border-radius:0 4px 4px 0;padding:.9rem 1.1rem;}
+.bio-aporte-item{font-size:.84rem;color:#c8a860;line-height:1.55;padding:.25rem 0;border-bottom:1px solid var(--border);}
+.bio-aporte-item:last-child{border-bottom:none;}
+.bio-aporte-item::before{content:'✦ ';color:var(--gold);font-size:.7rem;}
+/* trans modal */
+.modal-trans-pad{padding:1.6rem 1.8rem 1.8rem;}
+.modal-year{font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;font-weight:700;margin-bottom:.4rem;}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700;color:var(--white);margin-bottom:.4rem;line-height:1.2;}
+.modal-sub{font-size:.85rem;color:var(--muted);font-style:italic;margin-bottom:1rem;}
+.modal-body{font-size:.9rem;color:#b0a880;line-height:1.75;}
+.modal-body strong{color:var(--white);}
+.modal::-webkit-scrollbar{width:5px;}
+.modal::-webkit-scrollbar-track{background:transparent;}
+.modal::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="landing_ccpp_cbc.html">← Ciencias Políticas · CBC</a>
+  <div class="nav-right">
+    <span class="nav-hint">← Arrastrá para navegar →</span>
+  </div>
+</nav>
+
+<div id="timeline-wrapper">
+<div id="timeline-canvas">
+
+  <!-- ══ BANDA A: AÑOS ══ -->
+  <div class="banda banda-años" id="banda-años">
+    <div class="banda-años-label">Cronología</div>
+    <div class="banda-content" id="years-content"></div>
+  </div>
+
+  <!-- ══ BANDA B: TRANSFORMACIONES ══ -->
+  <div class="banda banda-trans" id="banda-trans">
+    <div class="banda-trans-label">Transformaciones<br>de la disciplina</div>
+    <div class="banda-content" id="trans-content"></div>
+  </div>
+
+  <!-- ══ BANDA C: PENSADORES ══ -->
+  <div class="banda banda-pens" id="banda-pens">
+    <div class="banda-pens-label">Pensadores<br>y obras clave</div>
+    <div class="banda-content" id="pens-content"></div>
+  </div>
+
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeOnOverlay(event)">
+  <div class="modal" id="modal-box"></div>
+</div>
+
+<script>
+// ── CONFIGURACIÓN ──────────────────────────────────────────
+const START_YEAR = 1840;
+const END_YEAR   = 2026;
+const COL_W      = 42; // px por año — más ancho para textos legibles
+const LABEL_W    = 130;
+
+document.documentElement.style.setProperty('--col-w', COL_W + 'px');
+
+// ── DATOS: TRANSFORMACIONES ────────────────────────────────
+const TRANS = [
+  {
+    year:1848, span:12,
+    titulo:"Primeras cátedras universitarias",
+    desc:"Se crean las primeras cátedras de ciencia política en Europa (Francia, Alemania). La disciplina emerge diferenciada de la filosofía y el derecho.",
+    detalle:"El surgimiento de cátedras universitarias específicas de ciencia política en Europa marca el inicio de la institucionalización académica de la disciplina. En Francia e Italia aparecen escuelas de ciencias políticas orientadas a la formación de funcionarios públicos. La disciplina convive todavía con la filosofía política y el derecho constitucional, de los que busca diferenciarse."
+  },
+  {
+    year:1880, span:15,
+    titulo:"Institucionalización en EE.UU.",
+    desc:"Se funda la primera escuela de CP en Columbia (1880). La disciplina se instala como autónoma en el mundo anglosajón.",
+    detalle:"La Escuela de Ciencias Políticas de la Universidad de Columbia (1880) es la primera institución académica exclusivamente dedicada a la disciplina en EE.UU. Le siguen otras universidades. La American Political Science Association (APSA) se funda en 1903. La CP estadounidense adopta un perfil empírico y aplicado desde sus orígenes, diferenciándose del enfoque europeo más filosófico."
+  },
+  {
+    year:1920, span:18,
+    titulo:"Enfoque institucional-formal",
+    desc:"Predomina el estudio de constituciones, poderes del Estado e instituciones formales. Método descriptivo-comparativo.",
+    detalle:"El período de entreguerras está dominado por el análisis de instituciones formales: constituciones, parlamentos, sistemas electorales, poderes del Estado. El método es descriptivo y comparativo. La CP no tiene todavía herramientas cuantitativas propias. La crisis de las democracias europeas (fascismo, nazismo) interpela a la disciplina y la obliga a explicar el colapso institucional."
+  },
+  {
+    year:1945, span:10,
+    titulo:"Internacionalización de la disciplina",
+    desc:"Tras la Segunda Guerra Mundial, la UNESCO promueve la CP a escala global. Se crea la Asociación Internacional de CP (IPSA, 1949).",
+    detalle:"En 1949 se funda la International Political Science Association (IPSA) bajo el auspicio de la UNESCO. Este hito marca la internacionalización de la disciplina. Se busca definir un programa mínimo común de la ciencia política a escala mundial. El documento de la UNESCO de 1948 establece los grandes campos: teoría política, instituciones, partidos y grupos, relaciones internacionales."
+  },
+  {
+    year:1950, span:18,
+    titulo:"Revolución behaviorista",
+    desc:"La corriente conductista introduce métodos cuantitativos y empíricos. Para Sartori, es el momento en que aparece la CP en sentido estricto.",
+    detalle:"El behaviorismo (conductismo) transforma radicalmente la disciplina alrededor de 1950. Introduce técnicas estadísticas, encuestas, análisis de datos y la búsqueda de regularidades empíricas en el comportamiento político. Para Sartori, es el momento en que la ciencia política aparece 'en sentido estricto'. El behaviorismo importa los métodos de la psicología y la sociología al estudio de la política."
+  },
+  {
+    year:1966, span:14,
+    titulo:"Giro holista: marxismo y sistemismo",
+    desc:"El enfoque sistémico (Easton) y los abordajes marxistas (Poulantzas, Miliband) desafían al behaviorismo. El Estado vuelve al centro.",
+    detalle:"En los años '60 emergen paradigmas holistas que critican el individualismo metodológico del behaviorismo. El enfoque sistémico (Easton) reemplaza al Estado por el 'sistema político' como unidad de análisis. Los abordajes marxistas (Poulantzas, Miliband) ubican al Estado en la lucha de clases. El neopluralismo (Lindblom) reconoce el poder estructural del capital. La CP incorpora la crítica social."
+  },
+  {
+    year:1980, span:14,
+    titulo:"Neo-institucionalismo",
+    desc:"'Las instituciones importan': el nuevo institucionalismo recupera el estudio de las reglas formales e informales que estructuran la política.",
+    detalle:"El neo-institucionalismo ('Las instituciones importan') recupera el estudio de las reglas, normas y procedimientos que estructuran el comportamiento político. A diferencia del institucionalismo clásico, no estudia solo las instituciones formales sino también las informales. March y Olsen (1984) son sus referentes. La ciencia política vuelve al Estado pero con nuevas herramientas analíticas."
+  },
+  {
+    year:1989, span:12,
+    titulo:"Transiciones democráticas y tercera ola",
+    desc:"El fin de la Guerra Fría impulsa la agenda de la democratización. Huntington sistematiza la 'tercera ola'. La CP se globaliza.",
+    detalle:"La caída del Muro de Berlín (1989) y el fin de la Guerra Fría reorientan la agenda de la ciencia política hacia el estudio de las transiciones democráticas. Huntington sistematiza la 'tercera ola de democratización'. O'Donnell y Schmitter estudian las transiciones desde regímenes autoritarios. La CP latinoamericana gana protagonismo mundial. La consolidación democrática se convierte en el tema central."
+  },
+  {
+    year:2000, span:14,
+    titulo:"Crisis de la representación y giro digital",
+    desc:"La desafección ciudadana, el populismo y las redes sociales interpelan a la disciplina. Welp estudia la democracia digital.",
+    detalle:"El siglo XXI trae nuevos desafíos: desafección ciudadana, erosión de los partidos tradicionales, populismo, polarización y democracia digital. Welp estudia los mecanismos de participación directa y la democracia en el siglo XXI. Levitsky y Ziblatt analizan cómo mueren las democracias. Las redes sociales transforman la comunicación política. La CP enfrenta la pregunta por la calidad y la supervivencia democrática."
+  },
+  {
+    year:2016, span:10,
+    titulo:"Populismo y erosión democrática",
+    desc:"Trump, Brexit, Bolsonaro: la CP estudia el retorno del autoritarismo competitivo y la erosión democrática desde adentro.",
+    detalle:"A partir de 2016 la agenda de la CP gira en torno a la erosión democrática: Trump en EE.UU., Brexit, Bolsonaro en Brasil, Orbán en Hungría. Levitsky y Ziblatt ('Cómo mueren las democracias', 2018) muestran que la democracia ya no muere por golpes de Estado sino por el vaciamiento gradual de sus instituciones. La polarización política y el autoritarismo competitivo se convierten en los temas centrales."
+  },
+];
+
+// ── DATOS: PENSADORES ──────────────────────────────────────
+const PENSADORES = [
+  {
+    year:1848, span:8,
+    autor:"Karl Marx",
+    vida:"Tréveris, 1818 — Londres, 1883",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/d/d4/Karl_Marx_001.jpg",
+    obra:"Manifiesto Comunista (1848) · El Capital (1867)",
+    semblanza:"<strong>Karl Marx</strong> nació en Tréveris (Prusia) en 1818 en el seno de una familia judía convertida al protestantismo. Estudió filosofía en Berlín, donde entró en contacto con el hegelianismo de izquierda. Expulsado de varios países europeos por sus actividades políticas, se radicó definitivamente en Londres, donde vivió en condiciones de extrema precariedad material mientras elaboraba su obra más ambiciosa. Trabajó como corresponsal del New York Tribune y fue cofundador de la Primera Internacional. Murió en 1883, dos años después de la muerte de su esposa Jenny.",
+    aportes:["Materialismo histórico: las condiciones materiales de producción determinan la superestructura política, jurídica e ideológica.","Teoría del Estado como instrumento de dominación de clase: el Estado burgués defiende los intereses de la clase dominante.","Concepto de dictadura del proletariado como período de transición hacia una sociedad sin clases.","La lucha de clases como motor de la historia política: toda historia escrita es historia de la lucha de clases.","Crítica de la economía política: análisis del capitalismo, la plusvalía y la explotación del trabajo asalariado."]
+  },
+  {
+    year:1859, span:8,
+    autor:"John Stuart Mill",
+    vida:"Londres, 1806 — Aviñón, 1873",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/9/99/John_Stuart_Mill_by_London_Stereoscopic_Co%2C_c1870.jpg",
+    obra:"Sobre la libertad (1859) · Gobierno representativo (1861)",
+    semblanza:"<strong>John Stuart Mill</strong> nació en Londres en 1806 y recibió una educación extraordinariamente rigurosa por parte de su padre, James Mill, y del filósofo Jeremy Bentham. A los tres años ya estudiaba griego. Trabajó para la Compañía de las Indias Orientales durante décadas, y fue brevemente miembro del Parlamento. Su relación intelectual y sentimental con Harriet Taylor influyó profundamente en su pensamiento sobre la emancipación de las mujeres. Es el gran sistematizador del liberalismo clásico y del utilitarismo.",
+    aportes:["Principio del daño: la única razón legítima para restringir la libertad individual es prevenir daño a terceros.","Defensa del gobierno representativo como el mejor sistema político para el desarrollo moral de los ciudadanos.","Fundamentos teóricos del sufragio universal y la representación proporcional.","Utilitarismo refinado: la felicidad como criterio moral, pero reconociendo cualidades distintas entre los placeres.","Pionero del feminismo liberal: 'La sujeción de la mujer' (1869) argumenta por la igualdad de derechos."]
+  },
+  {
+    year:1895, span:8,
+    autor:"Gaetano Mosca",
+    vida:"Palermo, 1858 — Roma, 1941",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/b/b9/Gaetano_Mosca.jpg",
+    obra:"Elementos de ciencia política (1895)",
+    semblanza:"<strong>Gaetano Mosca</strong> nació en Palermo en 1858 y desarrolló su carrera académica en las universidades de Palermo, Roma y Turín. Fue diputado y senador del Reino de Italia. Su obra principal, 'Elementos de ciencia política', plantea una teoría radical: en todas las sociedades, sin excepción, una minoría organizada gobierna sobre una mayoría desorganizada. Esta 'clase política' se renueva pero nunca desaparece. Mosca es uno de los fundadores de la escuela elitista clásica italiana.",
+    aportes:["Teoría de la clase política: toda sociedad está gobernada por una minoría organizada sobre una mayoría desorganizada.","La 'fórmula política': toda clase dirigente justifica su dominio mediante una doctrina o creencia aceptada por la sociedad.","Crítica empírica al marxismo: la desaparición de las élites es imposible; solo se produce la circulación de élites.","Fundamentos del elitismo como corriente de la ciencia política comparada.","Análisis del reclutamiento y reproducción de las élites políticas."]
+  },
+  {
+    year:1902, span:8,
+    autor:"Vilfredo Pareto",
+    vida:"París, 1848 — Céligny, 1923",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/c/c8/Vilfredo_Pareto_1870s2.jpg",
+    obra:"Los sistemas socialistas (1902) · Tratado de sociología general (1916)",
+    semblanza:"<strong>Vilfredo Pareto</strong> nació en París en 1848, hijo de un ingeniero genovés exiliado y de madre francesa. Se formó como ingeniero y trabajó en la industria antes de dedicarse a la economía y la sociología. Profesor en la Universidad de Lausana, desarrolló en paralelo contribuciones técnicas a la economía (el óptimo de Pareto, la curva de distribución del ingreso) y una sociología política conservadora y elitista. Su obra es compleja, extensa y difícil, pero su influencia en la ciencia política fue enorme.",
+    aportes:["Teoría de la circulación de las élites: 'leones' (fuerza) y 'zorros' (astucia) se alternan en el poder; la historia es un cementerio de aristócratas.","Distinción entre acciones lógicas (medios adecuados a fines) y no lógicas (la mayoría de las acciones humanas).","Concepto de 'derivaciones': las justificaciones ideológicas que los gobernantes usan para legitimar su poder.","Crítica sociológica al marxismo y al socialismo desde una perspectiva técnica y empírica.","Óptimo de Pareto: concepto económico que también influyó en la teoría del bienestar social."]
+  },
+  {
+    year:1919, span:8,
+    autor:"Max Weber",
+    vida:"Erfurt, 1864 — Múnich, 1920",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/1/16/Max_Weber_1894.jpg",
+    obra:"El político y el científico (1919) · Economía y sociedad (1922)",
+    semblanza:"<strong>Max Weber</strong> nació en Erfurt (Turingia) en 1864 en el seno de una familia burguesa protestante. Estudió derecho, historia y filosofía. Sufrió una grave crisis nerviosa en 1897 que lo apartó de la actividad académica durante varios años. Retomó su trabajo en Heidelberg y Múnich, donde produjo su obra más influyente. Participó activamente en la política alemana al final de la Primera Guerra Mundial y fue asesor en la redacción de la Constitución de Weimar. Murió de neumonía en 1920, a los 56 años, dejando una obra colosal e inconclusa.",
+    aportes:["Definición del Estado por el monopolio del uso legítimo de la fuerza física en un territorio.","Tipología de los tres tipos de dominación: carismática, tradicional y racional-legal.","Teoría de la burocracia como forma de dominación racional-legal y su papel en el Estado moderno.","Distinción entre ética de la convicción y ética de la responsabilidad en la acción política.","Concepto del 'desencantamiento del mundo' y la racionalización como proceso histórico dominante.","Distinción entre el funcionario (administra imparcialmente) y el político (lucha por el poder)."]
+  },
+  {
+    year:1942, span:8,
+    autor:"Joseph Schumpeter",
+    vida:"Triesch, 1883 — Taconic, 1950",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/5/50/Joseph_Alois_Schumpeter.jpg",
+    obra:"Capitalismo, socialismo y democracia (1942)",
+    semblanza:"<strong>Joseph Schumpeter</strong> nació en Triesch (actual República Checa) en 1883. Estudió en Viena y fue brevemente ministro de finanzas de Austria en 1919. Emigró a EE.UU. huyendo del nazismo y se convirtió en profesor de Harvard, donde ejerció una influencia enorme. Es conocido principalmente por dos ideas: la 'destrucción creativa' como motor del capitalismo y la teoría procedimental de la democracia. Murió en 1950 mientras trabajaba en una historia del análisis económico.",
+    aportes:["Teoría procedimental de la democracia: la democracia es el método para elegir líderes mediante competencia electoral, no un fin en sí mismo.","Analogía mercado/política: los votantes eligen como consumidores, basándose en percepciones e imágenes.","Concepto de 'destrucción creativa': el capitalismo avanza eliminando continuamente las viejas estructuras.","Crítica al modelo de democracia clásica basado en la voluntad general y la racionalidad del ciudadano.","Influencia decisiva en el individualismo metodológico aplicado a la política."]
+  },
+  {
+    year:1951, span:8,
+    autor:"Giovanni Sartori",
+    vida:"Florencia, 1924 — Roma, 2017",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/2/25/Giovanni_Sartori_%282010%29.jpg",
+    obra:"Partidos y sistemas de partidos (1976) · La política (1974)",
+    semblanza:"<strong>Giovanni Sartori</strong> nació en Florencia en 1924 y estudió ciencias sociales y filosofía. Fue profesor en las universidades de Florencia, Stanford, Yale y Columbia, donde construyó una carrera académica de enorme alcance internacional. Es uno de los politólogos más traducidos e influyentes del siglo XX. Sus trabajos sobre los sistemas de partidos, la democracia y la metodología de la ciencia política son referencia obligada en todo el mundo. Murió en Roma en 2017, a los 92 años.",
+    aportes:["Clasificación de los sistemas de partidos: bipartidismo, pluralismo moderado y pluralismo polarizado.","Distinción epistemológica entre ciencia política (pregunta por el 'cómo') y filosofía política (pregunta por el 'por qué').","El behaviorismo como momento fundacional de la CP en sentido estricto (circa 1950).","Necesidad de un lenguaje observador-perceptivo y de definiciones operacionales en CP.","Crítica al 'estiramiento conceptual': el uso impreciso de conceptos vacía su capacidad analítica.","Teoría de la democracia representativa y análisis de los partidos como actores centrales del sistema político."]
+  },
+  {
+    year:1953, span:9,
+    autor:"David Easton",
+    vida:"Toronto, 1917 — Irvine, 2014",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/3/3e/David_Easton.jpg",
+    obra:"El sistema político (1953) · Una teoría del análisis político (1965)",
+    semblanza:"<strong>David Easton</strong> nació en Toronto en 1917 y desarrolló su carrera en la Universidad de Chicago, donde se convirtió en una figura central del behaviorismo político. Introdujo el análisis sistémico en la ciencia política, transformando el modo en que la disciplina concibe su objeto de estudio. Fue presidente de la American Political Science Association en 1968-1969. Su obra, de gran abstracción teórica, buscaba construir una teoría general de la política comparable a la de otros sistemas sociales.",
+    aportes:["Modelo sistémico de la política: el sistema político convierte 'inputs' (demandas y apoyos) en 'outputs' (decisiones autoritativas).","Concepto de 'asignación autoritativa de valores': la política es la distribución vinculante de bienes en una sociedad.","El sistema político como 'caja negra' entre el entorno y las decisiones del gobierno.","Distinción entre apoyo difuso (legitimidad general) y apoyo específico (satisfacción con políticas concretas).","Alternativa al enfoque estatalista: el 'sistema político' reemplaza al Estado como unidad de análisis."]
+  },
+  {
+    year:1956, span:9,
+    autor:"Robert Dahl",
+    vida:"Inwood, 1915 — Hamden, 2014",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/2/2e/Robert_Dahl.jpg",
+    obra:"La poliarquía (1971) · La democracia y sus críticos (1989)",
+    semblanza:"<strong>Robert Dahl</strong> nació en Inwood (Iowa) en 1915 y desarrolló toda su carrera en la Universidad de Yale, donde fue el politólogo más influyente de la segunda mitad del siglo XX en el campo de la teoría democrática. Su investigación empírica sobre el poder en New Haven ('¿Quién gobierna?', 1961) desafió tanto a los elitistas como a los marxistas. Fue presidente de la APSA en 1966-1967. Murió en 2014 a los 98 años, habiendo producido una obra que abarca más de seis décadas.",
+    aportes:["Concepto de poliarquía: ningún régimen está totalmente democratizado; la democracia es un ideal teórico al que los regímenes reales se aproximan.","Tipología de cuatro regímenes según debate público y participación: hegemonía cerrada, hegemonía representativa, oligarquía competitiva y poliarquía.","La democracia requiere la continua aptitud para responder a las preferencias de los ciudadanos.","Crítica a las teorías elitistas: el poder en las democracias reales está distribuido entre múltiples actores.","La igualdad política como principio esencial de la democracia justa.","Respuesta a los críticos de la democracia: las críticas son legítimas pero no suficientes para rechazarla."]
+  },
+  {
+    year:1959, span:9,
+    autor:"Seymour M. Lipset",
+    vida:"Nueva York, 1922 — Arlington, 2006",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/5/5c/Seymour_Martin_Lipset.jpg",
+    obra:"El hombre político (1959)",
+    semblanza:"<strong>Seymour Martin Lipset</strong> nació en Nueva York en 1922 en el seno de una familia de inmigrantes judíos rusos. Estudió en el City College de Nueva York y obtuvo su doctorado en Columbia. Fue profesor en Columbia, Berkeley, Harvard y Stanford. Es uno de los sociólogos políticos más influyentes del siglo XX. Fue el único académico en presidir tanto la American Political Science Association como la American Sociological Association. Murió en 2006.",
+    aportes:["Tesis de la modernización y la democracia: a mayor desarrollo económico, mayor probabilidad de democracia estable ('El hombre político', 1959).","Concepto de legitimidad como variable clave de la estabilidad política, independiente de la eficacia.","Análisis de las bases sociales del voto y los alineamientos partidarios en las democracias occidentales.","Con Rokkan: teoría de los 'cleavages' (fracturas sociales) que estructuran los sistemas de partidos.","Estudio pionero de la democracia en los sindicatos ('La democracia sindical', 1956)."]
+  },
+  {
+    year:1963, span:9,
+    autor:"Gabriel Almond & Sidney Verba",
+    vida:"Almond: Rock Island 1911–2002 / Verba: Nueva York 1932–2019",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/b/b8/Gabriel_Almond.jpg",
+    obra:"La cultura cívica (1963)",
+    semblanza:"<strong>Gabriel Almond</strong> (1911-2002) fue profesor en Yale, Princeton y Stanford y uno de los fundadores del comparativismo en CP. <strong>Sidney Verba</strong> (1932-2019) fue profesor en Harvard y director de la Biblioteca Widener. Juntos realizaron el primer gran estudio empírico transnacional sobre actitudes políticas en cinco países (EE.UU., Gran Bretaña, Alemania, Italia y México), que se convirtió en un clásico de la CP comparada.",
+    aportes:["Concepto de cultura política: el conjunto de orientaciones subjetivas hacia el sistema político (cognoscitivas, afectivas, evaluativas).","Tipología de culturas políticas: parroquial (sin conciencia del sistema), súbdito (conciencia sin participación), participante (ciudadanía activa).","La 'cultura cívica' como mezcla óptima de los tres tipos, favorable a la democracia estable.","Fundamentos metodológicos del análisis comparado mediante encuestas de opinión pública a escala internacional.","Distinción entre orientaciones hacia el sistema, el proceso y las políticas públicas."]
+  },
+  {
+    year:1965, span:8,
+    autor:"Mancur Olson",
+    vida:"Grand Forks, 1932 — College Park, 1998",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/4/4e/Mancur_Olson.jpg",
+    obra:"La lógica de la acción colectiva (1965)",
+    semblanza:"<strong>Mancur Olson</strong> nació en Grand Forks (Dakota del Norte) en 1932 y fue profesor en la Universidad de Maryland durante décadas. Economista de formación, su obra más influyente surgió de preguntarse por qué los grupos de interés no siempre actúan racionalmente en defensa de sus intereses colectivos. Planteó un problema paradójico con consecuencias enormes para la teoría política y económica. Murió inesperadamente en 1998, mientras preparaba una conferencia.",
+    aportes:["Paradoja de la acción colectiva: si todos se benefician del bien colectivo sin contribuir, el individuo racional opta por el free riding.","Concepto de incentivos selectivos: la solución a la paradoja son recompensas o castigos que reciben solo quienes participan.","Distinción entre grupos pequeños (donde la acción colectiva es más fácil) y grupos grandes (donde es más difícil).","Crítica a la teoría pluralista: los grupos de interés no representan automáticamente a sus miembros.","'El auge y la decadencia de las naciones' (1982): los grupos de interés organizados pueden frenar el crecimiento económico."]
+  },
+  {
+    year:1970, span:9,
+    autor:"Nicos Poulantzas",
+    vida:"Atenas, 1936 — París, 1979",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/d/dc/Nicos_Poulantzas.jpg",
+    obra:"Poder político y clases sociales (1968) · Estado, poder, socialismo (1978)",
+    semblanza:"<strong>Nicos Poulantzas</strong> nació en Atenas en 1936 y se radicó en París, donde estudió derecho y filosofía. Fue el más influyente de los teóricos marxistas estructuralistas del Estado. Su debate con Ralph Miliband en la New Left Review (1969-1972) sobre la naturaleza del Estado capitalista es uno de los intercambios más fecundos de la teoría política del siglo XX. Militante comunista y luego socialista, se suicidó en París en 1979, a los 43 años.",
+    aportes:["El Estado capitalista no es un instrumento pasivo de la burguesía sino una 'condensación material de las relaciones de fuerza entre clases'.","Concepto de autonomía relativa del Estado: el Estado puede actuar con cierta independencia de la clase dominante para preservar el sistema.","Distinción entre poder de Estado (control político) y aparato de Estado (instituciones).","Análisis de los 'aparatos ideológicos del Estado' (con Althusser): educación, familia, iglesia como instrumentos de reproducción del orden.","Teoría del fascismo y el autoritarismo como forma específica del Estado capitalista en crisis."]
+  },
+  {
+    year:1971, span:9,
+    autor:"Arend Lijphart",
+    vida:"Apeldoorn, 1936",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/e/ef/Arend_Lijphart_2014_%28cropped%29.jpg",
+    obra:"Democracias (1984) · Modelos de democracia (1999)",
+    semblanza:"<strong>Arend Lijphart</strong> nació en Apeldoorn (Países Bajos) en 1936 y desarrolló su carrera en las universidades de Leiden y California San Diego. Es el mayor especialista mundial en política comparada y democracia consensual. Su obra abarca el estudio de las democracias consociativas, los sistemas electorales y los modelos de democracia. Fue presidente de la APSA en 1995-1996. Sigue activo como académico.",
+    aportes:["Distinción entre democracia de mayorías (Westminster) y democracia de consenso (consociacional).","En sociedades divididas, la estabilidad democrática depende de que las élites de los distintos grupos negocien acuerdos de acomodación.","Los 36 países democráticos comparados muestran que el modelo consensual produce mejores resultados en bienestar, igualdad y participación.","Ocho características del modelo de mayorías vs. diez características del modelo de consenso.","Defensa de la representación proporcional y los sistemas pluripartidistas como favorables a la calidad democrática."]
+  },
+  {
+    year:1975, span:9,
+    autor:"Samuel Huntington",
+    vida:"Nueva York, 1927 — Martha's Vineyard, 2008",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/8/84/Huntington.jpg",
+    obra:"El orden político (1968) · La tercera ola (1991) · Choque de civilizaciones (1996)",
+    semblanza:"<strong>Samuel Huntington</strong> nació en Nueva York en 1927 y fue profesor en Harvard durante décadas, donde cofundó la revista Foreign Policy. Es uno de los politólogos más influyentes y polémicos del siglo XX. Su obra cubre el desarrollo político, las transiciones democráticas, las relaciones cívico-militares y la política internacional. 'El choque de civilizaciones' generó un debate global y fue duramente criticado por reduccionista. Murió en 2008.",
+    aportes:["El orden político requiere instituciones sólidas, no solo modernización económica: sin institucionalización, el desarrollo genera inestabilidad.","Teoría de la tercera ola de democratización: entre 1974 y 1991, más de 30 países transitaron hacia la democracia.","El Estado se percibe no solo por sus instrumentos (violencia) sino por sus efectos (orden, legitimidad, estabilidad).","Relaciones cívico-militares: análisis del control civil sobre las fuerzas armadas como condición de la democracia.","'El choque de civilizaciones' (1996): la política mundial del siglo XXI estará dominada por conflictos entre grandes bloques culturales."]
+  },
+  {
+    year:1984, span:9,
+    autor:"Charles Lindblom",
+    vida:"Turlock, 1917 — Branford, 2018",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/7/7c/Charles_E._Lindblom.jpg",
+    obra:"Política y mercado (1977) · El proceso de elaboración de políticas públicas",
+    semblanza:"<strong>Charles Lindblom</strong> nació en Turlock (California) en 1917 y fue profesor en Yale durante toda su carrera. Es el mayor exponente del neopluralismo y uno de los grandes teóricos de las políticas públicas. Comenzó como pluralista clásico pero evolucionó hacia una posición crítica: reconoció que los mercados otorgan al capital una posición estructural de privilegio que ningún otro grupo posee. Murió en 2018, a los 100 años.",
+    aportes:["Neopluralismo: el capital goza de una posición estructural privilegiada en las democracias capitalistas, no solo por su lobby sino por su control de la inversión.","Si las empresas no invierten, la economía colapsa: los gobiernos deben mantener la 'confianza empresarial' independientemente de su orientación política.","Concepto de 'incrementalismo': las políticas públicas no se elaboran racionalmente sino mediante ajustes pequeños y sucesivos.","Crítica al modelo de racionalidad comprehensiva en la toma de decisiones públicas.","Distinción entre el sistema de precios (mercado) y el sistema político (autoridad) como dos mecanismos alternativos de coordinación social."]
+  },
+  {
+    year:1986, span:9,
+    autor:"Guillermo O'Donnell & Philippe Schmitter",
+    vida:"O'Donnell: Bs. As. 1936–2011 / Schmitter: Chicago 1936",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/a/a5/Guillermo_O%27Donnell.jpg",
+    obra:"Transiciones desde un gobierno autoritario (1986)",
+    semblanza:"<strong>Guillermo O'Donnell</strong> (1936-2011) fue el politólogo latinoamericano más influyente del siglo XX. Nacido en Buenos Aires, desarrolló su carrera entre Argentina, Brasil y EE.UU. (Notre Dame). <strong>Philippe Schmitter</strong> (n. 1936) es profesor en el Instituto Universitario Europeo de Florencia. Juntos produjeron el texto fundacional de la 'transitología', la subdisciplina que estudia las transiciones desde regímenes autoritarios.",
+    aportes:["Marco analítico de las transiciones democráticas: distinción entre liberalización (ampliación de derechos civiles) y democratización (elecciones competitivas).","Los pactos entre élites de la oposición y sectores del régimen son el mecanismo central de las transiciones negociadas.","Concepto de 'democracia delegativa': sistemas en los que el presidente electo actúa sin rendir cuentas al congreso ni a la ciudadanía.","Análisis del autoritarismo burocrático en América Latina: regímenes militares que excluyen a los sectores populares para implementar políticas económicas ortodoxas.","Teoría de la 'doble transición': simultáneamente a la democratización política, los países latinoamericanos enfrentaron transiciones económicas."]
+  },
+  {
+    year:1991, span:9,
+    autor:"Juan Linz",
+    vida:"Bonn, 1926 — New Haven, 2013",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/e/e3/Juan_Linz.jpg",
+    obra:"La quiebra de las democracias (1978) · Los problemas de las democracias (1990s)",
+    semblanza:"<strong>Juan José Linz</strong> nació en Bonn en 1926 de padre alemán y madre española. Creció en España y se doctoró en Columbia. Fue profesor en Yale durante décadas, donde se convirtió en el mayor experto mundial en quiebras democráticas y regímenes autoritarios. Su tipología de los regímenes no democráticos es uno de los marcos analíticos más utilizados en ciencia política comparada. Recibió el Premio Príncipe de Asturias de Ciencias Sociales en 1987. Murió en New Haven en 2013.",
+    aportes:["Tipología canónica de regímenes no democráticos: autoritarismo (pluralismo limitado, desideologizado), totalitarismo (ideología articulada, movilización total) y régimen tradicional (patrimonialismo).","Crítica al presidencialismo como factor de fragilidad democrática: el mandato fijo genera rigidez que dificulta resolver crisis.","La alta fragmentación social y política como factor desestabilizador de las democracias.","La diversidad institucional como elemento que distingue a las democracias contemporáneas entre sí.","La falta de consenso entre las élites políticas como desafío clave para las democracias modernas."]
+  },
+  {
+    year:1996, span:9,
+    autor:"IPSA · Goodin & Klingemann",
+    vida:"Manual publicado en 1996 bajo el auspicio de la IPSA",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/3/38/IPSA_Logo.png",
+    obra:"A New Handbook of Political Science (1996)",
+    semblanza:"El <strong>Manual de Ciencia Política</strong> editado por Robert Goodin y Hans-Dieter Klingemann, publicado bajo el auspicio de la Asociación Internacional de Ciencia Política (IPSA), es el intento más ambicioso de sistematizar el 'campo común' de la disciplina a escala global. Reúne las contribuciones de los principales politólogos del mundo para definir el estado del arte de la disciplina y sus características metodológicas fundamentales. Es el texto de referencia que Malamud utiliza para definir las características de la CP.",
+    aportes:["Definición del campo común de la CP: es positiva (entiende la realidad sin transformarla), sistemática (métodos rigurosos) y profesional.","Establecimiento del mapa de las subdisciplinas: teoría política, política comparada, relaciones internacionales, políticas públicas, metodología.","Reconocimiento de la pluralidad metodológica como fortaleza de la disciplina.","Internacionalización de los estándares académicos de la CP: la disciplina deja de ser exclusivamente anglosajona.","Hito en la institucionalización global de la CP como disciplina universitaria autónoma."]
+  },
+  {
+    year:2000, span:9,
+    autor:"Robert Putnam",
+    vida:"Rochester, 1941",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/6/65/Robert_Putnam_-_World_Economic_Forum_Annual_Meeting_2013.jpg",
+    obra:"Making Democracy Work (1993) · Solo en la bolera (2000)",
+    semblanza:"<strong>Robert Putnam</strong> nació en Rochester (Nueva York) en 1941 y fue profesor en Harvard, donde dirigió el Centro de Asuntos Internacionales. Es el politólogo más citado del mundo en varias mediciones bibliométricas. Su obra sobre el capital social comenzó con un estudio de veinte años sobre el desempeño institucional de las regiones italianas y derivó hacia un diagnóstico del declive cívico en los EE.UU. Ha asesorado a múltiples presidentes estadounidenses.",
+    aportes:["Capital social: las redes de confianza, normas de reciprocidad y compromiso cívico que hacen posible la cooperación y la democracia.","El desempeño institucional de los gobiernos regionales italianos se explica por su capital social históricamente acumulado, no por su riqueza.","'Solo en la bolera' (2000): el capital social en EE.UU. ha declinado dramáticamente desde los años '60 debido a la televisión, la suburbanización y el recambio generacional.","La confianza social generalizada (no solo entre conocidos) es un recurso colectivo que facilita la democracia y el desarrollo económico.","Distinción entre capital social bonding (hacia dentro del grupo) y bridging (hacia fuera): este último es más favorable a la democracia."]
+  },
+  {
+    year:2005, span:9,
+    autor:"Yanina Welp",
+    vida:"Argentina, 1973",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Yanina_Welp_%282019%29.jpg/330px-Yanina_Welp_%282019%29.jpg",
+    obra:"El debate del siglo XXI · Democracia directa en América Latina",
+    semblanza:"<strong>Yanina Welp</strong> es politóloga argentina radicada en Suiza, investigadora en el Centro para la Democracia de Aarau. Es la mayor especialista en mecanismos de democracia directa y participación ciudadana en América Latina y Europa. Su investigación abarca el referéndum, la revocatoria de mandato, la iniciativa popular y el impacto de las tecnologías digitales en los procesos democráticos. Ha asesorado a organismos internacionales y es una voz destacada en el debate sobre la democracia del siglo XXI.",
+    aportes:["Democracia digital: las nuevas tecnologías amplían las posibilidades de participación política directa pero generan riesgos de exclusión y manipulación.","La desafección ciudadana hacia las instituciones democráticas es el principal desafío de las democracias del siglo XXI.","La polarización extrema entre ciudadanos es el problema central que deben enfrentar las democracias contemporáneas.","La exclusión digital (ciudadanos sin acceso a tecnología) es un nuevo factor de desigualdad política.","La manipulación de la información a través de redes sociales es un riesgo real para la calidad democrática."]
+  },
+  {
+    year:2018, span:7,
+    autor:"Steven Levitsky & Daniel Ziblatt",
+    vida:"Levitsky: n. 1968 (EE.UU.) / Ziblatt: n. 1972 (EE.UU.)",
+    foto:"https://upload.wikimedia.org/wikipedia/commons/5/5e/Steven_Levitsky_%282019%29.jpg",
+    obra:"Cómo mueren las democracias (2018)",
+    semblanza:"<strong>Steven Levitsky</strong> (n. 1968) es profesor en Harvard y especialista en política latinoamericana, partidos y autoritarismo. <strong>Daniel Ziblatt</strong> (n. 1972) es profesor en Harvard y especialista en política europea comparada. Juntos escribieron el bestseller académico más influyente de los últimos años sobre la fragilidad democrática. Su argumento surgió de observar el ascenso de Donald Trump y compararlo con experiencias históricas de erosión democrática.",
+    aportes:["Las democracias contemporáneas no mueren por golpes militares sino por erosión gradual desde adentro: líderes elegidos democráticamente que luego vacían las instituciones.","Cuatro señales de alarma del autoritarismo: rechazo de las reglas del juego democrático, negación de la legitimidad del rival, tolerancia de la violencia, disposición a restringir libertades civiles.","El autoritarismo competitivo: sistemas que mantienen las formas electorales pero subvierten la competencia real.","La polarización política extrema destruye las normas tácitas (tolerancia mutua y deferencia institucional) que sostienen la democracia.","El rol de los partidos como 'guardianes de la democracia': deben excluir a candidatos antisistema antes de que lleguen al poder."]
+  },
+];
+
+// ── BUILD TIMELINE ──────────────────────────────────────────
+const TOTAL_YEARS = END_YEAR - START_YEAR + 1;
+const CANVAS_W = TOTAL_YEARS * COL_W + LABEL_W;
+
+document.getElementById('timeline-canvas').style.minWidth = CANVAS_W + 'px';
+
+// Función para convertir año a posición X (relativa al contenido, sin label)
+function yearToX(y){ return (y - START_YEAR) * COL_W; }
+
+// ── BANDA A: AÑOS ──
+const yearsContent = document.getElementById('years-content');
+yearsContent.style.position = 'relative';
+yearsContent.style.width = (TOTAL_YEARS * COL_W) + 'px';
+yearsContent.style.flexShrink = '0';
+
+for(let y = START_YEAR; y <= END_YEAR; y++){
+  const div = document.createElement('div');
+  div.className = 'year-mark' + (y % 100 === 0 ? ' century' : y % 10 === 0 ? ' decade' : '');
+  const showLabel = (y % 10 === 0);
+  div.innerHTML = showLabel
+    ? `<span class="year-num">${y}</span><div class="tick"></div>`
+    : `<div class="tick"></div>`;
+  yearsContent.appendChild(div);
+}
+
+// ── BANDA B: TRANSFORMACIONES ──
+const transContent = document.getElementById('trans-content');
+transContent.style.position = 'relative';
+transContent.style.width = (TOTAL_YEARS * COL_W) + 'px';
+transContent.style.flexShrink = '0';
+
+// calcular altura disponible luego de render
+TRANS.forEach((t, i) => {
+  const el = document.createElement('div');
+  el.className = 'trans-item';
+  const x = yearToX(t.year);
+  const w = t.span * COL_W - 6;
+  const row = i % 2; // alternar filas para evitar solapamiento cercano
+  const top = 8 + row * 70;
+  el.style.left = x + 'px';
+  el.style.width = w + 'px';
+  el.style.top = top + 'px';
+  el.innerHTML = `<div class="ti-año">${t.year}</div><div class="ti-titulo">${t.titulo}</div><div class="ti-desc">${t.desc}</div>`;
+  el.addEventListener('click', () => openModal('trans', i));
+  transContent.appendChild(el);
+});
+
+// ── BANDA C: PENSADORES ──
+const pensContent = document.getElementById('pens-content');
+pensContent.style.position = 'relative';
+pensContent.style.width = (TOTAL_YEARS * COL_W) + 'px';
+pensContent.style.flexShrink = '0';
+
+PENSADORES.forEach((p, i) => {
+  const el = document.createElement('div');
+  el.className = 'pens-item';
+  const x = yearToX(p.year);
+  const w = p.span * COL_W - 6;
+  const row = i % 2;
+  const top = 8 + row * 78;
+  el.style.left = x + 'px';
+  el.style.width = w + 'px';
+  el.style.top = top + 'px';
+  el.innerHTML = `<div class="pi-año">${p.year}</div><div class="pi-autor">${p.autor}</div><div class="pi-obra">${p.obra}</div><div class="pi-aporte">${p.aporte}</div>`;
+  el.addEventListener('click', () => openModal('pens', i));
+  pensContent.appendChild(el);
+});
+
+// ajustar altura de bandas B y C
+function adjustHeights(){
+  const wh = window.innerHeight - 48; // nav
+  const bandaA = 52;
+  const bandaB = Math.floor((wh - bandaA) / 2);
+  const bandaC = wh - bandaA - bandaB;
+  document.getElementById('banda-trans').style.height = bandaB + 'px';
+  document.getElementById('banda-pens').style.height = bandaC + 'px';
+  document.getElementById('banda-trans').style.minHeight = bandaB + 'px';
+  document.getElementById('banda-pens').style.minHeight = bandaC + 'px';
+  // altura labels
+  document.querySelector('.banda-trans-label').style.height = bandaB + 'px';
+  document.querySelector('.banda-pens-label').style.height = bandaC + 'px';
+  transContent.style.height = bandaB + 'px';
+  pensContent.style.height = bandaC + 'px';
+}
+adjustHeights();
+window.addEventListener('resize', adjustHeights);
+
+// ── DRAG TO SCROLL ──────────────────────────────────────────
+const wrapper = document.getElementById('timeline-wrapper');
+let isDragging = false, startX, scrollLeft;
+
+wrapper.addEventListener('mousedown', e => {
+  isDragging = true;
+  startX = e.pageX - wrapper.offsetLeft;
+  scrollLeft = wrapper.scrollLeft;
+  wrapper.style.cursor = 'grabbing';
+});
+wrapper.addEventListener('mouseleave', () => { isDragging = false; wrapper.style.cursor = 'grab'; });
+wrapper.addEventListener('mouseup', () => { isDragging = false; wrapper.style.cursor = 'grab'; });
+wrapper.addEventListener('mousemove', e => {
+  if(!isDragging) return;
+  e.preventDefault();
+  const x = e.pageX - wrapper.offsetLeft;
+  const walk = (x - startX) * 1.5;
+  wrapper.scrollLeft = scrollLeft - walk;
+});
+
+// ── MODAL ───────────────────────────────────────────────────
+function openModal(type, idx){
+  const d = type === 'trans' ? TRANS[idx] : PENSADORES[idx];
+  const overlay = document.getElementById('modal-overlay');
+  const box = document.getElementById('modal-box');
+
+  if(type === 'trans'){
+    box.innerHTML = `
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-trans-pad">
+        <p class="modal-year" style="color:var(--trans-color)">${d.year}</p>
+        <p class="modal-title">${d.titulo}</p>
+        <p class="modal-sub">Transformación de la disciplina</p>
+        <div class="modal-body"><p>${d.detalle}</p></div>
+      </div>
+    `;
+  } else {
+    const fotoHTML = d.foto
+      ? `<img src="${d.foto}" alt="${d.autor}" onerror="this.parentNode.innerHTML='<div class=bio-photo-placeholder>👤</div>'">`
+      : `<div class="bio-photo-placeholder">👤</div>`;
+
+    const aportesHTML = d.aportes.map(a =>
+      `<div class="bio-aporte-item">${a}</div>`
+    ).join('');
+
+    box.innerHTML = `
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="bio-header">
+        <div class="bio-photo-wrap">${fotoHTML}</div>
+        <div class="bio-header-info">
+          <p class="bio-year-tag">Obra clave · ${d.year}</p>
+          <p class="bio-name">${d.autor}</p>
+          <p class="bio-vida">${d.vida}</p>
+          <p class="bio-obra-tag">${d.obra}</p>
+        </div>
+      </div>
+      <div class="bio-body">
+        <div>
+          <p class="bio-section-label">Semblanza</p>
+          <p class="bio-semblanza">${d.semblanza}</p>
+        </div>
+        <div>
+          <p class="bio-section-label">Aportes a la politología</p>
+          <div class="bio-aportes">${aportesHTML}</div>
+        </div>
+      </div>
+    `;
+  }
+  overlay.classList.add('open');
+}
+
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+function closeOnOverlay(e){ if(e.target === document.getElementById('modal-overlay')) closeModal(); }
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+
+// scroll inicial a 1950 (inicio del período más relevante para el programa)
+setTimeout(() => {
+  wrapper.scrollLeft = yearToX(1930) - 80;
+}, 100);
+</script>
+</body>
+</html>

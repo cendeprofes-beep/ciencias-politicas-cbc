@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>Vocabulario Politológico · Ciencias Políticas CBC</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#07070a;--surface:#0f0f14;--card:#13131a;--border:#1e1e2a;
+  --gold:#c9a84c;--gold-d:#4a3a08;--text:#dcd8ca;--muted:#55555f;--white:#f0ecd8;
+  --u1:#4a7ec4;--u2:#8a5ac4;--u3:#3aaa6a;--u4:#c47a2a;--u5:#c44a4a;--u6:#c44a8a;
+  --exam:#c9a84c;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;line-height:1.6;min-height:100vh;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(7,7,10,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.nav-brand{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--gold);text-decoration:none;}
+.nav-count{font-size:.85rem;color:var(--muted);white-space:nowrap;}
+#count-display{color:var(--gold);font-weight:700;}
+
+/* HERO */
+.hero{text-align:center;padding:3rem 1.5rem 2rem;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+.hero::before{content:'ABC';position:absolute;font-family:'Playfair Display',serif;font-size:clamp(5rem,20vw,14rem);font-weight:900;color:rgba(201,168,76,.025);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;letter-spacing:.2em;}
+.eyebrow{font-size:.78rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:.5rem;}
+h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:900;color:var(--white);line-height:1.1;margin-bottom:.5rem;}
+.hero-sub{font-size:.95rem;color:var(--muted);max-width:500px;margin:0 auto;}
+
+/* CONTROLES */
+.controls{max-width:960px;margin:0 auto;padding:1.5rem 1.2rem 1rem;display:flex;flex-direction:column;gap:1rem;}
+.search-wrap{position:relative;}
+#search{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:5px;padding:1rem 1.2rem 1rem 3.2rem;color:var(--white);font-family:'Inter',sans-serif;font-size:1.1rem;outline:none;transition:border-color .2s;}
+#search:focus{border-color:var(--gold);}
+#search::placeholder{color:var(--muted);}
+.search-icon{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1.2rem;pointer-events:none;}
+.filters{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;}
+.filter-label{font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-right:.3rem;}
+.filter-btn{font-size:.88rem;font-weight:600;padding:.5rem 1.1rem;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .18s;letter-spacing:.03em;}
+.filter-btn:hover{color:var(--white);border-color:var(--muted);}
+.filter-btn.active{color:var(--bg);font-weight:700;}
+.fb-all.active{background:var(--gold);border-color:var(--gold);color:var(--bg);}
+.fb-u1.active{background:var(--u1);border-color:var(--u1);}
+.fb-u2.active{background:var(--u2);border-color:var(--u2);}
+.fb-u3.active{background:var(--u3);border-color:var(--u3);}
+.fb-u4.active{background:var(--u4);border-color:var(--u4);}
+.fb-u5.active{background:var(--u5);border-color:var(--u5);}
+.fb-u6.active{background:var(--u6);border-color:var(--u6);}
+.fb-exam.active{background:var(--exam);border-color:var(--exam);}
+
+/* autor filter */
+#autor-select{background:var(--surface);border:1px solid var(--border);border-radius:20px;color:var(--text);font-family:'Inter',sans-serif;font-size:.88rem;font-weight:600;padding:.5rem 1.1rem;cursor:pointer;outline:none;transition:border-color .2s;}
+#autor-select:focus{border-color:var(--gold);}
+#autor-select option{background:var(--card);}
+
+/* GRID */
+.grid{max-width:960px;margin:0 auto;padding:0 1.2rem 3rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.8rem;}
+
+/* TERM CARD */
+.term-card{background:var(--card);border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:border-color .25s,transform .2s,box-shadow .25s;border-left:3px solid var(--border);cursor:pointer;}
+.term-card:hover{transform:translateY(-1px);}
+.term-card.u1{border-left-color:var(--u1);}
+.term-card.u2{border-left-color:var(--u2);}
+.term-card.u3{border-left-color:var(--u3);}
+.term-card.u4{border-left-color:var(--u4);}
+.term-card.u5{border-left-color:var(--u5);}
+.term-card.u6{border-left-color:var(--u6);}
+
+/* ESTADO EXPANDIDO */
+.term-card.expanded{
+  grid-column: 1 / -1;
+  transform: none;
+  box-shadow: 0 0 0 2px var(--gold-d), 0 8px 32px rgba(0,0,0,.5);
+  border-color: var(--gold-d);
+}
+.term-card.expanded .tc-term{ font-size:1.6rem; line-height:1.2; }
+.term-card.expanded .tc-head{ padding:1.4rem 1.5rem 1rem; }
+.term-card.expanded .tc-def{
+  font-size:1.08rem;
+  color:#a8b87a;
+  font-weight:700;
+  line-height:1.8;
+  padding:0 1.5rem 1.2rem;
+}
+.term-card.expanded .tc-foot{
+  padding:.8rem 1.5rem;
+  font-size:.88rem;
+}
+.term-card.expanded .tc-autor{ font-size:.88rem; color:#c47a2a; font-weight:700; }
+.term-card.expanded .tc-unidad{ font-size:.78rem; padding:.2rem .65rem; }
+.term-card.expanded .tc-exam{ font-size:.72rem; padding:.2rem .6rem; }
+
+/* indicador de expansión */
+.tc-expand-hint{
+  font-size:.62rem; color:var(--muted);
+  margin-left:.4rem; transition:transform .2s;
+  display:inline-block;
+}
+.term-card.expanded .tc-expand-hint{ transform:rotate(180deg); color:var(--gold); }
+
+.tc-head{padding:1rem 1.1rem .7rem;display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;}
+.tc-term{font-size:1.1rem;font-weight:700;color:var(--white);line-height:1.2;flex:1;transition:font-size .25s;}
+.tc-exam{font-size:.75rem;font-weight:700;background:rgba(201,168,76,.15);color:var(--gold);border:1px solid rgba(201,168,76,.3);border-radius:3px;padding:.18rem .55rem;white-space:nowrap;letter-spacing:.06em;flex-shrink:0;}
+.tc-def{padding:0 1.1rem .9rem;font-size:.95rem;color:#a8b87a;font-weight:700;line-height:1.65;transition:font-size .25s,color .25s;}
+.tc-def em{color:#a09060;font-style:italic;}
+.tc-foot{padding:.65rem 1.1rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.3rem;transition:padding .25s;}
+.tc-autor{font-size:.82rem;color:#c47a2a;font-weight:700;font-style:normal;}
+.tc-unidad{font-size:.75rem;font-weight:700;padding:.18rem .55rem;border-radius:3px;letter-spacing:.06em;}
+.tu1{background:rgba(74,126,196,.15);color:var(--u1);}
+.tu2{background:rgba(138,90,196,.15);color:var(--u2);}
+.tu3{background:rgba(58,170,106,.15);color:var(--u3);}
+.tu4{background:rgba(196,122,42,.15);color:var(--u4);}
+.tu5{background:rgba(196,74,74,.15);color:var(--u5);}
+.tu6{background:rgba(196,74,138,.15);color:var(--u6);}
+
+/* EMPTY STATE */
+.empty{display:none;text-align:center;padding:3rem 1rem;color:var(--muted);font-size:1rem;grid-column:1/-1;}
+.empty.show{display:block;}
+
+/* highlight */
+mark{background:rgba(201,168,76,.25);color:var(--white);border-radius:2px;padding:0 1px;}
+
+footer{text-align:center;font-size:.85rem;color:var(--muted);padding:1.5rem 1rem 2.5rem;border-top:1px solid var(--border);}
+footer span{color:var(--gold);}
+@media(max-width:500px){.grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="landing_ccpp_cbc.html">← Ciencias Políticas · CBC</a>
+  <span class="nav-count">Mostrando <span id="count-display">—</span> términos</span>
+</nav>
+
+<div class="hero">
+  <p class="eyebrow">Ciencias Políticas (22) · CBC · UBA</p>
+  <h1>Vocabulario Politológico</h1>
+  <p class="hero-sub">Términos del programa completo (Unidades 1–6). Buscá por palabra, filtrá por unidad o por autor.</p>
+</div>
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search" placeholder="Buscar término o concepto..." autocomplete="off">
+  </div>
+  <div class="filters">
+    <span class="filter-label">Unidad:</span>
+    <button class="filter-btn fb-all active" data-unit="all">Todas</button>
+    <button class="filter-btn fb-u1" data-unit="u1">U1 · CP como disciplina</button>
+    <button class="filter-btn fb-u2" data-unit="u2">U2 · El Estado</button>
+    <button class="filter-btn fb-u3" data-unit="u3">U3 · Democracia</button>
+    <button class="filter-btn fb-u4" data-unit="u4">U4 · Gobierno</button>
+    <button class="filter-btn fb-u5" data-unit="u5">U5 · Elecciones y partidos</button>
+    <button class="filter-btn fb-u6" data-unit="u6">U6 · Género y movimientos</button>
+    <button class="filter-btn fb-exam" data-unit="exam">⭐ Entra en examen</button>
+  </div>
+  <div class="filters">
+    <span class="filter-label">Autor:</span>
+    <select id="autor-select">
+      <option value="all">Todos los autores</option>
+      <option value="Bobbio">Bobbio</option>
+      <option value="Bulcourf">Bulcourf & Vázquez</option>
+      <option value="Malamud">Malamud</option>
+      <option value="Lopreite">Lopreite & Rodríguez Gusta</option>
+      <option value="Dahl">Dahl</option>
+      <option value="Linz">Linz</option>
+      <option value="Welp">Welp</option>
+      <option value="Zelaznik">Zelaznik</option>
+      <option value="Bonvecchi">Bonvecchi & Zelaznik</option>
+      <option value="De Luca">De Luca</option>
+      <option value="Levitsky">Levitsky</option>
+      <option value="Franceschet">Franceschet</option>
+      <option value="Tula">Tula</option>
+      <option value="Weber">Weber</option>
+      <option value="Sartori">Sartori</option>
+      <option value="Morlino">Morlino</option>
+      <option value="Lijphart">Lijphart</option>
+      <option value="Abal Medina">Abal Medina</option>
+      <option value="Harari">Harari</option>
+      <option value="Graeber">Graeber</option>
+      <option value="Tilly">Tilly & Wood</option>
+    </select>
+  </div>
+</div>
+
+<div class="grid" id="grid">
+  <div class="empty" id="empty">No se encontraron términos con ese criterio.</div>
+</div>
+
+<footer>
+  Vocabulario Politológico · Ciencias Políticas (22) · CBC · <span>UBA</span> · Prof. Claudio Damián Sacco
+</footer>
+
+<script>
+const TERMS = [
+
+  // ══════ UNIDAD 1: CP COMO DISCIPLINA ══════
+
+  {term:"Ciencia política",def:"Disciplina que indaga y sistematiza conocimientos sobre actividades relacionadas con el poder en organizaciones sociales. Tiene un objeto empírico y trabaja con hechos y conceptos. Según Malamud, no es ni matemática, ni literatura, ni filosofía.",autor:"Malamud",unit:"u1",exam:true},
+  {term:"Behaviorismo",def:"Corriente que aparece alrededor de 1950 e introduce técnicas cuantitativas y empíricas en el estudio de fenómenos políticos. Para Sartori, marca el inicio de la ciencia política en sentido estricto.",autor:"Sartori",unit:"u1",exam:true},
+  {term:"Animal político",def:"Concepto griego (Aristóteles) que designa al ser humano en tanto ser que vive en la polis. Para Sartori, no es una faceta del mismo hombre que el 'animal social', sino una antropología diferente que la sustituye.",autor:"Sartori",unit:"u1",exam:true},
+  {term:"Animal social",def:"Concepto latino que designa al ser humano en su dimensión gregaria. Para Sartori, 'social' es un término latino, no griego, y representa una antropología distinta que sustituye a la del animal político, no una faceta del mismo.",autor:"Sartori",unit:"u1",exam:true},
+  {term:"Sesgo de valoración",def:"Distorsión que introduce el investigador al observar un fenómeno social a partir de sus propios valores. Sartori sostiene que debe eliminarse mediante la neutralización y cancelación de las valoraciones.",autor:"Sartori",unit:"u1",exam:true},
+  {term:"Lenguaje observador-perceptivo",def:"Lenguaje científico capaz de observar directamente los fenómenos, construir definiciones operacionales y lograr una verdadera disposición empírica. Para Sartori, es la mayor necesidad de la CP en sentido estricto.",autor:"Sartori",unit:"u1",exam:true},
+  {term:"Filosofía política",def:"Para Malamud, indaga sobre la esencia de las cosas, sus propiedades, causas y efectos a través de juicios normativos o de valor, no de comprobaciones empíricas. Es la 'madre de la ciencia' pero no es ciencia política.",autor:"Malamud",unit:"u1",exam:true},
+  {term:"Modelos matemáticos",def:"Para Malamud, describen, explican y predicen la realidad. Al ser disciplinas abstractas, por sí mismas no tienen aplicación concreta, sino como herramienta de otras disciplinas.",autor:"Malamud",unit:"u1",exam:true},
+  {term:"Literatura",def:"Para Malamud, arte que usa la palabra y el lenguaje para describir, sugerir e iluminar hechos o argumentos, aunque por sí misma es incapaz de probarlos ni de refutarlos.",autor:"Malamud",unit:"u1",exam:true},
+  {term:"CP positiva",def:"Característica de la ciencia política según la cual su objeto es la realidad tal como es. La misión del politólogo es entender la realidad, no transformarla; esa última es la misión del militante.",autor:"Malamud",unit:"u1",exam:true},
+  {term:"CP sistemática",def:"Característica de la ciencia política según la cual utiliza métodos rigurosos de diseño, recolección y análisis seleccionados según el problema de investigación, valiéndose de razonamiento inferencial lógico (deducción e inducción).",autor:"Malamud",unit:"u1",exam:true},
+  {term:"Individualismo metodológico",def:"Corriente teórica según la cual las estructuras macro-sociales son el resultado de la agregación de las acciones de los individuos. Permite explicar fenómenos colectivos a partir de comportamientos y estrategias individuales.",autor:"Abal Medina",unit:"u1",exam:true},
+  {term:"Teoría de la democracia (Schumpeter)",def:"Teoría del individualismo metodológico que introduce la analogía entre el mercado económico y el político: los votantes eligen partidos y candidatos como consumidores, basándose en percepciones, imágenes y gustos.",autor:"Abal Medina",unit:"u1",exam:true},
+  {term:"Teoría económica de la democracia (Downs)",def:"Teoría que interpreta que las democracias estables son aquellas cuyos partidos se alinean entre izquierda-derecha y donde la curva de distribución de votantes tiene forma de curva normal. Los partidos se orientan al centro para captar indecisos.",autor:"Abal Medina",unit:"u1",exam:true},
+  {term:"Elección racional (Escuela de Chicago)",def:"Enfoque del individualismo metodológico que usa el modelo deductivo formal basado en la idea de que los individuos son actores racionales que eligen los cursos de acción que maximizan sus preferencias. Racionalidad instrumental y utilitarista.",autor:"Abal Medina",unit:"u1",exam:true},
+  {term:"Teoría de Olson",def:"Analiza las dinámicas de grupos desde un razonamiento utilitarista. Indica que existen incentivos selectivos (negativos o positivos) que reciben quienes participan de la acción colectiva para obtener un bien colectivo.",autor:"Abal Medina",unit:"u1",exam:true},
+  {term:"Gino Germani",def:"Promotor de la ciencia política académica en Argentina a fines de los años '40. Impulsó métodos y técnicas de investigación empírica bajo el modelo teórico del estructural-funcionalismo y la teoría de la modernización.",autor:"Abal Medina",unit:"u1",exam:true},
+  {term:"Estructural-funcionalismo",def:"Enfoque teórico predominante en los inicios de la ciencia política argentina. Analiza las estructuras sociales en términos de sus funciones para el sistema. Asociado a Parsons y Germani en Argentina.",autor:"Abal Medina",unit:"u1",exam:false},
+  {term:"Asociaciones profesionales",def:"Para Bulcourf y Vázquez, son esenciales para la consolidación y legitimación de la ciencia política como disciplina. No se centran en regular la actividad política sino en profesionalizar el campo académico.",autor:"Bulcourf",unit:"u1",exam:true},
+  {term:"Producción de conocimiento independiente",def:"Para Bulcourf y Vázquez, la característica fundamental para considerar a una disciplina como profesión. Implica autonomía respecto de otros campos e intereses.",autor:"Bulcourf",unit:"u1",exam:true},
+  {term:"Animismo",def:"Visión del mundo que no separaba esencialmente a los humanos de los demás animales, árboles o accidentes geográficos. Todos los seres compartían reglas comunes. Fue transformada por las religiones teístas que silenciaron a actores no humanos.",autor:"Harari",unit:"u1",exam:true},
+  {term:"Religiones teístas",def:"Para Harari, transformaron las religiones animistas llevando al silencio a todos los actores excepto a Dios y los hombres (y en algunos casos ángeles y demonios). Justificaron la economía agrícola mediante nuevos mitos cosmológicos.",autor:"Harari",unit:"u1",exam:true},
+  {term:"Revolución agrícola",def:"Para Harari, proceso que generó como consecuencias la Biblia, nuevas oleadas de extinciones masivas y la domesticación de animales. Todas sus consecuencias son correctas simultáneamente.",autor:"Harari",unit:"u1",exam:true},
+  {term:"Deuda primordial",def:"Para Graeber, la deuda que los individuos tienen con la sociedad que los hizo. El Estado es su guardián y por eso puede cobrar impuestos. Esta deuda es infinita y no cancelable.",autor:"Graeber",unit:"u1",exam:true},
+  {term:"Mito del trueque",def:"Para Graeber, el mito fundamental de todas las teorías económicas: la suposición de una sociedad primitiva donde los intercambios se daban mediante el trueque. Para Graeber, ese mundo nunca existió: la deuda precede al dinero.",autor:"Graeber",unit:"u1",exam:true},
+  {term:"Patrón oro",def:"Sistema monetario que respaldaba las monedas de los principales Estados en metales preciosos. Fue abandonado por los principales Estados del mundo a finales del siglo XX.",autor:"Graeber",unit:"u1",exam:true},
+  {term:"Diádicos",def:"Para Malamud, quienes creen que los conflictos sociales solo pueden resolverse entre las partes directamente involucradas, sin intervención de un tercero.",autor:"Malamud",unit:"u1",exam:true},
+  {term:"Triádicos",def:"Para Malamud, quienes creen que es posible y deseable la intervención de un tercero para resolver conflictos sociales. Es la lógica del Estado y del derecho moderno.",autor:"Malamud",unit:"u1",exam:true},
+  {term:"Atenienses",def:"Para Malamud, quienes creían que los conflictos podían resolverse por el azar (tirando una moneda). Ya no existen en la política contemporánea, quedaron en la Atenas antigua.",autor:"Malamud",unit:"u1",exam:true},
+
+  // ══════ UNIDAD 2: EL ESTADO ══════
+
+  {term:"Estado",def:"Para Weber, institución humana que reclama el monopolio del uso legítimo de la fuerza física dentro de un territorio determinado. Malamud señala que Weber lo definió por su recurso específico (la violencia) y no por su función.",autor:"Weber",unit:"u2",exam:true},
+  {term:"Monopolio de la violencia legítima",def:"Definición weberiana del Estado: institución que detenta el uso legítimo de la fuerza física en un territorio. Es la innovación de Weber respecto a concepciones anteriores que definían al Estado por su función.",autor:"Weber",unit:"u2",exam:true},
+  {term:"Soberanía estatal",def:"Principio que implica la autoridad suprema del Estado sobre su territorio y población. Para Malamud, en el contexto contemporáneo es un principio debilitado por la globalización, aunque no obsoleto.",autor:"Malamud",unit:"u2",exam:true},
+  {term:"Dominación carismática",def:"Tipo de dominación weberiana basada en una cualidad extraordinaria de una personalidad particular. Los dominados obedecen por devoción personal al líder. Ejemplos: San Martín, líderes religiosos.",autor:"Weber",unit:"u2",exam:true},
+  {term:"Dominación tradicional",def:"Tipo de dominación weberiana basada en la tradición 'desde tiempo inmemorial'. La asociación está basada en la piedad; el soberano es un señor personal. Ejemplos: monarquías hereditarias.",autor:"Weber",unit:"u2",exam:true},
+  {term:"Dominación racional-legal",def:"Tipo de dominación weberiana propia de las sociedades modernas. Se obedece la norma impersonal y objetiva, no a la persona. Ejemplos: constituciones, leyes, burocracia.",autor:"Weber",unit:"u2",exam:true},
+  {term:"Funcionario político",def:"Para Weber, su función esencial es administrar imparcialmente ('sine ira et studio': sin ira y sin prevención). El funcionario ejecuta órdenes con precisión; no crea su propio poder político.",autor:"Weber",unit:"u2",exam:true},
+  {term:"Demagogo",def:"Para Weber, la figura típica del jefe político en Occidente desde la instauración de la democracia. Líder que busca obtener apoyo popular mediante discursos persuasivos y emocionales. Los publicistas políticos y periodistas son sus representantes más notables.",autor:"Weber",unit:"u2",exam:true},
+  {term:"Asociación burocrática",def:"Para Weber, tipo de asociación en la que el cuadro administrativo está separado de los medios materiales de administración, que son propiedad del titular del poder o entidad estatal.",autor:"Weber",unit:"u2",exam:true},
+  {term:"Asociación estamental",def:"Para Weber, tipo de asociación en la que el cuadro administrativo (aristócratas o similares) es propietario de los medios de administración. Se opone a la asociación burocrática.",autor:"Weber",unit:"u2",exam:true},
+  {term:"Neopluralismo",def:"Para Malamud, corriente teórica surgida en los años '60 cuyo mayor exponente es Charles Lindblom. Replanteó el mayor poder de los agentes de poder económico sobre otros actores: los grupos que representan al capital gozan de posición privilegiada no solo por su lobby sino por su situación estructural.",autor:"Malamud",unit:"u2",exam:true},
+  {term:"Enfoque sistémico",def:"Paradigma holista que sustituyó gradualmente a los enfoques basados en el agente en los años '60. Se enfoca en el sistema político en vez del Estado como ordenador.",autor:"Malamud",unit:"u2",exam:true},
+  {term:"Abordajes marxistas",def:"Paradigma holista que junto al enfoque sistémico sustituyó a las teorías anteriores en los años '60. En estos abordajes el Estado está predeterminado por la lucha de clases.",autor:"Malamud",unit:"u2",exam:true},
+  {term:"Orden político",def:"Para Malamud (retomando a Huntington), efecto o consecuencia del Estado que permite percibir su presencia y efectividad. El Estado no solo se percibe por sus instrumentos (violencia) sino por sus efectos: el orden político.",autor:"Malamud",unit:"u2",exam:true},
+  {term:"Dictadura del proletariado",def:"Concepto de Marx (vía Bobbio) que describe el período de transición en el que la clase trabajadora toma el control del Estado para suprimir las clases sociales existentes y avanzar hacia una sociedad sin clases.",autor:"Bobbio",unit:"u2",exam:true},
+  {term:"Relaciones de producción",def:"Para Marx (vía Bobbio), las formas en que los individuos producen y se relacionan entre sí en el proceso productivo. Son fundamentales para determinar la base material de la sociedad (materialismo histórico).",autor:"Bobbio",unit:"u2",exam:true},
+  {term:"Extinción del Estado",def:"Para Marx (vía Bobbio), el Estado debe extinguirse para constituir una sociedad sin clases. No es una idea utópica ni irrealizable sino el horizonte lógico del materialismo histórico.",autor:"Bobbio",unit:"u2",exam:true},
+  {term:"Feminismo de Estado",def:"Para Lopreite y Rodríguez Gusta, proceso de incorporación de la agenda feminista en las políticas públicas argentinas desde 1983. Los organismos internacionales actúan como aliados clave pero no son determinantes en las decisiones nacionales.",autor:"Lopreite",unit:"u2",exam:true},
+  {term:"Ley de IVE",def:"Ley de Interrupción Voluntaria del Embarazo promulgada en 2020 en Argentina. Para Lopreite y Rodríguez Gusta, es el hito más significativo en la institucionalización del feminismo de Estado.",autor:"Lopreite",unit:"u2",exam:true},
+  {term:"Organismos internacionales (género)",def:"Para Lopreite y Rodríguez Gusta, actúan como aliados clave en el desarrollo del feminismo de Estado en Argentina, pero no son determinantes en las decisiones nacionales. No son ni los principales actores ni son irrelevantes.",autor:"Lopreite",unit:"u2",exam:true},
+  {term:"Integración nacional en América Latina",def:"Para Malamud, proceso dificultado por factores físicos, étnicos y culturales. A diferencia de Argentina, Brasil, México y Perú tenían un aparato institucional colonial previo que facilitó este proceso.",autor:"Malamud",unit:"u2",exam:true},
+
+  // ══════ UNIDAD 3: DEMOCRACIA ══════
+
+  {term:"Poliarquía",def:"Término acuñado por Dahl para referirse a los regímenes que comúnmente se denominan democracias. No existe ningún régimen de dimensión considerable totalmente democratizado; la democracia es un ideal teórico al que los regímenes reales se acercan o alejan.",autor:"Dahl",unit:"u3",exam:true},
+  {term:"Democracia (Dahl)",def:"Ideal teórico caracterizado por la continua aptitud para responder a las preferencias de los ciudadanos. Las tres condiciones mínimas que propone Dahl son fundamentales pero no suficientes para considerar democrático a un régimen.",autor:"Dahl",unit:"u3",exam:true},
+  {term:"Hegemonía representativa",def:"En la tipología de Dahl, régimen que resulta de una hegemonía cerrada que amplía la participación de sus ciudadanos (sufragio universal) pero no el debate público. Aumenta representación sin expandir el derecho al debate.",autor:"Dahl",unit:"u3",exam:true},
+  {term:"Oligarquía competitiva",def:"En la tipología de Dahl, régimen que permite el debate público pero restringe la participación. Es el opuesto a la hegemonía representativa en la evolución hacia la poliarquía.",autor:"Dahl",unit:"u3",exam:true},
+  {term:"Debate público",def:"Una de las dos dimensiones centrales en la tipología de regímenes de Dahl. Mide el grado en que los ciudadanos pueden expresar, organizar y hacer valer sus preferencias. Junto con la participación, define el grado de democratización.",autor:"Dahl",unit:"u3",exam:true},
+  {term:"Libertades civiles",def:"Para Dahl, condición sine qua non de la democracia. Un régimen no puede considerarse democrático si no respeta las libertades civiles de los individuos.",autor:"Dahl",unit:"u3",exam:true},
+  {term:"Pluralidad de voces",def:"Para Dahl, su función en democracia es fortalecer la deliberación pública y la representación. No sirve para fomentar el consenso de élites ni para generar polarización.",autor:"Dahl",unit:"u3",exam:true},
+  {term:"Igualdad política",def:"Para Dahl, el principio esencial para que una democracia sea justa. No lo son la participación mayoritaria, la representación proporcional ni la redistribución económica.",autor:"Dahl",unit:"u3",exam:true},
+  {term:"Críticas a la democracia (Dahl cap. 15)",def:"En 'La democracia y sus críticos', Dahl responde a las críticas antidemocráticas argumentando que son legítimas pero no suficientes para rechazar la democracia. Señala como limitación la falta de acceso a la información y como crítica filosófica la incapacidad de garantizar igualdad real.",autor:"Dahl",unit:"u3",exam:true},
+  {term:"Sistemas presidenciales (Linz)",def:"Para Linz, el tipo de régimen más susceptible a las crisis políticas porque genera rigidez institucional: tanto el ejecutivo como el legislativo tienen mandatos fijos y legitimidades democráticas separadas.",autor:"Linz",unit:"u3",exam:true},
+  {term:"Fragmentación social y política",def:"Para Linz, uno de los factores que puede desestabilizar a una democracia. La alta fragmentación dificulta la formación de consensos y la gobernabilidad.",autor:"Linz",unit:"u3",exam:true},
+  {term:"Diversidad institucional",def:"Para Linz, el elemento que distingue a las democracias contemporáneas entre sí. Las democracias no son todas iguales: se diferencian por sus instituciones, no por su homogeneidad.",autor:"Linz",unit:"u3",exam:true},
+  {term:"Falta de consenso entre élites",def:"Para Linz, el desafío clave para las democracias modernas. Cuando las élites políticas no logran acuerdos mínimos, los sistemas democráticos se vuelven vulnerables.",autor:"Linz",unit:"u3",exam:true},
+  {term:"Democracia digital",def:"Para Welp, la aplicación de tecnologías digitales a los procesos democráticos. Su principal reto es la exclusión de ciudadanos sin acceso a tecnología (brecha digital).",autor:"Welp",unit:"u3",exam:true},
+  {term:"Desafección ciudadana",def:"Para Welp, uno de los principales desafíos de las democracias en el siglo XXI. Implica el alejamiento de los ciudadanos de las instituciones democráticas y la pérdida de confianza en ellas.",autor:"Welp",unit:"u3",exam:true},
+  {term:"Polarización política",def:"Para Welp, uno de los problemas centrales de las democracias contemporáneas. También para Levitsky, uno de los factores que ha contribuido al resurgimiento de actitudes autoritarias en América Latina.",autor:"Welp",unit:"u3",exam:true},
+  {term:"Manipulación de la información",def:"Para Welp, uno de los riesgos de la democracia en el siglo XXI. Las redes sociales pueden ser usadas para manipular la información y distorsionar los procesos democráticos.",autor:"Welp",unit:"u3",exam:true},
+  {term:"Participación política digital",def:"Para Welp, las nuevas tecnologías han aumentado las posibilidades de participación política directa, aunque no han reemplazado a los partidos políticos tradicionales.",autor:"Welp",unit:"u3",exam:true},
+
+  // ══════ UNIDAD 4: GOBIERNO ══════
+
+  {term:"Gobierno",def:"Para Zelaznik, conjunto de instituciones y personas que ejercen el poder dentro de un marco normativo. Está presente tanto en democracias como en regímenes autoritarios. La legitimidad es una característica fundamental de cualquier tipo de gobierno.",autor:"Zelaznik",unit:"u4",exam:true},
+  {term:"Legitimidad",def:"Para Zelaznik, característica fundamental de cualquier tipo de gobierno. Un gobierno legítimo es aquel reconocido como válido por los gobernados, independientemente del tipo de régimen.",autor:"Zelaznik",unit:"u4",exam:true},
+  {term:"Sistema presidencial",def:"Sistema de gobierno en el que el ejecutivo y el legislativo son elegidos por separado y tienen mandatos fijos e independientes. Para Bonvecchi y Zelaznik, en Argentina el factor clave es la relación entre el presidente y los gobernadores provinciales.",autor:"Zelaznik",unit:"u4",exam:true},
+  {term:"Sistema parlamentario",def:"Sistema de gobierno en el que el ejecutivo surge del legislativo y depende de su confianza para mantenerse. Para Linz, es más flexible que el presidencialismo para resolver crisis políticas.",autor:"Zelaznik",unit:"u4",exam:true},
+  {term:"Gobernadores provinciales",def:"Para Bonvecchi y Zelaznik, actores clave del presidencialismo argentino que pueden limitar el poder del presidente. No son una extensión del ejecutivo nacional ni actúan solo en su ámbito local.",autor:"Bonvecchi",unit:"u4",exam:true},
+  {term:"Relación Congreso-Presidente",def:"Para Bonvecchi y Zelaznik, es una relación de colaboración en la que el Congreso delega frecuentemente su poder al ejecutivo. El factor de estabilidad es la capacidad del presidente para negociar con distintos actores políticos.",autor:"Bonvecchi",unit:"u4",exam:true},
+  {term:"Capacidad de negociación presidencial",def:"Para Bonvecchi y Zelaznik, el aspecto del presidencialismo argentino que funciona como factor de estabilidad. El presidente que logra negociar con gobernadores, partidos y actores sociales garantiza la gobernabilidad.",autor:"Bonvecchi",unit:"u4",exam:true},
+  {term:"Democracia de mayorías",def:"Modelo de Lijphart caracterizado por sociedad homogénea, bipartidismo estable, alternancia en el poder entre mayorías y minorías. No tiene constitución escrita necesariamente, ni partidos multidimensionales. Ejemplo: España.",autor:"Lijphart",unit:"u4",exam:true},
+  {term:"Democracia de consenso",def:"Modelo de Lijphart caracterizado por coaliciones amplias, representación proporcional, bicameralismo equilibrado, sistema de partidos multidimensional. Permite la presencia de minorías en los gabinetes. Ejemplo: Alemania.",autor:"Lijphart",unit:"u4",exam:true},
+  {term:"Coalición de gobierno",def:"En la democracia de consenso de Lijphart, mecanismo que permite la presencia de minorías en los gabinetes mediante coaliciones amplias de diversos partidos. El caso alemán (SPD + Verdes + FDP) ilustra este elemento.",autor:"Lijphart",unit:"u4",exam:true},
+
+  // ══════ UNIDAD 5: ELECCIONES Y PARTIDOS ══════
+
+  {term:"Sistema electoral",def:"Para De Luca, conjunto de reglas que determinan cómo los votos se convierten en escaños. Incluye los sistemas mayoritarios, proporcionales y mixtos.",autor:"De Luca",unit:"u5",exam:true},
+  {term:"Sistema mixto",def:"Para De Luca, sistema electoral que combina elementos de representación mayoritaria y representación proporcional. Es la única definición que el examen pregunta sobre De Luca.",autor:"De Luca",unit:"u5",exam:true},
+  {term:"Representación proporcional",def:"Sistema electoral en el que los escaños se distribuyen en proporción a los votos obtenidos. Es uno de los elementos del modelo de democracia de consenso de Lijphart.",autor:"De Luca",unit:"u5",exam:true},
+  {term:"Partidos políticos en América Latina",def:"Para Malamud, han tenido una evolución marcada por la inestabilidad y el personalismo. Tienden a cambiar según las características del sistema electoral.",autor:"Malamud",unit:"u5",exam:true},
+  {term:"Construcción de partidos en incertidumbre",def:"Para Levitsky, proceso que requiere la creación de una base sólida de apoyo popular. Para reconstruir la confianza en los partidos es necesario promover la participación ciudadana y la transparencia.",autor:"Levitsky",unit:"u5",exam:true},
+  {term:"Resurgimiento autoritario",def:"Para Levitsky, fenómeno al que ha contribuido la polarización política en América Latina. El fortalecimiento de instituciones democráticas va en sentido contrario.",autor:"Levitsky",unit:"u5",exam:true},
+  {term:"Fragmentación del PJ",def:"Para Malamud y De Luca, la principal ruptura en el sistema de partidos argentino entre 1983 y 2015. La fragmentación interna del Partido Justicialista (duhaldismo, kirchnerismo y otras corrientes) transformó el sistema.",autor:"Malamud",unit:"u5",exam:true},
+  {term:"Crisis política de 2001",def:"Para Abal Medina, la caída de De la Rúa impulsó estudios sobre manifestaciones electorales, selección de candidatos, impactos en el sistema de partidos y formas de protesta social y participación ciudadana.",autor:"Abal Medina",unit:"u5",exam:true},
+  {term:"Menemismo",def:"Para Abal Medina, la presidencia de Menem (1989-1999) motivó estudios sobre la tendencia delegativa, la debilidad de controles horizontales en la relación presidente-congreso y la personalización de las decisiones como nuevo estilo de poder.",autor:"Abal Medina",unit:"u5",exam:true},
+  {term:"Tendencia delegativa",def:"Estilo de ejercicio del poder en el que el presidente toma decisiones de manera personal y concentrada, con débiles controles horizontales del Congreso. Fue el objeto de estudio durante el menemismo según Abal Medina.",autor:"Abal Medina",unit:"u5",exam:true},
+
+  // ══════ UNIDAD 6: GÉNERO Y MOVIMIENTOS SOCIALES ══════
+
+  {term:"Cuotas de género",def:"Para Franceschet, mecanismos legales que exigen una representación mínima de mujeres en listas o cargos. Su principal desafío es que a menudo no se aplican correctamente. La representación formal no garantiza la representación sustantiva.",autor:"Franceschet",unit:"u6",exam:true},
+  {term:"Paridad de género",def:"Para Tula, sistema que asegura la igualdad numérica (50/50) entre hombres y mujeres en la representación política. Se diferencia de las cuotas en que estas solo exigen un mínimo, mientras que la paridad garantiza igualdad.",autor:"Tula",unit:"u6",exam:true},
+  {term:"Representación sustantiva",def:"Para Franceschet, la defensa efectiva de los intereses de las mujeres por parte de sus representantes. Se distingue de la representación formal (presencia numérica). Las cuotas promueven la formal pero no garantizan la sustantiva.",autor:"Franceschet",unit:"u6",exam:true},
+  {term:"Movimientos sociales",def:"Para Tilly y Wood, formas de acción colectiva sostenida que combinan campañas de reivindicación, un repertorio de acción (WUNC) y demostraciones públicas de valor, unidad, número y compromiso.",autor:"Tilly",unit:"u6",exam:false},
+  {term:"WUNC",def:"Para Tilly, sigla que sintetiza las características que los movimientos sociales deben demostrar públicamente: Valor (Worthiness), Unidad (Unity), Número (Numbers) y Compromiso (Commitment).",autor:"Tilly",unit:"u6",exam:false},
+  {term:"Protesta digital",def:"Para Welp, nuevas formas de movilización política que utilizan redes sociales y plataformas digitales. No reemplaza a los partidos políticos tradicionales pero amplía las posibilidades de participación.",autor:"Welp",unit:"u6",exam:true},
+  {term:"Ley de Paridad de Género (2017)",def:"Ley argentina sancionada en 2017 que establece la paridad (50/50) en las listas de candidatos para cargos legislativos nacionales. Para Lopreite y Rodríguez Gusta, es un hito en el feminismo de Estado, aunque el examen privilegia la Ley de IVE (2020) como el hito más citado.",autor:"Lopreite",unit:"u6",exam:true},
+  {term:"Tutelaje",def:"Concepto de Dahl que refiere a la idea de que existe un grupo o entidad con conocimiento superior que debe guiar las decisiones colectivas en lugar de dejar que el pueblo decida por sí mismo. Es una crítica a la democracia.",autor:"Dahl",unit:"u6",exam:false},
+];
+
+// ── RENDER ──────────────────────────────────────────────────
+let activeUnit = 'all';
+let activeAutor = 'all';
+let searchVal = '';
+
+function uLabel(u){
+  const map={u1:'U1',u2:'U2',u3:'U3',u4:'U4',u5:'U5',u6:'U6'};
+  return map[u]||u;
+}
+function uClass(u){ return 'tu'+u.replace('u',''); }
+
+function highlight(text, q){
+  if(!q) return text;
+  const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+  return text.replace(re,'<mark>$1</mark>');
+}
+
+function render(){
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('empty');
+  const q = searchVal.trim().toLowerCase();
+
+  let filtered = TERMS.filter(t => {
+    const unitOk = activeUnit === 'all' || (activeUnit === 'exam' ? t.exam : t.unit === activeUnit);
+    const autorOk = activeAutor === 'all' || t.autor === activeAutor;
+    const searchOk = !q || t.term.toLowerCase().includes(q) || t.def.toLowerCase().includes(q) || t.autor.toLowerCase().includes(q);
+    return unitOk && autorOk && searchOk;
+  });
+
+  // sort alphabetically
+  filtered.sort((a,b) => a.term.localeCompare(b.term,'es'));
+
+  // remove old cards
+  grid.querySelectorAll('.term-card').forEach(el => el.remove());
+  empty.classList.remove('show');
+
+  document.getElementById('count-display').textContent = filtered.length;
+
+  if(filtered.length === 0){
+    empty.classList.add('show');
+    return;
+  }
+
+  filtered.forEach(t => {
+    const card = document.createElement('div');
+    card.className = `term-card ${t.unit}`;
+
+    const examBadge = t.exam ? `<span class="tc-exam">⭐ ENTRA EN EXAMEN</span>` : '';
+
+    card.innerHTML = `
+      <div class="tc-head">
+        <span class="tc-term">${highlight(t.term, q)} <span class="tc-expand-hint">▾</span></span>
+        ${examBadge}
+      </div>
+      <div class="tc-def">${highlight(t.def, q)}</div>
+      <div class="tc-foot">
+        <span class="tc-autor">${t.autor}</span>
+        <span class="tc-unidad ${uClass(t.unit)}">${uLabel(t.unit)}</span>
+      </div>
+    `;
+
+    card.addEventListener('click', () => {
+      const wasExpanded = card.classList.contains('expanded');
+      // cerrar cualquier otra expandida
+      document.querySelectorAll('.term-card.expanded').forEach(c => c.classList.remove('expanded'));
+      if(!wasExpanded){
+        card.classList.add('expanded');
+        // scroll suave para que quede visible
+        setTimeout(() => card.scrollIntoView({behavior:'smooth', block:'nearest'}), 50);
+      }
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+// ── EVENTOS ──────────────────────────────────────────────────
+document.getElementById('search').addEventListener('input', e => {
+  searchVal = e.target.value;
+  render();
+});
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeUnit = btn.dataset.unit;
+    render();
+  });
+});
+
+document.getElementById('autor-select').addEventListener('change', e => {
+  activeAutor = e.target.value;
+  render();
+});
+
+// initial render
+render();
+</script>
+</body>
+</html>
